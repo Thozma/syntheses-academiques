@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<!--
+  Site web de partage de synthèses académiques
+  Permet aux étudiants de partager et consulter des synthèses de cours
+  
+  @author: Thomas Bauwens
+  @version: 1.0.0
+  @date: Mai 2025
+-->
+<html lang="fr">
+  <head>
+    <!-- Métadonnées de base -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Plateforme de partage de synthèses pour les étudiants de 1ère année en informatique" />
+    <meta name="author" content="Thomas Bauwens" />
+    
+    <!-- Titre de la page -->
+    <title>les Synthèses de 1ERE BIN - Bauwens Thomas</title>
+    
+    <!-- Feuille de style CSS -->
+    <link rel="stylesheet" href="style/style.css" />
+  </head>
+
+  <body>
+    <!-- Présentation de l'application -->
+    <div class="presentation">
+      <div class="header-main">
+        <div class="header-left">
+          <img
+            src="image/image.png"
+            alt="Photo de présentation de Bauwens Thomas"
+            class="image"
+          />
+          <div class="texte">
+            <h1>Les synthèses des premières BIN</h1>
+            <h3>par les élèves, pour les élèves !</h3>
+            <h3>Créé par Bauwens Thomas</h3>
+            <h3 class="school-info">Haute Ecole Léonard de Vinci</h3>
+            <h3 class="school-info">2024 - 2025 Informatique - développement d'applications</h3>
+          </div>
+        </div>
+        <div class="contact-info">
+          <h4>Nous joindre</h4>
+          <form id="questionForm" method="POST" onsubmit="return handleQuestionSubmit(event);">
+            <div class="form-row">
+              <input type="text" id="nomDiscordQuestion" name="nomDiscord" placeholder="Discord" required />
+              <input type="email" id="email" name="email" placeholder="Email" />
+            </div>
+            <div class="form-row">
+              <textarea id="message" name="message" placeholder="Votre message" required></textarea>
+              <button type="submit">Envoyer</button>
+            </div>
+          </form>
+          <div id="questionConfirmationMessage" class="confirmation-message">Message envoyé !</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des fichiers disponibles -->
+    <div class="files-container">
+      <h2>Synthèses disponibles</h2>
+      <div id="filesList" class="files-list">
+        <p>Chargement des synthèses...</p>
+        <!-- Message par défaut avant que les fichiers ne soient chargés -->
+      </div>
+    </div>
+
+    <!-- Formulaire d'upload de fichiers -->
+    <div class="upload-section">
+      <h2>Ajouter une Synthèse</h2>
+      <form
+        id="syntheseForm"
+        enctype="multipart/form-data"
+        method="POST"
+        onsubmit="return handleUpload(event);"
+      >
+        <div class="form-grid">
+          <div class="form-group">
+            <div class="input-row">
+              <input type="text" id="nomDiscord" name="nomDiscord" placeholder="Nom Discord" required />
+              <select id="cours" name="cours" required>
+                <option value="" disabled selected>Sélectionnez un cours</option>
+                <option value="STRUCTURE DE DONNEES">Structure de Données</option>
+                <option value="MATHEMATIQUE 1">Mathématique 1</option>
+                <option value="MATHEMATIQUE 2">Mathématique 2</option>
+                <option value="BASE DE DONNEES">Base de Données</option>
+                <option value="SYSTEMES D'EXPLOITATION / LINUX">Systèmes d'Exploitation / Linux</option>
+                <option value="JAVASCRIPT">JavaScript</option>
+                <option value="ANGLAIS">Anglais</option>
+                <option value="ALGO">Algorithmique</option>
+                <option value="APOO">Analyse et Programmation Orientée Objet</option>
+                <option value="FONCTIONNEMENT DES ORDINATEURS">Fonctionnement des Ordinateurs</option>
+                <option value="GESTION COMPTABILITE ECONOMIE">Gestion, Comptabilité et Économie</option>
+                <option value="COMPETENCES NUMERIQUES">Compétences Numériques</option>
+              </select>
+            </div>
+            <div class="input-row">
+              <input type="text" id="titre" name="titre" placeholder="Titre de la synthèse" required />
+              <div class="file-input">
+                <input type="file" id="fichier" name="fichier" accept=".pdf" required />
+                <small class="file-format">Format PDF uniquement</small>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Description de votre synthèse (facultatif)"
+            ></textarea>
+            <div class="form-actions">
+              <small class="upload-notice">Le chargement peut prendre quelques instants<span class="dots">...</span></small>
+              <button type="submit">Envoyer la synthèse</button>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div id="confirmationMessage" class="upload-confirmation">En chargement ...</div>
+    </div>
+
+    <!-- Footer de la page -->
+    <div class="footer">&copy; 2025 Bauwens Thomas - Tous droits réservés</div>
+
+    <script>
+      /**
+       * ========== GESTION DU FORMULAIRE DE CONTACT ==========
+       * Fonction asynchrone qui gère la soumission du formulaire de contact
+       * Récupère les données du formulaire, les envoie au serveur via une requête AJAX,
+       * affiche un message de confirmation et redirige l'utilisateur vers la page principale
+       * 
+       * @param {Event} event - L'événement de soumission du formulaire
+       * @returns {boolean} - Retourne false pour empêcher la soumission normale du formulaire
+       */
+      async function handleQuestionSubmit(event) {
+        // Empêche la soumission normale du formulaire
+        event.preventDefault();
+        // Récupère les références aux éléments du DOM
+        const form = document.getElementById('questionForm');
+        const confirmationMessage = document.getElementById('questionConfirmationMessage');
+        
+        try {
+          // Crée un objet FormData à partir du formulaire
+          const formData = new FormData(form);
+          // Envoie les données au serveur via une requête AJAX
+          const response = await fetch('/ask-question', {
+            method: 'POST',
+            body: formData
+          });
+
+          // Analyse la réponse JSON du serveur
+          const result = await response.json();
+          // Si la réponse contient une erreur, la lance comme exception
+          if (result.error) throw new Error(result.error);
+
+          // Affiche le message de succès
+          confirmationMessage.textContent = 'Message envoyé !';
+          confirmationMessage.style.display = 'block';
+          confirmationMessage.style.color = '#155724'; // Couleur verte pour le succès
+          // Réinitialise le formulaire
+          form.reset();
+          
+          // Affiche le message pendant 2 secondes puis redirige vers la page principale
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
+        } catch (error) {
+          // Gestion des erreurs : affiche un message d'erreur
+          confirmationMessage.textContent = error.message || 'Erreur lors de l\'envoi';
+          confirmationMessage.style.display = 'block';
+          confirmationMessage.style.color = '#721c24'; // Couleur rouge pour l'erreur
+        }
+        // Empêche la soumission normale du formulaire
+        return false;
+      }
+
+      /**
+       * ========== GESTION DU FORMULAIRE D'UPLOAD ==========
+       * Fonction asynchrone qui gère la soumission du formulaire d'upload de fichiers
+       * Récupère les données du formulaire et le fichier, les envoie au serveur,
+       * affiche un message de confirmation et rafraîchit la liste des fichiers
+       * 
+       * @param {Event} event - L'événement de soumission du formulaire
+       * @returns {boolean} - Retourne false pour empêcher la soumission normale du formulaire
+       */
+      async function handleUpload(event) {
+        // Empêche la soumission normale du formulaire
+        event.preventDefault();
+        // Récupère le formulaire et crée un objet FormData pour l'envoi du fichier
+        const form = event.target;
+        const formData = new FormData(form);
+        // Récupère l'élément qui affichera le message de confirmation
+        const confirmationMessage = document.getElementById('confirmationMessage');
+
+        try {
+          // Affiche un message d'attente pendant l'upload
+          confirmationMessage.style.display = 'block';
+          confirmationMessage.textContent = 'Upload en cours...';
+
+          // Envoie les données au serveur via une requête AJAX
+          const response = await fetch('/upload', {
+            method: 'POST',
+            body: formData // FormData gère automatiquement l'envoi de fichiers
+          });
+
+          // Analyse la réponse JSON du serveur
+          const result = await response.json();
+
+          // Vérifie si la réponse contient une erreur
+          if (result.error) {
+            throw new Error(result.error);
+          }
+
+          // Affiche le message de succès retourné par le serveur
+          confirmationMessage.textContent = result.message;
+          confirmationMessage.style.color = '#155724'; // Couleur verte pour le succès
+          // Réinitialise le formulaire
+          form.reset();
+          // Rafraîchit la liste des fichiers pour afficher le nouveau fichier
+          loadFiles();
+
+        } catch (error) {
+          // Gestion des erreurs : affiche un message d'erreur
+          console.error('Erreur:', error);
+          confirmationMessage.textContent = error.message || 'Erreur lors de l\'upload';
+          confirmationMessage.style.color = '#721c24'; // Couleur rouge pour l'erreur
+        }
+
+        // Empêche la soumission normale du formulaire
+        return false;
+      }
+
+      /**
+       * ========== CHARGEMENT ET AFFICHAGE DES FICHIERS ==========
+       * Fonction qui récupère la liste des fichiers depuis le serveur,
+       * les organise par cours, génère le HTML pour les afficher
+       * et implémente la fonctionnalité de sections pliables/dépliables
+       */
+      function loadFiles() {
+        // Récupère la liste des fichiers depuis le serveur
+        fetch("/get-files")
+          .then((response) => response.json()) // Convertit la réponse en JSON
+          .then((files) => {
+            // Récupère l'élément DOM qui contiendra la liste des fichiers
+            const filesListDiv = document.getElementById("filesList");
+
+            // Affiche un message si aucun fichier n'est disponible
+            if (files.length === 0) {
+              filesListDiv.innerHTML =
+                "<p>Aucune synthèse n'est disponible pour le moment.</p>";
+              return;
+            }
+
+            /**
+             * Organise les fichiers par cours
+             * Crée un objet où chaque clé est un nom de cours et chaque valeur est un tableau de fichiers
+             */
+            const filesByCourse = {};
+            files.forEach((file) => {
+              // Crée un tableau vide pour ce cours s'il n'existe pas encore
+              if (!filesByCourse[file.cours]) {
+                filesByCourse[file.cours] = [];
+              }
+              // Ajoute le fichier au tableau correspondant à son cours
+              filesByCourse[file.cours].push(file);
+            });
+
+            /**
+             * Génère le HTML pour chaque section de cours
+             * Chaque section contient un titre de cours et la liste des fichiers associés
+             */
+            let html = '';
+            // Parcourt les cours dans l'ordre alphabétique
+            Object.keys(filesByCourse).sort().forEach(cours => {
+              const courseFiles = filesByCourse[cours];
+              
+              // Crée la structure de la section de cours avec un titre et une flèche pour plier/déplier
+              html += `
+              <div class="course-section">
+                <h3>
+                  ${cours}
+                  <span class="course-toggle"></span>
+                </h3>
+                <div class="course-files">
+              `;
+
+              // Trie les fichiers par date (plus récent en premier) et génère le HTML pour chaque fichier
+              courseFiles.sort((a, b) => new Date(b.dateAjout) - new Date(a.dateAjout)).forEach(file => {
+                html += `
+                <div class="file-item">
+                  <div class="file-header">
+                    <a href="/Les synthèses des invités/${file.cours}/${file.nomFichier}" target="_blank">
+                      <span class="label">Titre :</span> ${file.titre}
+                    </a>
+                    <span class="file-discord"><span class="label">Nom :</span> ${file.nomDiscord}</span>
+                    <div class="file-meta">
+                      <span class="file-size">${(file.poidsFichier / 1048576).toFixed(2)} Mo</span>
+                      <span class="file-date">${file.dateAjout}</span>
+                    </div>
+                  </div>
+                  ${file.description ? `<div class="file-description"><span class="label">Description :</span> ${file.description}</div>` : ''}
+                </div>
+                `;
+              });
+
+              // Ferme la structure HTML de la section de cours
+              html += `
+                </div>
+              </div>
+              `;
+            });
+            
+            // Insère le HTML généré dans la page
+            filesListDiv.innerHTML = html;
+            
+            /**
+             * Implémente la fonctionnalité de sections pliables/dépliables
+             * Permet à l'utilisateur de cliquer sur un titre de cours pour afficher/masquer les fichiers
+             */
+            const courseSections = document.querySelectorAll('.course-section');
+            
+            // Ouvre la première section par défaut pour que l'utilisateur voie au moins quelques fichiers
+            if (courseSections.length > 0) {
+              courseSections[0].classList.add('open');
+            }
+            
+            // Ajoute un écouteur d'événements à chaque titre de section
+            document.querySelectorAll('.course-section h3').forEach(header => {
+              header.addEventListener('click', () => {
+                const section = header.parentElement;
+                section.classList.toggle('open'); // Ajoute ou supprime la classe 'open'
+              });
+            });
+          })
+          .catch((error) => {
+            // Gestion des erreurs lors du chargement des fichiers
+            console.error("Erreur lors du chargement des fichiers:", error);
+            document.getElementById("filesList").innerHTML =
+              "<p>Une erreur s'est produite lors du chargement des synthèses.</p>";
+          });
+      }
+
+      // Charge les fichiers lorsque la page est prête
+      document.addEventListener("DOMContentLoaded", loadFiles);
+
+      // Fonction pour afficher un message de confirmation après soumission
+      function handleSubmit() {
+        document.getElementById("confirmationMessage").style.display = "block";
+        return true;
+      }
+
+      // Cette fonction a été remplacée par la version async ci-dessus
+    </script>
+  </body>
+</html>

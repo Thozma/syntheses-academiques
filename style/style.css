@@ -1,0 +1,490 @@
+/* Reset et styles de base pour toute la page */
+body {
+    font-family: Arial, sans-serif;          /* Police par défaut pour tout le site */
+    margin: 0;                               /* Supprime les marges externes par défaut */
+    padding: 0;                              /* Supprime les marges internes par défaut */
+    background-color: #f4f4f4;             /* Couleur de fond gris clair */
+}
+
+/* Style pour la section de présentation */
+.presentation {
+    display: flex;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.header-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    flex: 1;
+}
+
+.texte h3 {
+    margin: 5px 0;
+}
+
+.school-info {
+    font-size: 0.9em !important;
+    color: #666 !important;
+    font-weight: normal !important;
+}
+
+.contact-info {
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    margin-left: 20px;
+}
+
+.contact-info h4 {
+    margin: 0 0 8px 0;
+    color: #333;
+    font-size: 0.9em;
+}
+
+.form-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.form-row:last-child {
+    margin-bottom: 0;
+}
+
+.contact-info input,
+.contact-info textarea {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: Arial, sans-serif;
+}
+
+.contact-info input {
+    width: 120px;
+}
+
+.contact-info textarea {
+    flex: 1;
+    height: 34px;
+    resize: none;
+    box-sizing: border-box;
+}
+
+.contact-info button {
+    padding: 0 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 0.9em;
+    font-weight: 500;
+    height: 34px;
+}
+
+.contact-info button:hover {
+    background-color: #45a049;
+}
+
+.confirmation-message {
+    display: none;
+    color: green;
+    font-size: 0.85em;
+    margin-top: 8px;
+    text-align: center;
+}
+
+/* Style du conteneur de présentation en haut de la page */
+.presentation {
+    background: #fff;                         /* Fond blanc */
+    border-radius: 10px;                        /* Coins arrondis */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);    /* Ombre portée légère */
+    padding: 20px;                              /* Espacement interne */
+    max-width: 1000px;                          /* Largeur maximale */
+    margin: 50px auto;                          /* Centrage avec marge en haut */
+    display: flex;                              /* Disposition en flexbox */
+    align-items: center;                        /* Alignement vertical au centre */
+    gap: 30px;                                  /* Espace entre les éléments */
+}
+
+/* Style de l'image de profil */
+.image {
+    width: 120px;                            /* Largeur fixe */
+    height: 120px;                           /* Hauteur fixe */
+    border-radius: 50%;                      /* Forme circulaire */
+    object-fit: cover;                       /* Ajustement de l'image */
+}
+
+/* Conteneur du texte de présentation */
+.texte {
+    flex: 1;                                 /* Prend tout l'espace restant */
+}
+
+/* Style du titre principal */
+h1 {
+    font-size: 24px;                         /* Taille de police */
+    color: #f50000;                        /* Couleur rouge */
+    margin-bottom: 1px;                      /* Petit espace en bas */
+}
+
+/* Style des sous-titres */
+h3 {
+    font-size: 16px;                         /* Taille de police */
+    color: #666;                           /* Couleur gris foncé */
+    margin: 8px 0;                           /* Espacement vertical */
+}
+
+/* Section liste des fichiers */
+.files-container {
+    background: #fff;                         /* Fond blanc */
+    border-radius: 10px;                        /* Coins arrondis */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);    /* Ombre portée légère */
+    padding: 20px;                              /* Espacement interne */
+    max-width: 1000px;                          /* Largeur maximale */
+    margin: 20px auto;                          /* Centrage avec marge en haut */
+}
+
+.files-container h2 {
+    color: #333;                             /* Couleur du texte */
+    margin: 0 0 20px 0;                        /* Marge en bas uniquement */
+    font-size: 1.5em;                         /* Taille de police */
+}
+
+.files-list {
+    display: flex;                           /* Disposition en flexbox */
+    flex-direction: column;                  /* Empilé verticalement */
+    gap: 5px;                               /* Espace réduit entre les éléments */
+}
+
+/* Style des sections de cours */
+.course-section {
+    background: #fff;                         /* Fond blanc */
+    border-radius: 8px;                        /* Coins arrondis */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);   /* Ombre légère */
+    padding: 10px;                              /* Espacement interne réduit */
+    margin-bottom: 10px;                      /* Espace en bas augmenté */
+    border: 2px solid #999;                   /* Bordure grise plus foncée */
+}
+
+.course-section h3 {
+    margin: 0 0 10px 0;                        /* Marge en bas uniquement */
+    color: #333;                             /* Couleur du texte */
+    font-size: 0.9em;                         /* Taille de police réduite */
+    border-bottom: 1px solid #ccc;            /* Ligne de séparation plus visible */
+    padding: 6px 0;                           /* Espace au-dessus et sous le titre réduit */
+    cursor: pointer;                          /* Curseur main au survol */
+    display: flex;                            /* Flexbox pour aligner le titre et la flèche */
+    align-items: center;                      /* Alignement vertical */
+    justify-content: space-between;           /* Espacement entre titre et flèche */
+    background-color: #f5f5f5;                /* Fond gris clair pour le titre */
+    padding-left: 10px;                       /* Espacement à gauche */
+    border-radius: 5px;                       /* Coins arrondis */
+    font-weight: bold;                        /* Texte en gras */
+}
+
+/* Style pour la flèche */
+.course-toggle {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid #666;
+    margin-left: 10px;
+    transition: transform 0.3s ease;
+}
+
+/* Rotation de la flèche quand la section est ouverte */
+.course-section.open .course-toggle {
+    transform: rotate(180deg);
+}
+
+/* Cacher le contenu des sections fermées */
+.course-section:not(.open) .course-files {
+    display: none;
+}
+
+.course-files {
+    display: flex;                            /* Disposition en flexbox */
+    flex-direction: column;                   /* Empilé verticalement */
+    gap: 5px;                               /* Espace réduit entre les éléments */
+    gap: 5px;                                /* Espace réduit entre les fichiers */
+}
+
+/* Élément individuel de la liste */
+.file-item {
+    margin-bottom: 5px;                       /* Réduit l'écart entre les fichiers */
+    border: 1px solid #eee;                   /* Bordure fine grise */
+    border-radius: 5px;                       /* Coins arrondis */
+    padding: 5px;                            /* Espacement interne réduit */
+    transition: background-color 0.2s;        /* Animation au survol */
+    font-size: 0.9em;                         /* Taille de police très réduite */
+}
+
+/* En-tête du fichier avec titre, nom et infos */
+.file-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 10px;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 3px;
+}
+
+/* Titre du fichier */
+.file-header a {
+    grid-column: 1;
+    font-weight: bold;
+    color: #2c3e50;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Conteneur pour nom */
+.file-discord {
+    grid-column: 2;
+    text-align: center;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Conteneur pour taille et date */
+.file-meta {
+    grid-column: 3;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* Taille et date */
+.file-size, .file-date {
+    color: #777;
+    white-space: nowrap;
+    margin-left: 10px;
+}
+
+/* Style pour les labels */
+.label {
+    font-weight: bold;
+    color: #444;
+}
+
+/* Description du fichier */
+.file-description {
+    color: #666;
+    font-style: italic;
+    margin-top: 3px;
+    padding-left: 10px;
+    border-left: 2px solid #eee;
+    font-size: 0.9em;
+}
+
+/* Effet au survol des fichiers */
+.file-item:hover {
+    background-color: #f8f8f8;               /* Fond légèrement gris au survol */
+}
+
+/* Style du formulaire d'upload */
+.upload-section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    max-width: 1000px;
+    margin: 20px auto;
+}
+
+.upload-section h2 {
+    color: #333;
+    margin: 0 0 20px 0;
+    font-size: 1.5em;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    align-items: start;
+}
+
+.input-row input,
+.input-row select {
+    width: 100%;
+    height: 34px;
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.file-input {
+    width: 100%;
+}
+
+.file-input input[type="file"] {
+    width: 100%;
+    padding: 6px 0;
+}
+
+.file-format {
+    display: block;
+    color: #666;
+    font-size: 0.6em;
+    margin-top: 4px;
+}
+
+.upload-section textarea {
+    width: 100%;
+    min-height: 85px;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: Arial, sans-serif;
+    resize: none;
+    box-sizing: border-box;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: -4px;
+}
+
+.upload-notice {
+    color: #666;
+    font-size: 0.6em;
+    margin-right: 15px;
+    animation: fade 2s infinite;
+    display: inline-block;
+}
+
+@keyframes fade {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+
+.upload-section button {
+    padding: 0 20px;
+    height: 34px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.upload-section button:hover {
+    background-color: #45a049;
+}
+
+.upload-confirmation {
+    display: none;
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 15px;
+    text-align: center;
+}
+
+/* Pied de page */
+.footer {
+    text-align: center;                      /* Centrage du texte */
+    padding: 10px;                           /* Espacement interne */
+    font-size: 14px;                         /* Taille de police */
+    color: #666;                           /* Couleur grise */
+    margin-top: 20px;                        /* Espace au-dessus */
+}
+
+/* Message d'alerte */
+.alerte {
+    color: red;                            /* Texte en rouge */
+    font-weight: bold;                       /* Texte en gras */
+}
+
+/* Messages de succès et d'erreur */
+.message {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.success {
+    background-color: #dff0d8;
+    color: #3c763d;
+    border: 1px solid #d6e9c6;
+}
+
+.error {
+    background-color: #f2dede;
+    color: #a94442;
+    border: 1px solid #ebccd1;
+}
+
+.countdown {
+    font-size: 1.2em;
+    margin: 20px 0;
+    color: #333;
+    text-align: center;
+}
+
+.redirect-link {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.redirect-link a {
+    color: #007BFF;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.redirect-link a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
