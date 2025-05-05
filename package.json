@@ -2,9 +2,9 @@
   "name": "syntheses-website",
   "version": "1.0.0",
   "description": "Site web pour les synthèses",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node app.js"
   },
   "dependencies": {
     "express": "^4.21.2",

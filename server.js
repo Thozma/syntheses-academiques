@@ -24,6 +24,8 @@ const port = config.server.port;        // Port sur lequel le serveur va écoute
 // Configuration pour servir les fichiers statiques et parser les requêtes
 app.use(express.static(__dirname));    // Sert les fichiers du répertoire courant
 app.use('/Les synthèses des invités', express.static(path.join(__dirname, 'Les synthèses des invités'))); // Sert les fichiers uploadés
+
+// Middleware pour traiter les données JSON et formulaires
 app.use(express.json());               // Parse les requêtes avec JSON payload
 app.use(express.urlencoded({ extended: true })); // Parse les requêtes avec URL-encoded payload
 
@@ -125,7 +127,9 @@ const upload = multer({
 const transporter = nodemailer.createTransport(config.smtp);
 
 // Variable pour stocker l'adresse email de l'expéditeur pour une utilisation dans les routes
+// Utilisation directe de config.smtp.auth.user pour éviter les problèmes de portée
 const emailSender = config.smtp.auth.user;
+console.log('Configuration email: Utilisation de l\'adresse', emailSender);
 
 // ========== ROUTES DU SERVEUR ==========
 
@@ -181,39 +185,57 @@ app.post('/upload', (req, res) => {
        * Ce fichier est utilisé pour générer la liste des synthèses sur la page d'accueil
        */
       let fileList = [];
-      const jsonPath = 'fichiers.json';
+      // Utiliser un chemin absolu pour fichiers.json
+      const jsonPath = path.join(__dirname, 'fichiers.json');
+      console.log('Chemin du fichier JSON pour l\'upload:', jsonPath);
       
       // Charger la liste existante si le fichier existe déjà
       if (fs.existsSync(jsonPath)) {
-        fileList = JSON.parse(fs.readFileSync(jsonPath));
+        const fileContent = fs.readFileSync(jsonPath, 'utf8');
+        console.log('Fichier JSON existant trouvé, taille:', fileContent.length);
+        fileList = JSON.parse(fileContent);
+        console.log('Nombre de fichiers existants:', fileList.length);
+      } else {
+        console.log('Création d\'un nouveau fichier JSON');
       }
       
       // Ajouter le nouveau fichier et trier par date (plus récent en premier)
       fileList.push(fileData);
       fileList.sort((a, b) => new Date(b.dateAjout) - new Date(a.dateAjout));
+      console.log('Nombre total de fichiers après ajout:', fileList.length);
       
       // Sauvegarder la liste mise à jour
       fs.writeFileSync(jsonPath, JSON.stringify(fileList, null, 2));
+      console.log('Fichier JSON mis à jour avec succès');
 
       /**
        * Envoi d'un email de notification pour informer de l'ajout d'un nouveau fichier
        */
-      await transporter.sendMail({
-        from: `Thomas Bauwens <${emailSender}>`,
-        to: emailSender,
-        subject: 'Nouveau fichier téléchargé',
-        text: `Un nouveau fichier a été téléchargé :\n\n` +
-              `Nom Discord : ${req.body.nomDiscord}\n` +
-              `Nom du fichier : ${file.filename}\n` +
-              `Poids : ${(file.size / 1048576).toFixed(2)} MB\n` +
-              `Date d'envoi : ${new Date().toLocaleDateString('fr-FR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}`
-      });
+      try {
+        // Utilisation de la variable globale emailSender définie plus haut
+        console.log('Route /upload: Utilisation de l\'adresse email:', emailSender);
+        
+        await transporter.sendMail({
+          from: `Thomas Bauwens <${emailSender}>`,
+          to: emailSender,
+          subject: 'Nouveau fichier téléchargé',
+          text: `Un nouveau fichier a été téléchargé :\n\n` +
+                `Nom Discord : ${req.body.nomDiscord}\n` +
+                `Nom du fichier : ${file.filename}\n` +
+                `Poids : ${(file.size / 1048576).toFixed(2)} MB\n` +
+                `Date d'envoi : ${new Date().toLocaleDateString('fr-FR', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}`
+        });
+        console.log('Email de notification envoyé avec succès');
+      } catch (emailError) {
+        console.error('Erreur lors de l\'envoi de l\'email de notification:', emailError);
+        // On continue malgré l'erreur d'email car le fichier a bien été uploadé
+      }
 
       res.json({
         success: true,
@@ -239,13 +261,23 @@ app.post('/upload', (req, res) => {
  */
 app.get('/get-files', (req, res) => {
   try {
-    const jsonPath = 'fichiers.json';
+    // Utiliser un chemin absolu pour fichiers.json
+    const jsonPath = path.join(__dirname, 'fichiers.json');
+    console.log('Chemin du fichier JSON:', jsonPath);
+    
     // Si le fichier n'existe pas encore, renvoyer un tableau vide
     if (!fs.existsSync(jsonPath)) {
+      console.log('Fichier JSON introuvable');
       return res.json([]);
     }
+    
     // Lire et parser le fichier JSON
-    const fileList = JSON.parse(fs.readFileSync(jsonPath));
+    const fileContent = fs.readFileSync(jsonPath, 'utf8');
+    console.log('Contenu du fichier JSON (premiers 100 caractères):', fileContent.substring(0, 100));
+    
+    const fileList = JSON.parse(fileContent);
+    console.log('Nombre de fichiers trouvés:', fileList.length);
+    
     // Renvoyer la liste au format JSON
     res.json(fileList);
   } catch (error) {
@@ -266,14 +298,53 @@ app.get('/get-files', (req, res) => {
 app.post('/ask-question', async (req, res) => {
   try {
     // Extraction des données du formulaire
-    const { nomDiscord, email, message } = req.body;
+    // Debug: Afficher tout le contenu de req.body pour voir ce qui est reçu
+    console.log('Contenu complet de req.body:', req.body);
+    console.log('Content-Type:', req.headers['content-type']);
+    
+    // Récupération des données du formulaire
+    let nomDiscord = 'Non fourni';
+    let email = 'Non fourni';
+    let message = 'Non fourni';
+    
+    // Vérification si les données sont présentes dans req.body (JSON)
+    if (req.body) {
+      console.log('Type de req.body:', typeof req.body);
+      
+      // Si req.body est une chaîne de caractères (peut arriver avec certaines configurations)
+      if (typeof req.body === 'string') {
+        try {
+          const parsedBody = JSON.parse(req.body);
+          console.log('Corps parsé:', parsedBody);
+          
+          if (parsedBody.nomDiscord) nomDiscord = parsedBody.nomDiscord;
+          if (parsedBody.email) email = parsedBody.email;
+          if (parsedBody.message) message = parsedBody.message;
+        } catch (parseError) {
+          console.error('Erreur de parsing JSON:', parseError);
+        }
+      } else {
+        // Traitement normal de l'objet req.body
+        if (req.body.nomDiscord) nomDiscord = req.body.nomDiscord;
+        else if (req.body.discord) nomDiscord = req.body.discord;
+        else if (req.body.nomDiscordQuestion) nomDiscord = req.body.nomDiscordQuestion;
+        
+        if (req.body.email) email = req.body.email;
+        if (req.body.message) message = req.body.message;
+      }
+    }
+    
+    console.log('Données extraites du formulaire:', { nomDiscord, email, message });
 
-    // Envoi de l'email de contact
+    // Utilisation de la variable globale emailSender définie plus haut
+    console.log('Route /ask-question: Utilisation de l\'adresse email:', emailSender);
+    
+    // Envoi de l'email de contact avec les données récupérées
     await transporter.sendMail({
       from: `Thomas Bauwens <${emailSender}>`,
       to: emailSender,
       subject: 'Nouveau message de contact',
-      text: `Message de contact :\n\nNom Discord : ${nomDiscord}\nEmail : ${email || 'Non fourni'}\nMessage :\n${message}`
+      text: `Message de contact :\n\nNom Discord : ${nomDiscord}\nEmail : ${email}\nMessage :\n${message}`
     });
 
     // Réponse de succès
@@ -289,6 +360,9 @@ app.post('/ask-question', async (req, res) => {
 /**
  * Démarrage du serveur sur le port spécifié
  */
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Serveur démarré sur http://localhost:${port}`);
 });
+
+// Exporter le serveur pour permettre une gestion propre de l'arrêt
+module.exports = server;

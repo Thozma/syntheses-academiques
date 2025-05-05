@@ -140,12 +140,27 @@
         const confirmationMessage = document.getElementById('questionConfirmationMessage');
         
         try {
-          // Crée un objet FormData à partir du formulaire
-          const formData = new FormData(form);
-          // Envoie les données au serveur via une requête AJAX
+          // Récupérer directement les valeurs des champs
+          const nomDiscord = document.getElementById('nomDiscordQuestion').value;
+          const email = document.getElementById('email').value;
+          const message = document.getElementById('message').value;
+          
+          console.log('Envoi du message:', { nomDiscord, email, message });
+          
+          // Créer un objet JSON avec les données du formulaire
+          const formData = {
+            nomDiscord: nomDiscord,
+            email: email,
+            message: message
+          };
+          
+          // Envoie les données au serveur via une requête AJAX en JSON
           const response = await fetch('/ask-question', {
             method: 'POST',
-            body: formData
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
           });
 
           // Analyse la réponse JSON du serveur
@@ -319,10 +334,7 @@
              */
             const courseSections = document.querySelectorAll('.course-section');
             
-            // Ouvre la première section par défaut pour que l'utilisateur voie au moins quelques fichiers
-            if (courseSections.length > 0) {
-              courseSections[0].classList.add('open');
-            }
+            // Toutes les sections sont fermées par défaut
             
             // Ajoute un écouteur d'événements à chaque titre de section
             document.querySelectorAll('.course-section h3').forEach(header => {

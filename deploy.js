@@ -25,15 +25,18 @@ const config = {
     host: credentials.host || "ftp.belgacai.com", // Adresse du serveur FTP
     port: 21, // Port FTP standard
     localRoot: __dirname, // Dossier local à déployer
-    remoteRoot: "/www/", // Dossier distant sur le serveur LWS
+    remoteRoot: "nodeapp/", // Dossier distant dédié pour Node.js
     include: ['*', '**/*'], // Inclure tous les fichiers et dossiers
     exclude: [
-        "node_modules/**", // Exclure les modules Node.js
+        "**/node_modules/**", // Exclure tous les dossiers node_modules et leur contenu
+        "node_modules", // Exclure le dossier node_modules à la racine
         ".git/**", // Exclure les fichiers Git
         "deploy.js", // Exclure ce script
         ".gitignore", // Exclure le fichier .gitignore
         "README.md", // Exclure le README
-        "config.example.js" // Exclure l'exemple de configuration
+        "config.example.js", // Exclure l'exemple de configuration
+        "app.js.lock", // Exclure le fichier de verrouillage s'il existe
+        // Note: .htaccess et install.js ne sont PAS exclus car ils sont nécessaires pour CloudLinux
     ],
     deleteRemote: false, // Ne pas supprimer les fichiers distants
     forcePasv: false, // Désactiver le mode PASV forcé
@@ -43,7 +46,15 @@ const config = {
 // Lancement du déploiement
 ftpDeploy.deploy(config)
     .then(res => console.log('Déploiement terminé!'))
-    .catch(err => console.log(err));
+    .catch(err => {
+        // Ignorer l'erreur si c'est juste un répertoire qui existe déjà
+        if (err.code === 550 && err.message && err.message.includes("Can't create directory: File exists")) {
+            console.log('Avertissement: Certains répertoires existent déjà sur le serveur. Le déploiement continue.');
+            console.log('Déploiement terminé avec des avertissements!');
+        } else {
+            console.log(err);
+        }
+    });
 
 // Événements pour suivre la progression
 ftpDeploy.on('uploading', function(data) {

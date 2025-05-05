@@ -37,7 +37,7 @@ cp ftp-credentials.example.js ftp-credentials.js
 
 4. Lancez le serveur :
 ```bash
-node server.js
+node app.js
 ```
 
 5. Accédez à l'application dans votre navigateur :
@@ -76,6 +76,7 @@ node deploy.js
 
 ## Structure du Projet
 
+- `app.js` : Point d'entrée principal de l'application, gère le cycle de vie
 - `server.js` : Serveur Node.js avec toutes les routes et la logique
 - `index.html` : Interface utilisateur principale
 - `style/style.css` : Styles CSS de l'application
@@ -86,6 +87,7 @@ node deploy.js
 - `deploy.js` : Script de déploiement FTP
 - `Les synthèses des invités/` : Dossier contenant les fichiers uploadés
 - `fichiers.json` : Base de données des fichiers uploadés
+- `.htaccess` : Fichier nécessaire pour la configuration de l'hébergement LWS
 
 ## Sécurité
 
