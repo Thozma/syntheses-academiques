@@ -28,6 +28,7 @@ body {
     align-items: flex-start;
     gap: 20px;
     flex: 1;
+    min-width: 60%;
 }
 
 .texte h3 {
@@ -38,14 +39,15 @@ body {
     font-size: 0.9em !important;
     color: #666 !important;
     font-weight: normal !important;
+    white-space: nowrap;
 }
 
 .contact-info {
     background-color: #f5f5f5;
-    padding: 10px;
+    padding: 15px;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    width: 400px;
+    width: 420px;
     margin-left: 20px;
 }
 
@@ -74,8 +76,12 @@ body {
     font-family: Arial, sans-serif;
 }
 
-.contact-info input {
+.contact-info input[type="text"] {
     width: 120px;
+}
+
+.contact-info input[type="email"] {
+    flex: 1;
 }
 
 .contact-info textarea {
@@ -240,11 +246,10 @@ h3 {
 /* En-tête du fichier avec titre, nom et infos */
 .file-header {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr;
     grid-gap: 10px;
-    align-items: center;
     width: 100%;
-    margin-bottom: 3px;
+    margin-bottom: 5px;
 }
 
 /* Titre du fichier */
@@ -253,9 +258,10 @@ h3 {
     font-weight: bold;
     color: #2c3e50;
     text-decoration: none;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 1.3;
+    margin-bottom: 5px;
 }
 
 /* Conteneur pour nom */
@@ -268,19 +274,24 @@ h3 {
     text-overflow: ellipsis;
 }
 
-/* Conteneur pour taille et date */
+/* Conteneur pour nom, taille et date */
 .file-meta {
-    grid-column: 3;
+    grid-column: 1;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: flex-start;
+    gap: 15px;
+    margin-top: 5px;
 }
 
-/* Taille et date */
-.file-size, .file-date {
+/* Nom, taille et date */
+.file-info, .file-size, .file-date {
     color: #777;
     white-space: nowrap;
-    margin-left: 10px;
+}
+
+.file-info {
+    margin-right: auto;
 }
 
 /* Style pour les labels */
@@ -487,4 +498,35 @@ h3 {
 .redirect-link a:hover {
     color: #0056b3;
     text-decoration: underline;
+}
+
+/* Styles pour les mots-clés Java */
+.java-keyword {
+    color: #d73a49;
+    font-family: Arial, sans-serif;
+    font-size: 0.9em;
+    font-weight: normal;
+}
+
+/* Style spécifique pour les mots-clés Java dans les boutons */
+button .java-keyword {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+/* Styles pour les icônes de cours */
+.course-icon {
+    display: inline-block;
+    margin-right: 8px;
+    font-size: 1.2em;
+    vertical-align: middle;
+}
+
+/* Animation subtile pour les icônes au survol des sections */
+.course-section:hover .course-icon {
+    transform: scale(1.2);
+    transition: transform 0.2s ease;
 }

@@ -34,22 +34,22 @@
           />
           <div class="texte">
             <h1>Les synthèses des premières BIN</h1>
-            <h3>par les élèves, pour les élèves !</h3>
-            <h3>Créé par Bauwens Thomas</h3>
+            <h3><span class="java-keyword">for</span> les élèves, <span class="java-keyword">by</span> les élèves !</h3>
+            <h3><span class="java-keyword">public static</span> Créateur <span class="java-keyword">new</span> Bauwens Thomas</h3>
             <h3 class="school-info">Haute Ecole Léonard de Vinci</h3>
-            <h3 class="school-info">2024 - 2025 Informatique - développement d'applications</h3>
+            <h3 class="school-info"><span class="java-keyword">while</span> (2024 - 2025) Informatique - développement d'applications</h3>
           </div>
         </div>
         <div class="contact-info">
           <h4>Nous joindre</h4>
           <form id="questionForm" method="POST" onsubmit="return handleQuestionSubmit(event);">
             <div class="form-row">
-              <input type="text" id="nomDiscordQuestion" name="nomDiscord" placeholder="Discord" required />
+              <input type="text" id="nomDiscordQuestion" name="nomDiscord" placeholder="Nom / Discord" required />
               <input type="email" id="email" name="email" placeholder="Email" />
             </div>
             <div class="form-row">
               <textarea id="message" name="message" placeholder="Votre message" required></textarea>
-              <button type="submit">Envoyer</button>
+              <button type="submit"><span class="java-keyword">send</span>()</button>
             </div>
           </form>
           <div id="questionConfirmationMessage" class="confirmation-message">Message envoyé !</div>
@@ -59,7 +59,7 @@
 
     <!-- Liste des fichiers disponibles -->
     <div class="files-container">
-      <h2>Synthèses disponibles</h2>
+      <h2><span class="java-keyword">import</span> Synthèses disponibles</h2>
       <div id="filesList" class="files-list">
         <p>Chargement des synthèses...</p>
         <!-- Message par défaut avant que les fichiers ne soient chargés -->
@@ -68,7 +68,7 @@
 
     <!-- Formulaire d'upload de fichiers -->
     <div class="upload-section">
-      <h2>Ajouter une Synthèse</h2>
+      <h2><span class="java-keyword">void</span> Ajouter(Synthèse)</h2>
       <form
         id="syntheseForm"
         enctype="multipart/form-data"
@@ -78,7 +78,7 @@
         <div class="form-grid">
           <div class="form-group">
             <div class="input-row">
-              <input type="text" id="nomDiscord" name="nomDiscord" placeholder="Nom Discord" required />
+              <input type="text" id="nomDiscord" name="nomDiscord" placeholder="Nom / Discord" required />
               <select id="cours" name="cours" required>
                 <option value="" disabled selected>Sélectionnez un cours</option>
                 <option value="STRUCTURE DE DONNEES">Structure de Données</option>
@@ -112,7 +112,7 @@
             ></textarea>
             <div class="form-actions">
               <small class="upload-notice">Le chargement peut prendre quelques instants<span class="dots">...</span></small>
-              <button type="submit">Envoyer la synthèse</button>
+              <button type="submit"><span class="java-keyword">submit</span>()</button>
             </div>
           </div>
         </div>
@@ -290,11 +290,14 @@
             Object.keys(filesByCourse).sort().forEach(cours => {
               const courseFiles = filesByCourse[cours];
               
-              // Crée la structure de la section de cours avec un titre et une flèche pour plier/déplier
+              // Obtenir l'icône appropriée pour ce cours
+              const courseIcon = getCourseIcon(cours);
+              
+              // Crée la structure de la section de cours avec un titre, une icône et une flèche pour plier/déplier
               html += `
               <div class="course-section">
                 <h3>
-                  ${cours}
+                  <span class="course-icon">${courseIcon}</span> ${cours}
                   <span class="course-toggle"></span>
                 </h3>
                 <div class="course-files">
@@ -308,8 +311,8 @@
                      <a href="/Les synthèses des invités/${file.cours}/${file.nomFichier}" target="_blank">
                       <span class="label">Titre :</span> <span class="titre-bleu">${file.titre}</span>
                     </a>
-                    <span class="file-discord"><span class="label">Nom :</span> ${file.nomDiscord}</span>
                     <div class="file-meta">
+                      <span class="file-info"><span class="label">Nom :</span> ${file.nomDiscord}</span>
                       <span class="file-size">${(file.poidsFichier / 1048576).toFixed(2)} Mo</span>
                       <span class="file-date">${file.dateAjout}</span>
                     </div>
@@ -353,6 +356,34 @@
           });
       }
 
+      /**
+       * Fonction qui retourne une icône appropriée pour chaque cours
+       * 
+       * @param {string} courseName - Nom du cours
+       * @returns {string} - Icône Unicode correspondant au cours
+       */
+      function getCourseIcon(courseName) {
+        // Tableau de correspondance entre les cours et leurs icônes
+        const courseIcons = {
+          "STRUCTURE DE DONNEES": "📊", // 📊 = 📊 (graphique)
+          "MATHEMATIQUE 1": "🫀",     // 🫀 = 🫀 (symbole mathématique)
+          "MATHEMATIQUE 2": "📝",     // 📝 = 📝 (bloc-notes)
+          "BASE DE DONNEES": "📂",    // 📂 = 📂 (dossier)
+          "SYSTEMES D'EXPLOITATION / LINUX": "🐧", // 🐧 = 🐧 (pingouin pour Linux)
+          "JAVASCRIPT": "🐱",         // 🐱 = 🐱 (chat pour JavaScript)
+          "ANGLAIS": "🇬🇧",           // 🇬🇧 = 🇬🇧 (drapeau UK)
+          "ALGO": "🧩",              // 🧩 = 🧩 (pièce de puzzle)
+          "APOO": "🔍",              // 🔍 = 🔍 (loupe)
+          "FONCTIONNEMENT DES ORDINATEURS": "💻", // 💻 = 💻 (ordinateur)
+          "GESTION COMPTABILITE ECONOMIE": "💰", // 💰 = 💰 (sac d'argent)
+          "COMPETENCES NUMERIQUES": "📱", // 📱 = 📱 (smartphone)
+          "DIVERS": "📓"              // 📓 = 📓 (bloc-notes)
+        };
+        
+        // Retourne l'icône correspondante ou une icône par défaut si le cours n'est pas dans la liste
+        return courseIcons[courseName] || "📖"; // 📖 = 📖 (livre par défaut)
+      }
+      
       // Charge les fichiers lorsque la page est prête
       document.addEventListener("DOMContentLoaded", loadFiles);
 
