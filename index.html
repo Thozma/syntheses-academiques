@@ -93,6 +93,7 @@
                 <option value="FONCTIONNEMENT DES ORDINATEURS">Fonctionnement des Ordinateurs</option>
                 <option value="GESTION COMPTABILITE ECONOMIE">Gestion, Comptabilité et Économie</option>
                 <option value="COMPETENCES NUMERIQUES">Compétences Numériques</option>
+                <option value="DIVERS">Divers</option>
               </select>
             </div>
             <div class="input-row">
@@ -304,8 +305,8 @@
                 html += `
                 <div class="file-item">
                   <div class="file-header">
-                    <a href="/Les synthèses des invités/${file.cours}/${file.nomFichier}" target="_blank">
-                      <span class="label">Titre :</span> ${file.titre}
+                     <a href="/Les synthèses des invités/${file.cours}/${file.nomFichier}" target="_blank">
+                      <span class="label">Titre :</span> <span class="titre-bleu">${file.titre}</span>
                     </a>
                     <span class="file-discord"><span class="label">Nom :</span> ${file.nomDiscord}</span>
                     <div class="file-meta">
@@ -363,5 +364,11 @@
 
       // Cette fonction a été remplacée par la version async ci-dessus
     </script>
+    <style>
+      .titre-bleu {
+        color: #0066cc;
+        font-weight: bold;
+      }
+    </style>
   </body>
 </html>
