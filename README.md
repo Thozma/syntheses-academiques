@@ -5,11 +5,13 @@ Une application web pour permettre aux étudiants de partager et consulter des s
 ## Fonctionnalités
 
 - Upload de fichiers PDF
-- Organisation par cours
+- Organisation par cours avec icônes thématiques
 - Formulaire de contact
 - Notifications par email
 - Interface responsive
 - Sections pliables/dépliables
+- Style inspiré de Java avec mots-clés colorés
+- Animations subtiles pour améliorer l'expérience utilisateur
 
 ## Installation locale
 
@@ -104,6 +106,42 @@ node deploy.js
 - JavaScript vanilla (frontend)
 - CSS3
 
+## Éléments de Design
+
+### Thème Java
+
+Le site utilise un thème inspiré du langage de programmation Java pour créer une ambiance technique adaptée aux étudiants en informatique :
+
+- Mots-clés Java (`for`, `while`, `public static`, `new`, `import`, `void`, `submit`, `send`) affichés en rouge (#d73a49)
+- Police Arial (non monospace) pour les mots-clés Java avec taille de 0.9em et poids normal
+- Intégration des mots-clés dans les titres et boutons pour un effet visuel cohérent
+
+### Icônes de Cours
+
+Chaque cours est représenté par une icône Unicode thématique :
+
+- Structure de Données : 📊 (graphique)
+- Mathématique 1 : 🫀 (symbole mathématique)
+- Mathématique 2 : 📝 (bloc-notes)
+- Base de Données : 📂 (dossier)
+- Systèmes d'Exploitation / Linux : 🐧 (pingouin pour Linux)
+- JavaScript : 🐱 (chat pour JavaScript)
+- Anglais : 🏴󠁧󠁢󠁥󠁮󠁧󠁿 (drapeau anglais)
+- Algorithmique : 🧩 (pièce de puzzle)
+- APOO : 🔍 (loupe)
+- Fonctionnement des Ordinateurs : 💻 (ordinateur)
+- Gestion, Comptabilité et Économie : 💰 (sac d'argent)
+- Compétences Numériques : 📱 (smartphone)
+- Divers : 📓 (bloc-notes)
+
+### Interface Utilisateur
+
+- Formulaires avec espacement et alignement optimisés
+- Formulaire de contact avec largeur de 420px et padding de 15px
+- Champ email avec expansion automatique (flex: 1)
+- Animations subtiles pour améliorer l'expérience utilisateur
+- Sections de cours pliables/dépliables avec animation de flèche
+
 ## Auteur
 
 Thomas Bauwens
@@ -111,3 +149,12 @@ Thomas Bauwens
 ## Licence
 
 Tous droits réservés © 2025
+
+## Journal des modifications
+
+### 06/05/2025
+- Modification de l'icône pour le cours d'anglais : remplacement par le drapeau anglais spécifique (🏴󠁧󠁢󠁥󠁮󠁧󠁿) pour améliorer l'affichage
+- Documentation complète des éléments de design Java dans le README
+- Documentation des icônes thématiques pour chaque cours
+- Amélioration de la documentation technique concernant l'interface utilisateur
+- Mise à jour de la liste des fonctionnalités pour inclure les éléments de style Java et les animations
