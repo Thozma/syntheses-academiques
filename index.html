@@ -10,16 +10,16 @@
 <html lang="fr">
   <head>
     <!-- Métadonnées de base -->
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Plateforme de partage de synthèses pour les étudiants de 1ère année en informatique" />
-    <meta name="author" content="Thomas Bauwens" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Plateforme de partage de synthèses pour les étudiants de 1ère année en informatique">
+    <meta name="author" content="Thomas Bauwens">
     
     <!-- Titre de la page -->
     <title>les Synthèses de 1ERE BIN - Bauwens Thomas</title>
     
     <!-- Feuille de style CSS -->
-    <link rel="stylesheet" href="style/style.css" />
+    <link rel="stylesheet" href="style/style.css">
   </head>
 
   <body>
@@ -30,8 +30,7 @@
           <img
             src="image/image.png"
             alt="Photo de présentation de Bauwens Thomas"
-            class="image"
-          />
+            class="image">
           <div class="texte">
             <h1>Les synthèses des premières BIN</h1>
             <h3><span class="java-keyword">for</span> les élèves, <span class="java-keyword">by</span> les élèves !</h3>
@@ -44,8 +43,8 @@
           <h4>Nous joindre</h4>
           <form id="questionForm" method="POST" onsubmit="return handleQuestionSubmit(event);">
             <div class="form-row">
-              <input type="text" id="nomDiscordQuestion" name="nomDiscord" placeholder="Nom / Discord" required />
-              <input type="email" id="email" name="email" placeholder="Email" />
+              <input type="text" id="nomDiscordQuestion" name="nomDiscord" placeholder="Nom / Discord" required>
+              <input type="email" id="email" name="email" placeholder="Email">
             </div>
             <div class="form-row">
               <textarea id="message" name="message" placeholder="Votre message" required></textarea>
@@ -78,7 +77,7 @@
         <div class="form-grid">
           <div class="form-group">
             <div class="input-row">
-              <input type="text" id="nomDiscord" name="nomDiscord" placeholder="Nom / Discord" required />
+              <input type="text" id="nomDiscord" name="nomDiscord" placeholder="Nom / Discord" required>
               <select id="cours" name="cours" required>
                 <option value="" disabled selected>Sélectionnez un cours</option>
                 <option value="STRUCTURE DE DONNEES">Structure de Données</option>
@@ -97,9 +96,9 @@
               </select>
             </div>
             <div class="input-row">
-              <input type="text" id="titre" name="titre" placeholder="Titre de la synthèse" required />
+              <input type="text" id="titre" name="titre" placeholder="Titre de la synthèse" required>
               <div class="file-input">
-                <input type="file" id="fichier" name="fichier" accept=".pdf" required />
+                <input type="file" id="fichier" name="fichier" accept=".pdf" required>
                 <small class="file-format">Format PDF uniquement</small>
               </div>
             </div>
@@ -395,11 +394,6 @@
 
       // Cette fonction a été remplacée par la version async ci-dessus
     </script>
-    <style>
-      .titre-bleu {
-        color: #0066cc;
-        font-weight: bold;
-      }
-    </style>
+
   </body>
 </html>

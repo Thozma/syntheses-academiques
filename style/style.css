@@ -530,3 +530,9 @@ button .java-keyword {
     transform: scale(1.2);
     transition: transform 0.2s ease;
 }
+
+/* Style pour les titres en bleu */
+.titre-bleu {
+    color: #0066cc;
+    font-weight: bold;
+}
