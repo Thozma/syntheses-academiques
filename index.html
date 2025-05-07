@@ -1,11 +1,22 @@
 <!DOCTYPE html>
 <!--
   Site web de partage de synthèses académiques
-  Permet aux étudiants de partager et consulter des synthèses de cours
+  
+  Cette application web permet aux étudiants de première année en informatique 
+  de la Haute Ecole Léonard de Vinci de partager et consulter des synthèses de cours.
+  Les utilisateurs peuvent télécharger des fichiers PDF, ZIP ou consulter des liens vidéo.
+  Les synthèses sont organisées par cours avec des icônes thématiques pour faciliter la navigation.
+  
+  Technologies utilisées :
+  - Frontend : HTML, CSS, JavaScript vanilla
+  - Backend : Node.js, Express
+  - Stockage : Système de fichiers, fichiers JSON
+  - Déploiement : Hébergé sur LWS (hébergeur français)
   
   @author: Thomas Bauwens
-  @version: 1.0.0
+  @version: 1.1.0
   @date: Mai 2025
+  @lastModified: 7 mai 2025
 -->
 <html lang="fr">
   <head>
@@ -48,7 +59,7 @@
             </div>
             <div class="form-row">
               <textarea id="message" name="message" placeholder="Votre message" required></textarea>
-              <button type="submit"><span class="java-keyword">send</span>( )</button>
+              <button type="submit"><span class="java-keyword">send</span> ()</button>
             </div>
           </form>
           <div id="questionConfirmationMessage" class="confirmation-message">Message envoyé !</div>
@@ -67,15 +78,28 @@
 
     <!-- Formulaire d'upload de fichiers -->
     <div class="upload-section">
-      <h2><span class="java-keyword">void</span> Ajouter(Synthèse)</h2>
+      <div class="header-with-buttons">
+        <div class="title-container">
+          <h2><span class="java-keyword">void</span> Ajouter (Synthèse)</h2>
+        </div>
+        <div class="upload-type-selector">
+          <button type="button" id="pdfButton" class="upload-type-btn active" onclick="selectUploadType('pdf')"><span class="java-keyword">pdf</span> ()</button>
+          <button type="button" id="zipButton" class="upload-type-btn" onclick="selectUploadType('zip')"><span class="java-keyword">zip</span> ()</button>
+          <button type="button" id="multiButton" class="upload-type-btn" onclick="selectUploadType('multi')"><span class="java-keyword">multi</span> ()</button>
+          <button type="button" id="videoButton" class="upload-type-btn" onclick="selectUploadType('video')"><span class="java-keyword">video</span> ()</button>
+        </div>
+        <div class="spacer"></div>
+      </div>
       <form
         id="syntheseForm"
         enctype="multipart/form-data"
         method="POST"
         onsubmit="return handleUpload(event);"
       >
+        <input type="hidden" id="uploadType" name="uploadType" value="pdf">
         <div class="form-grid">
           <div class="form-group">
+
             <div class="input-row">
               <input type="text" id="nomDiscord" name="nomDiscord" placeholder="Nom / Discord" required>
               <select id="cours" name="cours" required>
@@ -97,11 +121,24 @@
             </div>
             <div class="input-row">
               <input type="text" id="titre" name="titre" placeholder="Titre de la synthèse" required>
-              <div class="file-input">
-                <input type="file" id="fichier" name="fichier" accept=".pdf" required>
-                <small class="file-format">Format PDF uniquement</small>
+              <div id="pdfUploadRow" class="file-input">
+                <input type="file" id="fichier" name="fichier" accept=".pdf">
+                <small class="file-format">Format PDF uniquement (max 20 Mo)</small>
+              </div>
+              <div id="zipUploadRow" class="file-input" style="display: none;">
+                <input type="file" id="fichierZip" name="fichier" accept=".zip">
+                <small class="file-format">Format ZIP uniquement (max 20 Mo)</small>
+              </div>
+              <div id="multiUploadRow" class="file-input" style="display: none;">
+                <input type="file" id="fichierMulti" name="fichiers" multiple>
+                <small class="file-format">Glissez plusieurs fichiers ou un dossier (max 20 Mo au total)</small>
+              </div>
+              <div id="videoUploadRow" class="video-input" style="display: none;">
+                <input type="url" id="videoUrl" name="videoUrl" placeholder="Lien de la vidéo (YouTube, Vimeo, etc.)">
+                <small class="file-format">Lien vidéo (YouTube, Vimeo, etc.)</small>
               </div>
             </div>
+
           </div>
           <div class="form-group">
             <textarea
@@ -111,7 +148,7 @@
             ></textarea>
             <div class="form-actions">
               <small class="upload-notice">Le chargement peut prendre quelques instants<span class="dots">...</span></small>
-              <button type="submit"><span class="java-keyword">submit</span>()</button>
+              <button type="submit"><span class="java-keyword">submit</span> ()</button>
             </div>
           </div>
         </div>
@@ -119,10 +156,64 @@
       <div id="confirmationMessage" class="upload-confirmation">En chargement ...</div>
     </div>
 
-    <!-- Footer de la page -->
-    <div class="footer">&copy; 2025 Bauwens Thomas - Tous droits réservés</div>
 
     <script>
+      /**
+       * Fonction pour sélectionner le type d'upload (PDF, ZIP ou vidéo)
+       * 
+       * @param {string} type - Le type d'upload ('pdf', 'zip' ou 'video')
+       */
+      function selectUploadType(type) {
+        // Récupère les éléments du DOM
+        const pdfButton = document.getElementById('pdfButton');
+        const zipButton = document.getElementById('zipButton');
+        const multiButton = document.getElementById('multiButton');
+        const videoButton = document.getElementById('videoButton');
+        const pdfRow = document.getElementById('pdfUploadRow');
+        const zipRow = document.getElementById('zipUploadRow');
+        const multiRow = document.getElementById('multiUploadRow');
+        const videoRow = document.getElementById('videoUploadRow');
+        const fichierInput = document.getElementById('fichier');
+        const fichierZipInput = document.getElementById('fichierZip');
+        const fichierMultiInput = document.getElementById('fichierMulti');
+        const videoUrlInput = document.getElementById('videoUrl');
+        
+        // Désactiver tous les boutons et cacher tous les champs
+        pdfButton.classList.remove('active');
+        zipButton.classList.remove('active');
+        multiButton.classList.remove('active');
+        videoButton.classList.remove('active');
+        pdfRow.style.display = 'none';
+        zipRow.style.display = 'none';
+        multiRow.style.display = 'none';
+        videoRow.style.display = 'none';
+        fichierInput.removeAttribute('required');
+        fichierZipInput.removeAttribute('required');
+        fichierMultiInput.removeAttribute('required');
+        videoUrlInput.removeAttribute('required');
+        
+        // Activer le type sélectionné
+        if (type === 'pdf') {
+          pdfButton.classList.add('active');
+          pdfRow.style.display = 'block';
+          fichierInput.setAttribute('required', '');
+        } else if (type === 'zip') {
+          zipButton.classList.add('active');
+          zipRow.style.display = 'block';
+          fichierZipInput.setAttribute('required', '');
+        } else if (type === 'multi') {
+          multiButton.classList.add('active');
+          multiRow.style.display = 'block';
+          fichierMultiInput.setAttribute('required', '');
+        } else if (type === 'video') {
+          videoButton.classList.add('active');
+          videoRow.style.display = 'block';
+          videoUrlInput.setAttribute('required', '');
+        }
+        
+        // Stocke le type d'upload sélectionné dans un champ caché
+        document.getElementById('uploadType').value = type;
+      }
       /**
        * ========== GESTION DU FORMULAIRE DE CONTACT ==========
        * Fonction asynchrone qui gère la soumission du formulaire de contact
@@ -201,36 +292,131 @@
       async function handleUpload(event) {
         // Empêche la soumission normale du formulaire
         event.preventDefault();
-        // Récupère le formulaire et crée un objet FormData pour l'envoi du fichier
+        
+        // Récupère le formulaire
         const form = event.target;
-        const formData = new FormData(form);
         // Récupère l'élément qui affichera le message de confirmation
         const confirmationMessage = document.getElementById('confirmationMessage');
+        // Récupère le type d'upload sélectionné
+        const uploadType = document.getElementById('uploadType').value;
 
         try {
           // Affiche un message d'attente pendant l'upload
           confirmationMessage.style.display = 'block';
           confirmationMessage.textContent = 'Upload en cours...';
 
-          // Envoie les données au serveur via une requête AJAX
-          const response = await fetch('/upload', {
-            method: 'POST',
-            body: formData // FormData gère automatiquement l'envoi de fichiers
-          });
-
+          let response, result;
+          
+          // Approche différente selon le type d'upload
+          if (uploadType === 'pdf') {
+            // Vérifie si un fichier PDF a été sélectionné
+            if (!document.getElementById('fichier').files[0]) {
+              throw new Error('Veuillez sélectionner un fichier PDF');
+            }
+            
+            // Pour les PDFs, utilise FormData pour l'upload de fichier
+            const formData = new FormData(form);
+            formData.append('uploadType', 'pdf');
+            
+            // Envoie les données au serveur via une requête AJAX
+            response = await fetch('/upload', {
+              method: 'POST',
+              body: formData // FormData gère automatiquement l'envoi de fichiers
+            });
+            
+          } else if (uploadType === 'zip') {
+            // Vérifie si un fichier ZIP a été sélectionné
+            if (!document.getElementById('fichierZip').files[0]) {
+              throw new Error('Veuillez sélectionner un fichier ZIP');
+            }
+            
+            // Pour les ZIPs, utilise FormData pour l'upload de fichier
+            const formData = new FormData(form);
+            formData.append('uploadType', 'zip');
+            // Ne pas ajouter le fichier manuellement, il est déjà inclus dans le formulaire
+            
+            // Envoie les données au serveur via une requête AJAX
+            response = await fetch('/upload', {
+              method: 'POST',
+              body: formData // FormData gère automatiquement l'envoi de fichiers
+            });
+            
+          } else if (uploadType === 'multi') {
+            // Vérifie si des fichiers ont été sélectionnés
+            const files = document.getElementById('fichierMulti').files;
+            if (files.length === 0) {
+              throw new Error('Veuillez sélectionner au moins un fichier');
+            }
+            
+            // Pour les fichiers multiples, utilise FormData pour l'upload de fichiers
+            const formData = new FormData();
+            
+            // Ajoute les métadonnées du formulaire
+            formData.append('uploadType', 'multi');
+            formData.append('nomDiscord', document.getElementById('nomDiscord').value);
+            formData.append('cours', document.getElementById('cours').value);
+            formData.append('titre', document.getElementById('titre').value);
+            formData.append('description', document.getElementById('description').value);
+            
+            // Ajoute tous les fichiers sélectionnés
+            for (let i = 0; i < files.length; i++) {
+              formData.append('fichiers', files[i]);
+            }
+            
+            // Envoie les données au serveur via une requête AJAX
+            response = await fetch('/upload-multi', {
+              method: 'POST',
+              body: formData // FormData gère automatiquement l'envoi de fichiers
+            });
+            
+          } else if (uploadType === 'video') {
+            // Vérifie si un lien vidéo a été entré
+            const videoUrl = document.getElementById('videoUrl').value;
+            if (!videoUrl) {
+              throw new Error('Veuillez entrer un lien vidéo');
+            }
+            
+            // Pour les vidéos, utilise JSON pour l'envoi des données
+            const videoData = {
+              uploadType: 'video',
+              videoUrl: videoUrl,
+              nomDiscord: document.getElementById('nomDiscord').value,
+              cours: document.getElementById('cours').value,
+              titre: document.getElementById('titre').value,
+              description: document.getElementById('description').value
+            };
+            
+            console.log('Envoi des données vidéo:', videoData);
+            
+            // Envoie les données au serveur via une requête AJAX
+            response = await fetch('/upload', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(videoData)
+            });
+          }
+          
           // Analyse la réponse JSON du serveur
-          const result = await response.json();
-
+          result = await response.json();
+          
           // Vérifie si la réponse contient une erreur
           if (result.error) {
-            throw new Error(result.error);
+            // Si l'erreur est un objet, on extrait un message lisible
+            const errorMessage = typeof result.error === 'object' 
+              ? JSON.stringify(result.error) 
+              : result.error;
+            throw new Error(errorMessage);
           }
-
+          
           // Affiche le message de succès retourné par le serveur
           confirmationMessage.textContent = result.message;
           confirmationMessage.style.color = '#155724'; // Couleur verte pour le succès
           // Réinitialise le formulaire
           form.reset();
+          // Réinitialise l'interface d'upload
+          selectUploadType('pdf');
           // Rafraîchit la liste des fichiers pour afficher le nouveau fichier
           loadFiles();
 
@@ -252,10 +438,36 @@
        * et implémente la fonctionnalité de sections pliables/dépliables
        */
       function loadFiles() {
-        // Récupère la liste des fichiers depuis le serveur
-        fetch("/get-files")
-          .then((response) => response.json()) // Convertit la réponse en JSON
+        console.log('Chargement des fichiers...');
+        // Récupère l'URL de base du site
+        const baseUrl = window.location.origin;
+        const fetchUrl = `${baseUrl}/get-files`;
+        console.log('URL de récupération des fichiers:', fetchUrl);
+        
+        // Récupère la liste des fichiers depuis le serveur avec l'URL complète
+        fetch(fetchUrl)
+          .then((response) => {
+            console.log('Statut de la réponse:', response.status);
+            if (!response.ok) {
+              throw new Error(`Erreur HTTP: ${response.status}`);
+            }
+            return response.json(); // Convertit la réponse en JSON
+          })
           .then((files) => {
+            console.log('Fichiers récupérés:', files.length);
+            
+            // Formater toutes les dates dans le format JJ/MM/AAAA
+            files.forEach(file => {
+              // Convertir la date d'ajout si elle existe
+              if (file.dateAjout) {
+                file.dateAjout = formatDate(file.dateAjout);
+              }
+              // Convertir la date si elle existe (autre format possible)
+              if (file.date) {
+                file.date = formatDate(file.date);
+              }
+            });
+            
             // Récupère l'élément DOM qui contiendra la liste des fichiers
             const filesListDiv = document.getElementById("filesList");
 
@@ -306,15 +518,11 @@
               courseFiles.sort((a, b) => new Date(b.dateAjout) - new Date(a.dateAjout)).forEach(file => {
                 html += `
                 <div class="file-item">
-                  <div class="file-header">
-                     <a href="/Les synthèses des invités/${file.cours}/${file.nomFichier}" target="_blank">
-                      <span class="label">Titre :</span> <span class="titre-bleu">${file.titre}</span>
-                    </a>
-                    <div class="file-meta">
-                      <span class="file-info"><span class="label">Nom :</span> ${file.nomDiscord}</span>
-                      <span class="file-size">${(file.poidsFichier / 1048576).toFixed(2)} Mo</span>
-                      <span class="file-date">${file.dateAjout}</span>
-                    </div>
+                  ${generateFileLink(file)}
+                  <div class="file-meta">
+                    <span class="file-info"><span class="label">Nom :</span> ${file.nomDiscord}</span>
+                    <span class="file-size">${file.type === 'video' ? 'Lien externe' : `${(file.poidsFichier / 1048576).toFixed(2)} Mo`}</span>
+                    <span class="file-date">${formatDate(file.dateAjout)}</span>
                   </div>
                   ${file.description ? `<div class="file-description"><span class="label">Description :</span> ${file.description}</div>` : ''}
                 </div>
@@ -351,10 +559,71 @@
             // Gestion des erreurs lors du chargement des fichiers
             console.error("Erreur lors du chargement des fichiers:", error);
             document.getElementById("filesList").innerHTML =
-              "<p>Une erreur s'est produite lors du chargement des synthèses.</p>";
+              `<p>Une erreur s'est produite lors du chargement des synthèses.</p>
+              <p style="font-size: 0.8em; color: #666;">Détail de l'erreur: ${error.message}</p>`;
           });
       }
 
+      /**
+       * Génère le lien HTML pour un fichier
+       * 
+       * @param {Object} file - Objet contenant les métadonnées du fichier
+       * @returns {string} - HTML pour le lien du fichier
+       */
+      function generateFileLink(file) {
+        // Génère un lien différent selon le type de fichier (PDF, ZIP ou vidéo)
+        if (file.type === 'video') {
+          // Pour les vidéos, crée un lien externe vers la vidéo
+          return `<a href="${file.url}" target="_blank" class="file-link" style="text-decoration: none;">
+                    <span class="file-type-badge">🎥</span>
+                    <span class="file-title" style="color: #0066cc;">${file.titre}</span>
+                  </a>`;
+        } else if (file.type === 'zip') {
+          // Pour les ZIPs, crée un lien vers le fichier local
+          return `<a href="${file.path}" target="_blank" class="file-link" style="text-decoration: none;">
+                    <span class="file-type-badge">💼</span>
+                    <span class="file-title" style="color: #0066cc;">${file.titre}</span>
+                  </a>`;
+        } else {
+          // Pour les PDFs, crée un lien vers le fichier local
+          // Vérifie si la propriété path est définie, sinon utilise nomFichier
+          const filePath = file.path || `/Les synthèses des invités/${file.cours}/${file.nomFichier}`;
+          return `<a href="${filePath}" target="_blank" class="file-link" style="text-decoration: none;">
+                    <span class="file-type-badge">📄</span>
+                    <span class="file-title" style="color: #0066cc;">${file.titre}</span>
+                  </a>`;
+        }
+      }
+      
+      /**
+       * Fonction qui formate une date au format jour/mois/année
+       * 
+       * @param {string} dateString - Date au format ISO ou autre
+       * @returns {string} - Date formatée au format DD/MM/YYYY
+       */
+      function formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        
+        try {
+          const date = new Date(dateString);
+          
+          // Vérifie si la date est valide
+          if (isNaN(date.getTime())) {
+            return dateString; // Retourne la chaîne originale si la date est invalide
+          }
+          
+          // Formate la date au format JJ/MM/AAAA
+          const day = date.getDate().toString().padStart(2, '0');
+          const month = (date.getMonth() + 1).toString().padStart(2, '0');
+          const year = date.getFullYear();
+          
+          return `${day}/${month}/${year}`;
+        } catch (e) {
+          console.error('Erreur lors du formatage de la date:', e);
+          return dateString; // En cas d'erreur, retourne la chaîne originale
+        }
+      }
+      
       /**
        * Fonction qui retourne une icône appropriée pour chaque cours
        * 
@@ -370,7 +639,7 @@
           "BASE DE DONNEES": "📂",    // 📂 = 📂 (dossier)
           "SYSTEMES D'EXPLOITATION / LINUX": "🐧", // 🐧 = 🐧 (pingouin pour Linux)
           "JAVASCRIPT": "🐱",         // 🐱 = 🐱 (chat pour JavaScript)
-          "ANGLAIS": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",           // Drapeau anglais (England flag)
+          "ANGLAIS": "🇬🇧",           // 🇬🇧 = 🇬🇧 (drapeau UK)
           "ALGO": "🧩",              // 🧩 = 🧩 (pièce de puzzle)
           "APOO": "🔍",              // 🔍 = 🔍 (loupe)
           "FONCTIONNEMENT DES ORDINATEURS": "💻", // 💻 = 💻 (ordinateur)
@@ -392,8 +661,12 @@
         return true;
       }
 
-      // Cette fonction a été remplacée par la version async ci-dessus
     </script>
+
+    <!-- Pied de page avec copyright -->
+    <footer class="site-footer">
+      <p>&copy; 2025 Bauwens Thomas - Tous droits réservés</p>
+    </footer>
 
   </body>
 </html>

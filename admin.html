@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<!--
+  Panneau d'administration - Synthèses Académiques
+  
+  Cette page permet aux administrateurs de gérer les synthèses académiques.
+  Fonctionnalités principales :
+  - Authentification par mot de passe
+  - Affichage de tous les fichiers avec filtrage et recherche
+  - Modification des informations des fichiers (titre, cours, etc.)
+  - Conversion de fichiers PDF/ZIP en liens vidéo
+  - Suppression de fichiers
+  
+  La page utilise JavaScript vanilla pour les interactions et communique
+  avec le backend Node.js via des requêtes fetch API. Les styles sont
+  définis dans le fichier admin.css séparé.
+  
+  @author: Thomas Bauwens
+  @version: 1.1.0
+  @date: Mai 2025
+  @lastModified: 7 mai 2025
+-->
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration - Synthèses Académiques</title>
+  <link rel="stylesheet" href="style/style.css">
+  <link rel="stylesheet" href="style/admin.css">
+</head>
+<body>
+  <div class="admin-container" id="loginContainer">
+    <div class="login-form">
+      <h2 class="admin-title">Administration</h2>
+      <p>Veuillez vous connecter pour accéder au panneau d'administration</p>
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" placeholder="Entrez le mot de passe">
+      </div>
+      <button class="action-btn edit-btn" onclick="login()">Connexion</button>
+      <p id="loginError" style="color: red; display: none;">Mot de passe incorrect</p>
+    </div>
+  </div>
+  
+  <div class="admin-container" id="adminPanel" style="display: none;">
+    <div class="admin-header">
+      <h2 class="admin-title">Panneau d'Administration</h2>
+      <button class="logout-btn" onclick="logout()">Déconnexion</button>
+    </div>
+    
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Rechercher par titre, nom ou description...">
+    </div>
+    
+    <div class="filter-options">
+      <select id="typeFilter">
+        <option value="">Tous les types</option>
+        <option value="pdf">PDF</option>
+        <option value="zip">ZIP</option>
+        <option value="video">Vidéo</option>
+      </select>
+      
+      <select id="coursFilter">
+        <option value="">Tous les cours</option>
+        <!-- Les options seront ajoutées dynamiquement -->
+      </select>
+    </div>
+    
+    <div class="table-container" id="tableContainer">
+      <table class="file-table">
+        <thead>
+          <tr>
+            <th style="min-width:70px; width:70px;">Type</th>
+            <th style="min-width:350px; width:350px;">Titre</th>
+            <th>Cours</th>
+            <th>Nom/Discord</th>
+            <th>Taille</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="fileTableBody">
+          <!-- Les données seront chargées dynamiquement -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Modal pour modifier un fichier -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h3>Modifier les informations du fichier</h3>
+      <form id="editForm">
+        <input type="hidden" id="editIndex">
+        
+        <div class="form-group">
+          <label for="editType">Type</label>
+          <select id="editType">
+            <!-- Les options seront ajoutées dynamiquement en fonction du type original -->
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="editTitre">Titre</label>
+          <input type="text" id="editTitre">
+        </div>
+        
+        <div class="form-group">
+          <label for="editCours">Cours</label>
+          <select id="editCours">
+            <option value="STRUCTURE DE DONNEES">Structure de Données</option>
+            <option value="MATHEMATIQUE 1">Mathématique 1</option>
+            <option value="MATHEMATIQUE 2">Mathématique 2</option>
+            <option value="BASE DE DONNEES">Base de Données</option>
+            <option value="SYSTEMES D'EXPLOITATION / LINUX">Systèmes d'Exploitation / Linux</option>
+            <option value="JAVASCRIPT">JavaScript</option>
+            <option value="ANGLAIS">Anglais</option>
+            <option value="ALGO">Algorithmes</option>
+            <option value="APOO">APOO</option>
+            <option value="FONCTIONNEMENT DES ORDINATEURS">Fonctionnement des Ordinateurs</option>
+            <option value="GESTION COMPTABILITE ECONOMIE">Gestion, Comptabilité, Économie</option>
+            <option value="COMPETENCES NUMERIQUES">Compétences Numériques</option>
+            <option value="DIVERS">Divers</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="editNom">Nom/Discord</label>
+          <input type="text" id="editNom">
+        </div>
+        
+        <div class="form-group">
+          <label for="editDescription">Description</label>
+          <textarea id="editDescription" rows="3"></textarea>
+        </div>
+        
+        <div class="form-group" id="videoUrlGroup" style="display: none;">
+          <label for="editUrl">URL de la vidéo</label>
+          <input type="url" id="editUrl" placeholder="https://www.youtube.com/watch?v=...">
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="cancel-btn" onclick="closeModal()">Annuler</button>
+          <button type="button" class="save-btn" onclick="saveChanges()">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Modal de confirmation pour la suppression -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content" style="max-width: 400px;">
+      <span class="close" onclick="closeDeleteModal()">&times;</span>
+      <h3>Confirmer la suppression</h3>
+      <p>Êtes-vous sûr de vouloir supprimer ce fichier ? Cette action est irréversible.</p>
+      <input type="hidden" id="deleteIndex">
+      <div class="form-actions">
+        <button type="button" class="cancel-btn" onclick="closeDeleteModal()">Annuler</button>
+        <button type="button" class="delete-btn" onclick="confirmDelete()">Supprimer</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Protection globale contre l'erreur toUpperCase sur les valeurs undefined
+    (function() {
+      // Sauvegarder la méthode originale
+      const originalToUpperCase = String.prototype.toUpperCase;
+      
+      // Redéfinir la méthode toUpperCase pour qu'elle ne génère jamais d'erreur
+      String.prototype.toUpperCase = function() {
+        // Si this est undefined ou null, retourner 'N/A'
+        if (this === undefined || this === null) {
+          console.warn('Tentative d\'appel de toUpperCase sur une valeur undefined ou null');
+          return 'N/A';
+        }
+        // Sinon, appeler la méthode originale
+        return originalToUpperCase.call(this);
+      };
+      
+      // Protection pour les propriétés undefined
+      Object.prototype.toUpperCase = function() {
+        console.warn('Tentative d\'appel de toUpperCase sur un objet non-string');
+        return 'N/A';
+      };
+    })();
+    
+    // Fonction utilitaire pour sécuriser l'accès aux propriétés
+    function safeGet(obj, path, defaultValue = '') {
+      if (!obj) return defaultValue;
+      
+      const keys = path.split('.');
+      let result = obj;
+      
+      for (const key of keys) {
+        if (result === undefined || result === null) {
+          return defaultValue;
+        }
+        result = result[key];
+      }
+      
+      return result !== undefined && result !== null ? result : defaultValue;
+    }
+    
+    // Fonction pour sécuriser l'appel à toUpperCase
+    function safeToUpperCase(str) {
+      return typeof str === 'string' ? str.toUpperCase() : 'N/A';
+    }
+    
+    // Vérifier si l'utilisateur est déjà connecté
+    document.addEventListener("DOMContentLoaded", () => {
+      const token = localStorage.getItem("adminToken");
+      if (token) {
+        // Afficher le panneau d'administration
+        document.getElementById("loginContainer").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+        loadFiles();
+      }
+    });
+    
+    // Fonction pour vérifier si la barre de défilement est nécessaire
+    function checkScrollbarVisibility() {
+      const tableContainer = document.getElementById('tableContainer');
+      // Ajouter une classe si le contenu dépasse la largeur visible
+      if (tableContainer.scrollWidth > tableContainer.clientWidth) {
+        tableContainer.classList.add('has-horizontal-scroll');
+      } else {
+        tableContainer.classList.remove('has-horizontal-scroll');
+      }
+    }
+    
+    // Vérifier la visibilité de la barre de défilement lors du chargement et du redimensionnement
+    window.addEventListener('resize', checkScrollbarVisibility);
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(checkScrollbarVisibility, 1000);
+    });
+    
+    // Fonction de connexion
+    function login() {
+      const password = document.getElementById("password").value;
+      
+      // Envoyer le mot de passe au serveur pour vérification
+      fetch("/admin/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ password })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Stocker le token dans le localStorage
+          localStorage.setItem("adminToken", data.token);
+          
+          // Afficher le panneau d'administration
+          document.getElementById("loginContainer").style.display = "none";
+          document.getElementById("adminPanel").style.display = "block";
+          
+          // Charger les fichiers
+          loadFiles();
+        } else {
+          // Afficher un message d'erreur
+          document.getElementById("loginError").style.display = "block";
+        }
+      })
+      .catch(error => {
+        console.error("Erreur de connexion:", error);
+        document.getElementById("loginError").style.display = "block";
+      });
+    }
+    
+    // Fonction de déconnexion
+    function logout() {
+      // Supprimer le token du localStorage
+      localStorage.removeItem("adminToken");
+      
+      // Rediriger vers la page de connexion
+      document.getElementById("adminPanel").style.display = "none";
+      document.getElementById("loginContainer").style.display = "block";
+    }
+    
+    // Charger les fichiers depuis le serveur
+    let allFiles = [];
+    
+    function loadFiles() {
+      fetch("/get-files")
+        .then(response => response.json())
+        .then(files => {
+          // S'assurer que tous les fichiers ont une propriété type valide
+          allFiles = files.map(file => {
+            // Si le type est manquant, définir un type par défaut en fonction des propriétés disponibles
+            if (!file.type) {
+              if (file.url) {
+                file.type = 'video';
+              } else if (file.path && file.path.endsWith('.zip')) {
+                file.type = 'zip';
+              } else {
+                file.type = 'pdf'; // Type par défaut
+              }
+              console.log('Type manquant détecté, assigné:', file.type, 'pour le fichier:', file.titre);
+            }
+            return file;
+          });
+          
+          console.log('Fichiers chargés avec succès:', allFiles.length);
+          
+          // Remplir le filtre de cours
+          populateCoursFilter(allFiles);
+          
+          // Afficher les fichiers
+          displayFiles(allFiles);
+          
+          // Vérifier la visibilité de la barre de défilement
+          setTimeout(checkScrollbarVisibility, 500);
+        })
+        .catch(error => {
+          console.error("Erreur lors du chargement des fichiers:", error);
+          showNotification('Erreur lors du chargement des fichiers', false);
+        });
+    }
+    
+    // Remplir le filtre de cours avec les cours disponibles
+    function populateCoursFilter(files) {
+      const coursFilter = document.getElementById("coursFilter");
+      const cours = [...new Set(files.map(file => file.cours))].sort();
+      
+      // Vider le filtre
+      while (coursFilter.options.length > 1) {
+        coursFilter.remove(1);
+      }
+      
+      // Ajouter les options
+      cours.forEach(cours => {
+        const option = document.createElement("option");
+        option.value = cours;
+        option.textContent = cours;
+        coursFilter.appendChild(option);
+      });
+    }
+    
+    // Afficher les fichiers dans le tableau
+    function displayFiles(files) {
+      const tableBody = document.getElementById("fileTableBody");
+      tableBody.innerHTML = "";
+      
+      if (files.length === 0) {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td colspan="7" style="text-align: center;">Aucun fichier trouvé</td>`;
+        tableBody.appendChild(row);
+        return;
+      }
+      
+      files.forEach((file, displayIndex) => {
+        // Trouver l'index réel dans allFiles
+        const realIndex = allFiles.findIndex(f => 
+          f.path === file.path && 
+          f.titre === file.titre && 
+          f.nomDiscord === file.nomDiscord
+        );
+        
+        const row = document.createElement("tr");
+        
+        // Formater la taille du fichier
+        let fileSize = "N/A";
+        if (file.taille !== undefined) {
+          // Si la taille est 0, c'est probablement une vidéo ou un fichier non trouvé
+          if (file.taille === 0) {
+            fileSize = file.type === 'video' ? "Vidéo" : "0 MB";
+          } else if (file.taille < 1024) {
+            // Convertir les octets en MB
+            fileSize = (file.taille / 1048576).toFixed(2) + " MB";
+          } else if (file.taille < 1048576) {
+            // Convertir les KB en MB
+            fileSize = (file.taille / 1048576).toFixed(2) + " MB";
+          } else {
+            // Déjà en MB, mais avec 2 décimales pour plus de précision
+            fileSize = (file.taille / 1048576).toFixed(2) + " MB";
+          }
+        }
+        
+        // Formater la date
+        let fileDate = "N/A";
+        if (file.date) {
+          try {
+            const dateObj = new Date(file.date);
+            if (!isNaN(dateObj.getTime())) {
+              fileDate = dateObj.toLocaleDateString('fr-FR');
+            }
+          } catch (e) {
+            console.log("Erreur de format de date pour", file.titre, e);
+          }
+        }
+        
+        // Icône en fonction du type (avec vérification que le type existe)
+        let typeIcon = "📄"; // Par défaut: document
+        if (file.type) {
+          if (file.type === "zip") typeIcon = "🗂️";
+          if (file.type === "video") typeIcon = "🎬";
+        }
+        
+        // Stocker l'index réel comme attribut de données
+        row.setAttribute('data-index', realIndex >= 0 ? realIndex : displayIndex);
+        
+        // Utiliser l'index correct
+        const indexToUse = realIndex >= 0 ? realIndex : displayIndex;
+        
+        // Utiliser notre fonction sécurisée pour le type
+        const fileType = safeToUpperCase(safeGet(file, 'type'));
+        
+        row.innerHTML = `
+          <td style="min-width:70px; width:70px; white-space:nowrap;">${typeIcon} <small>${fileType}</small></td>
+          <td style="min-width:350px; width:350px;">${safeGet(file, 'titre', 'Sans titre')}</td>
+          <td>${safeGet(file, 'cours', 'N/A')}</td>
+          <td>${safeGet(file, 'nomDiscord', 'N/A')}</td>
+          <td>${fileSize}</td>
+          <td>${fileDate || 'N/A'}</td>
+          <td>
+            <button class="action-btn edit-btn" onclick="openEditModal(${indexToUse})">Modifier</button>
+            <button class="action-btn delete-btn" onclick="openDeleteModal(${indexToUse})">Supprimer</button>
+            ${(safeGet(file, 'type') === 'zip' || safeGet(file, 'type') === 'pdf') ? 
+              `<button class="action-btn convert-btn" onclick="convertToVideo(${indexToUse})">→ Vidéo</button>` : ''}
+          </td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+    }
+    
+    // Ouvrir la modal d'édition
+    function openEditModal(index) {
+      // Vérifier que l'index est valide
+      if (index < 0 || index >= allFiles.length) {
+        showNotification('Erreur: Index de fichier invalide', false);
+        return;
+      }
+      
+      const file = allFiles[index];
+      console.log("Ouverture de la modal pour le fichier:", file);
+      console.log("Index:", index);
+      
+      // Vérifier que le fichier existe
+      if (!file) {
+        showNotification('Erreur: Fichier introuvable', false);
+        return;
+      }
+      
+      // Récupérer le type original du fichier
+      const originalType = safeGet(file, 'type', 'pdf');
+      
+      // Remplir le sélecteur de type avec seulement les options pertinentes
+      const typeSelect = document.getElementById("editType");
+      typeSelect.innerHTML = ''; // Vider les options existantes
+      
+      // Ajouter l'option pour le type original
+      const originalOption = document.createElement('option');
+      originalOption.value = originalType;
+      
+      // Afficher un nom convivial pour le type
+      if (originalType === 'pdf') {
+        originalOption.textContent = 'PDF (original)';
+      } else if (originalType === 'zip') {
+        originalOption.textContent = 'ZIP (original)';
+      } else if (originalType === 'video') {
+        originalOption.textContent = 'Vidéo (original)';
+      } else {
+        originalOption.textContent = originalType.toUpperCase() + ' (original)';
+      }
+      
+      typeSelect.appendChild(originalOption);
+      
+      // Si ce n'est pas déjà une vidéo, ajouter l'option vidéo
+      if (originalType !== 'video') {
+        const videoOption = document.createElement('option');
+        videoOption.value = 'video';
+        videoOption.textContent = 'Vidéo';
+        typeSelect.appendChild(videoOption);
+      }
+      
+      // Sélectionner le type original
+      typeSelect.value = originalType;
+      
+      // Remplir les autres champs
+      document.getElementById("editIndex").value = index;
+      document.getElementById("editTitre").value = safeGet(file, 'titre', '');
+      document.getElementById("editCours").value = safeGet(file, 'cours', '');
+      document.getElementById("editNom").value = safeGet(file, 'nomDiscord', '');
+      document.getElementById("editDescription").value = safeGet(file, 'description', '');
+      
+      // Afficher/masquer le champ URL en fonction du type
+      const videoUrlGroup = document.getElementById("videoUrlGroup");
+      if (file.type && file.type === "video") {
+        videoUrlGroup.style.display = "block";
+        document.getElementById("editUrl").value = file.url || "";
+      } else {
+        videoUrlGroup.style.display = "none";
+        // Réinitialiser la valeur du champ URL pour éviter des problèmes
+        document.getElementById("editUrl").value = "";
+      }
+      
+      // Écouter les changements de type pour afficher/masquer le champ URL
+      const editTypeSelect = document.getElementById("editType");
+      
+      // Supprimer tous les anciens event listeners pour éviter les doublons
+      const newEditTypeSelect = editTypeSelect.cloneNode(true);
+      editTypeSelect.parentNode.replaceChild(newEditTypeSelect, editTypeSelect);
+      
+      // Ajouter le nouveau event listener
+      newEditTypeSelect.addEventListener("change", function() {
+        if (this.value === "video") {
+          videoUrlGroup.style.display = "block";
+        } else {
+          videoUrlGroup.style.display = "none";
+          // Réinitialiser la valeur du champ URL
+          document.getElementById("editUrl").value = "";
+        }
+      });
+      
+      document.getElementById("editModal").style.display = "block";
+    }
+    
+    // Fermer la modal d'édition
+    function closeModal() {
+      document.getElementById("editModal").style.display = "none";
+    }
+    
+    // Enregistrer les modifications
+    function saveChanges() {
+      const index = parseInt(document.getElementById("editIndex").value);
+      const type = document.getElementById("editType").value;
+      const titre = document.getElementById("editTitre").value;
+      const cours = document.getElementById("editCours").value;
+      const nomDiscord = document.getElementById("editNom").value;
+      const description = document.getElementById("editDescription").value;
+      
+      // Préparer les mises à jour
+      const updates = {
+        type,
+        titre,
+        cours,
+        nomDiscord,
+        description
+      };
+      
+      // Si c'est une vidéo, ajouter l'URL
+      if (type === "video") {
+        updates.url = document.getElementById("editUrl").value;
+      }
+      
+      // Afficher un message de chargement
+      const saveBtn = document.querySelector('.save-btn');
+      const originalText = saveBtn.textContent;
+      saveBtn.textContent = 'Enregistrement...';
+      saveBtn.disabled = true;
+      
+      // Créer une fonction pour afficher un message de notification
+      function showNotification(message, isSuccess = true) {
+        // Supprimer toute notification existante
+        const existingNotifications = document.querySelectorAll('.notification-message');
+        existingNotifications.forEach(notification => {
+          document.body.removeChild(notification);
+        });
+        
+        // Créer la notification
+        const notification = document.createElement('div');
+        notification.className = 'notification-message';
+        notification.textContent = message;
+        notification.style.position = 'fixed';
+        notification.style.top = '20px';
+        notification.style.left = '50%';
+        notification.style.transform = 'translateX(-50%)';
+        notification.style.backgroundColor = isSuccess ? '#4CAF50' : '#f44336';
+        notification.style.color = 'white';
+        notification.style.padding = '15px 25px';
+        notification.style.borderRadius = '4px';
+        notification.style.zIndex = '9999';
+        notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+        notification.style.fontSize = '16px';
+        document.body.appendChild(notification);
+        
+        // Faire disparaître le message après 3 secondes
+        setTimeout(() => {
+          notification.style.opacity = '0';
+          notification.style.transition = 'opacity 0.5s';
+          setTimeout(() => {
+            if (document.body.contains(notification)) {
+              document.body.removeChild(notification);
+            }
+          }, 500);
+        }, 3000);
+      }
+      
+      // Envoyer les mises à jour au serveur
+      fetch("/admin/update-file", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ index, updates })
+      })
+      .then(response => {
+        // Vérifier si la réponse est OK avant de parser le JSON
+        if (!response.ok) {
+          return response.json().then(errorData => {
+            throw new Error(errorData.message || `Erreur HTTP: ${response.status}`);
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          // Mettre à jour la liste locale
+          allFiles[index] = { ...allFiles[index], ...updates };
+          
+          // Rafraîchir l'affichage
+          displayFiles(allFiles);
+          
+          // Fermer la modal
+          closeModal();
+          
+          // Afficher un message de succès
+          showNotification('Modification réussie !', true);
+        } else {
+          // Réinitialiser le bouton
+          saveBtn.textContent = originalText;
+          saveBtn.disabled = false;
+          
+          // Afficher l'erreur
+          showNotification('Erreur: ' + data.message, false);
+        }
+      })
+      .catch(error => {
+        // Réinitialiser le bouton
+        saveBtn.textContent = originalText;
+        saveBtn.disabled = false;
+        
+        console.error("Erreur lors de la mise à jour:", error);
+        showNotification('Erreur: ' + error.message, false);
+      });
+    }
+    
+    // Ouvrir la modal de confirmation de suppression
+    function openDeleteModal(index) {
+      document.getElementById("deleteIndex").value = index;
+      document.getElementById("deleteModal").style.display = "block";
+    }
+    
+    // Fermer la modal de confirmation de suppression
+    function closeDeleteModal() {
+      document.getElementById("deleteModal").style.display = "none";
+    }
+    
+    // Confirmer la suppression
+    function confirmDelete() {
+      const index = document.getElementById("deleteIndex").value;
+      const file = allFiles[index];
+      
+      fetch("/admin/delete-file", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ index: parseInt(index) })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Supprimer de la liste locale
+          allFiles.splice(index, 1);
+          
+          // Rafraîchir l'affichage
+          displayFiles(allFiles);
+          
+          // Fermer la modal
+          closeDeleteModal();
+        } else {
+          alert("Erreur lors de la suppression: " + data.message);
+        }
+      })
+      .catch(error => {
+        console.error("Erreur lors de la suppression:", error);
+        alert("Erreur lors de la suppression. Consultez la console pour plus de détails.");
+      });
+    }
+    
+    // Convertir un fichier en vidéo
+    function convertToVideo(index) {
+      const file = allFiles[index];
+      
+      // Préremplir les champs du formulaire d'édition
+      document.getElementById("editIndex").value = index;
+      document.getElementById("editType").value = "video";
+      document.getElementById("editTitre").value = file.titre;
+      document.getElementById("editCours").value = file.cours;
+      document.getElementById("editNom").value = file.nomDiscord;
+      document.getElementById("editDescription").value = file.description || "";
+      
+      // Afficher le champ URL
+      const videoUrlGroup = document.getElementById("videoUrlGroup");
+      videoUrlGroup.style.display = "block";
+      document.getElementById("editUrl").value = "";
+      
+      // Ouvrir la modal
+      document.getElementById("editModal").style.display = "block";
+    }
+    
+    // Recherche et filtrage
+    document.getElementById("searchInput").addEventListener("input", filterFiles);
+    document.getElementById("typeFilter").addEventListener("change", filterFiles);
+    document.getElementById("coursFilter").addEventListener("change", filterFiles);
+    
+    function filterFiles() {
+      const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+      const typeFilter = document.getElementById("typeFilter").value;
+      const coursFilter = document.getElementById("coursFilter").value;
+      
+      const filteredFiles = allFiles.filter(file => {
+        // Vérifier le terme de recherche
+        const matchesSearch = 
+          file.titre.toLowerCase().includes(searchTerm) ||
+          file.nomDiscord.toLowerCase().includes(searchTerm) ||
+          (file.description && file.description.toLowerCase().includes(searchTerm)) ||
+          file.cours.toLowerCase().includes(searchTerm);
+        
+        // Vérifier le filtre de type
+        const matchesType = typeFilter === "" || file.type === typeFilter;
+        
+        // Vérifier le filtre de cours
+        const matchesCours = coursFilter === "" || file.cours === coursFilter;
+        
+        return matchesSearch && matchesType && matchesCours;
+      });
+      
+      displayFiles(filteredFiles);
+    }
+    
+    // Écouter la touche Entrée pour la connexion
+    document.getElementById("password").addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        login();
+      }
+    });
+  </script>
+</body>
+</html>

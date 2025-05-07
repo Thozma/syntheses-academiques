@@ -18,5 +18,10 @@ module.exports = {
   // Autres configurations sensibles peuvent être ajoutées ici
   server: {
     port: 3000                     // Port du serveur
+  },
+  
+  // Configuration pour l'accès à l'administration
+  admin: {
+    password: 'your_secure_admin_password'  // Mot de passe pour la page d'administration
   }
 };
