@@ -286,6 +286,7 @@ Chaque cours est représenté par une icône Unicode thématique :
 - Adaptation du serveur pour traiter les liens vidéo comme des "fichiers virtuels"
 
 ### 05/05/2025
+- Envoi du projet sur github
 - Modification de l'icône pour le cours d'anglais : remplacement par le drapeau anglais spécifique (🏴󠁧󠁢󠁥󠁮󠁧󠁿) pour améliorer l'affichage
 - Documentation complète des éléments de design Java dans le README
 - Documentation des icônes thématiques pour chaque cours
