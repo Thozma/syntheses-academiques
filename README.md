@@ -247,17 +247,6 @@ Chaque cours est représenté par une icône Unicode thématique :
 - Procédure de déploiement documentée
 - Sauvegarde régulière des données
 
-## Auteur
-
-Thomas Bauwens
-
-## Licence
-
-Tous droits réservés © 2025
-
-
-
-
 ## Prochaines étapes et améliorations futures
 
 ### Interface utilisateur
@@ -271,9 +260,6 @@ Tous droits réservés © 2025
 
 ### Performance
 - Améliorer la compatibilité avec les navigateurs plus anciens
-
-
-
 
 ## Journal des modifications
 
@@ -304,3 +290,11 @@ Tous droits réservés © 2025
 - Documentation complète des éléments de design Java dans le README
 - Documentation des icônes thématiques pour chaque cours
 - Amélioration de la documentation technique concernant l'interface utilisateur
+
+## Auteur
+
+Thomas Bauwens
+
+## Licence
+
+Tous droits réservés © 2025
