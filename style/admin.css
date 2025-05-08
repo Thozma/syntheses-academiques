@@ -381,7 +381,7 @@
  * Permet de filtrer et rechercher dans la liste des fichiers
  */
 .search-bar {
-  margin-bottom: 15px;
+  margin: 30px 0 15px 0;
 }
 
 .search-bar input {
@@ -403,4 +403,115 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   min-width: 150px;
+}
+
+/* Boutons de tri */
+.sort-buttons {
+  display: flex;
+  gap: 8px;
+  margin-left: 10px;
+}
+
+.sort-buttons .btn-sm {
+  padding: 4px 8px;
+  font-size: 13px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.sort-buttons .btn-sm:hover {
+  background-color: #e9ecef;
+}
+
+/* Notes et modifications */
+.section-header {
+  margin-bottom: 8px;
+}
+
+.section-header h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+/* Style du formulaire de notes */
+.notes-form {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+/* Styles communs pour les éléments du formulaire */
+#adminName,
+#newNote,
+.section-header .btn-primary {
+  box-sizing: border-box;
+  height: 24px;
+  padding: 2px 8px;
+  font-size: 13px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+#adminName {
+  width: 150px;
+}
+
+#newNote {
+  flex: 1;
+  resize: none;
+}
+
+.section-header .btn-primary {
+  margin-left: auto;
+  background-color: #f8f9fa;
+  color: #333;
+  cursor: pointer;
+}
+
+.section-header .btn-primary:hover {
+  background-color: #e9ecef;
+}
+
+#notesList {
+  max-height: 250px;
+  overflow-y: auto;
+  font-size: 13px;
+}
+
+.notes-header {
+  display: flex;
+  padding: 6px;
+  background-color: transparent;
+  position: sticky;
+  top: 0;
+}
+
+.notes-header-date {
+  flex: 0 0 140px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.notes-header-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.sort-indicator {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+#notesContent {
+  padding: 6px;
 }

@@ -47,6 +47,23 @@
       <button class="logout-btn" onclick="logout()">Déconnexion</button>
     </div>
     
+    <div class="content-section">
+      <div class="section-header">
+        <h3>Notes et Modifications à faire</h3>
+        <div class="notes-form">
+          <input type="text" id="adminName" placeholder="Votre nom...">
+          <textarea id="newNote" placeholder="Ajouter un commentaire..."></textarea>
+          <button onclick="window.saveNotes()" class="btn btn-primary">Ajouter</button>
+        </div>
+      </div>
+      <div class="section-content">
+        <div id="notesList">
+
+          <div id="notesContent">
+        </div>
+      </div>
+    </div>
+    
     <div class="search-bar">
       <input type="text" id="searchInput" placeholder="Rechercher par titre, nom ou description...">
     </div>
@@ -65,6 +82,11 @@
       </select>
       
       <input type="text" id="dateFilter" placeholder="Rechercher par date (JJ/MM/AAAA)">
+
+      <div class="sort-buttons">
+        <button onclick="sortFiles('date', false)" class="btn btn-sm">Trier par date ↓</button>
+        <button onclick="sortFiles('id', true)" class="btn btn-sm">Trier par ID ↑</button>
+      </div>
     </div>
     
     <div class="table-container" id="tableContainer">
@@ -82,7 +104,6 @@
           </tr>
         </thead>
         <tbody id="fileTableBody">
-          <!-- Les données seront chargées dynamiquement -->
         </tbody>
       </table>
     </div>
@@ -156,6 +177,256 @@
   
   
   <script>
+    // Variable globale pour stocker tous les fichiers
+    const allFiles = [];
+
+    // Fonction de connexion
+    async function login() {
+      console.log('Tentative de connexion...');
+      const password = document.getElementById('password').value;
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ password })
+        });
+        console.log('Réponse de connexion reçue:', response);
+        const data = await response.json();
+        console.log('Données de connexion:', data);
+        
+        if (data.success) {
+          document.getElementById('loginContainer').style.display = 'none';
+          document.getElementById('adminPanel').style.display = 'block';
+          document.getElementById('loginError').style.display = 'none';
+          console.log('Connexion réussie, chargement des fichiers...');
+          await loadFiles(); // Attendre le chargement des fichiers
+        } else {
+          document.getElementById('loginError').style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Erreur de connexion:', error);
+        document.getElementById('loginError').style.display = 'block';
+      }
+    }
+
+    // Fonction d'affichage des fichiers
+    function displayFiles(files) {
+      const tbody = document.getElementById('fileTableBody');
+      tbody.innerHTML = '';
+      
+      files.forEach(file => {
+        const row = document.createElement('tr');
+        
+        // Formater la date
+        const date = new Date(file.dateAjout);
+        const formattedDate = date.toLocaleDateString('fr-FR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        
+        // Formater la taille
+        const size = file.taille ? `${(file.taille / 1024 / 1024).toFixed(2)} MB` : 'N/A';
+        
+        row.innerHTML = `
+          <td>${file.id}</td>
+          <td>${file.type || 'N/A'}</td>
+          <td>${file.titre}</td>
+          <td>${file.cours}</td>
+          <td>${file.nomDiscord}</td>
+          <td>${size}</td>
+          <td>${formattedDate}</td>
+          <td>
+            <button class="action-btn edit-btn" onclick="editFile(${file.id})">Modifier</button>
+            <button class="action-btn delete-btn" onclick="deleteFile(${file.id})">Supprimer</button>
+            ${file.type !== 'video' ? `<button class="action-btn convert-btn" onclick="convertToVideo(${file.id})">Convertir</button>` : ''}
+          </td>
+        `;
+        
+        tbody.appendChild(row);
+      });
+    }
+
+    // Fonction pour afficher les notifications
+    function showNotification(message, isSuccess = true) {
+      alert(message); // Version simple avec alert pour l'instant
+    }
+    
+    // Charger les notes sauvegardées au démarrage
+    document.addEventListener('DOMContentLoaded', () => {
+      // Charger le dernier nom utilisé
+      const savedName = localStorage.getItem('adminName');
+      if (savedName) {
+        document.getElementById('adminName').value = savedName;
+      }
+      
+      // Afficher les notes sauvegardées
+      displayNotes();
+      
+      // Ajouter l'event listener pour la touche Entrée
+      document.getElementById('newNote').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          saveNotes();
+        }
+      });
+    });
+    
+    window.saveNotes = function() {
+      const adminName = document.getElementById('adminName').value.trim();
+      if (!adminName) {
+        showNotification('Veuillez entrer votre nom', false);
+        return;
+      }
+      
+      const newNote = document.getElementById('newNote').value.trim();
+      if (!newNote) {
+        showNotification('Veuillez entrer un commentaire', false);
+        return;
+      }
+      
+      const now = new Date();
+      const date = now.toLocaleDateString('fr-FR');
+      const time = now.toLocaleTimeString('fr-FR');
+      
+      const noteId = Date.now().toString(); // Identifiant unique pour le commentaire
+      const noteData = {
+        id: noteId,
+        date: date,
+        time: time,
+        name: adminName,
+        text: newNote
+      };
+      
+      let notes = JSON.parse(localStorage.getItem('adminNotes') || '[]');
+      notes.unshift(noteData); // Ajouter au début du tableau
+      
+      localStorage.setItem('adminNotes', JSON.stringify(notes));
+      localStorage.setItem('adminName', adminName);
+      
+      displayNotes();
+      document.getElementById('newNote').value = '';
+      
+      showNotification('Commentaire ajouté');
+    };
+    
+    let currentSort = { field: 'date', ascending: false };
+
+    function toggleSort(field) {
+      if (currentSort.field === field) {
+        currentSort.ascending = !currentSort.ascending;
+      } else {
+        currentSort.field = field;
+        currentSort.ascending = true;
+      }
+      
+      // Mettre à jour les indicateurs de tri
+      document.getElementById('dateSort').textContent = 
+        currentSort.field === 'date' ? (currentSort.ascending ? '↑' : '↓') : '';
+      document.getElementById('idSort').textContent = 
+        currentSort.field === 'id' ? (currentSort.ascending ? '↑' : '↓') : '';
+      
+      sortNotes();
+    }
+
+    // Fonction de tri des notes
+    function sortNotes() {
+      let notes = JSON.parse(localStorage.getItem('adminNotes') || '[]');
+      
+      notes.sort((a, b) => {
+        if (currentSort.field === 'id') {
+          return currentSort.ascending ? a.id - b.id : b.id - a.id;
+        } else if (currentSort.field === 'date') {
+          const dateA = new Date(`${a.date} ${a.time}`);
+          const dateB = new Date(`${b.date} ${b.time}`);
+          return currentSort.ascending ? dateA - dateB : dateB - dateA;
+        }
+        return 0;
+      });
+      
+      localStorage.setItem('adminNotes', JSON.stringify(notes));
+      displayNotes();
+    }
+
+    // Afficher les notes
+    function displayNotes() {
+      const notesContent = document.getElementById('notesContent');
+      notesContent.innerHTML = ''; // Vider la liste
+      
+      const notes = JSON.parse(localStorage.getItem('adminNotes') || '[]');
+      
+      notes.forEach(note => {
+        const noteElement = document.createElement('div');
+        noteElement.className = 'note-item';
+        noteElement.style.display = 'flex';
+        noteElement.style.justifyContent = 'space-between';
+        noteElement.style.alignItems = 'flex-start';
+        noteElement.style.marginBottom = '4px';
+        noteElement.style.padding = '4px 6px';
+        noteElement.style.backgroundColor = '#f8f9fa';
+        noteElement.style.borderRadius = '3px';
+        noteElement.style.border = '1px solid #eee';
+        
+        const noteText = document.createElement('div');
+        noteText.style.fontFamily = 'Arial, sans-serif';
+        noteText.style.whiteSpace = 'pre-wrap';
+        noteText.style.flexGrow = '1';
+        noteText.style.marginRight = '10px';
+        noteText.style.fontSize = '13px';
+        noteText.style.lineHeight = '1.2';
+        
+        const timestamp = document.createElement('span');
+        timestamp.style.color = '#666';
+        timestamp.textContent = `[${note.date} ${note.time}] `;
+        
+        const author = document.createElement('span');
+        author.style.color = '#d73a49';
+        author.style.fontWeight = '500';
+        author.textContent = note.name;
+        
+        const separator = document.createElement('span');
+        separator.textContent = ' >> ';
+        
+        const content = document.createElement('span');
+        content.textContent = note.text;
+        
+        noteText.appendChild(timestamp);
+        noteText.appendChild(author);
+        noteText.appendChild(separator);
+        noteText.appendChild(content);
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'btn btn-danger btn-sm';
+        deleteBtn.style.padding = '0 4px';
+        deleteBtn.style.fontSize = '14px';
+        deleteBtn.style.lineHeight = '18px';
+        deleteBtn.style.minWidth = '20px';
+        deleteBtn.innerHTML = '&times;';
+        deleteBtn.onclick = () => deleteNote(note.id);
+        
+        noteElement.appendChild(noteText);
+        noteElement.appendChild(deleteBtn);
+        notesContent.appendChild(noteElement);
+      });
+    }
+    
+    // Supprimer une note spécifique
+    function deleteNote(noteId) {
+      if (confirm('Voulez-vous vraiment supprimer ce commentaire ?')) {
+        let notes = JSON.parse(localStorage.getItem('adminNotes') || '[]');
+        notes = notes.filter(note => note.id !== noteId);
+        localStorage.setItem('adminNotes', JSON.stringify(notes));
+        displayNotes();
+        showNotification('Commentaire supprimé');
+      }
+    }
+    
+
+
     // Protection globale contre l'erreur toUpperCase sur les valeurs undefined
     (function() {
       // Sauvegarder la méthode originale
@@ -366,60 +637,55 @@
       document.getElementById("loginContainer").style.display = "block";
     }
     
-    // Charger les fichiers depuis le serveur
-    let allFiles = [];
-    
-    function loadFiles() {
+    async function loadFiles() {
       console.log('Chargement des fichiers depuis:', window.location.origin + '/get-files');
-      fetch(window.location.origin + "/get-files")
-        .then(response => {
-          console.log('Réponse reçue:', response);
-          return response.json();
-        })
-        .then(files => {
-          console.log('Données reçues:', files);
-          // S'assurer que tous les fichiers ont une propriété type valide
-          allFiles = files.map(file => {
-            // Si le type est manquant, définir un type par défaut en fonction des propriétés disponibles
+      try {
+        const response = await fetch(window.location.origin + '/get-files');
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        if (data.success) {
+          console.log('Fichiers reçus:', data.files);
+          
+          // Vider le tableau existant
+          allFiles.splice(0, allFiles.length);
+          
+          // Ajouter les nouveaux fichiers avec leurs types
+          data.files.forEach(file => {
             if (!file.type) {
               if (file.url) {
                 file.type = 'video';
               } else if (file.path && file.path.endsWith('.zip')) {
                 file.type = 'zip';
               } else {
-                file.type = 'pdf'; // Type par défaut
+                file.type = 'pdf';
               }
               console.log('Type manquant détecté, assigné:', file.type, 'pour le fichier:', file.titre);
             }
-            return file;
+            allFiles.push(file);
           });
           
           // Trier les fichiers par date (plus récent en haut)
           allFiles.sort((a, b) => {
-            // Fonction pour convertir une date au format JJ/MM/AAAA en objet Date
             const parseDate = (dateStr) => {
-              if (!dateStr) return new Date(0); // Date par défaut si non définie
-              
-              // Format JJ/MM/AAAA
+              if (!dateStr) return new Date(0);
               const parts = dateStr.split('/');
               if (parts.length === 3) {
                 return new Date(parts[2], parts[1] - 1, parts[0]);
               }
-              
-              // Essayer comme date standard
               return new Date(dateStr);
             };
             
             const dateA = parseDate(a.dateAjout || a.date);
             const dateB = parseDate(b.dateAjout || b.date);
-            
-            // Tri décroissant (plus récent en haut)
             return dateB - dateA;
           });
           
-          console.log('Fichiers chargés avec succès:', allFiles.length);
-          
-          // Remplir le filtre de cours
+          // Mettre à jour les options de cours dans le filtre
+          const coursFilter = document.getElementById('coursFilter');
+          // Mettre à jour les options de cours dans le filtre
           populateCoursFilter(allFiles);
           
           // Afficher les fichiers
@@ -427,30 +693,27 @@
           
           // Vérifier la visibilité de la barre de défilement
           setTimeout(checkScrollbarVisibility, 500);
-        })
-        .catch(error => {
-          console.error("Erreur lors du chargement des fichiers:", error);
-          console.error("Stack trace:", error.stack);
-          showNotification('Erreur lors du chargement des fichiers: ' + error.message, false);
-        });
+          
+          console.log('Fichiers chargés avec succès:', allFiles.length);
+        } else {
+          console.error('Erreur lors du chargement des fichiers:', data.message);
+          showNotification('Erreur: ' + data.message, false);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des fichiers:', error);
+        console.error('Stack trace:', error.stack);
+        showNotification('Erreur lors du chargement des fichiers: ' + error.message, false);
+      }
     }
     
     // Remplir le filtre de cours avec les cours disponibles
     function populateCoursFilter(files) {
-      const coursFilter = document.getElementById("coursFilter");
+      const coursFilter = document.getElementById('coursFilter');
       const cours = [...new Set(files.map(file => file.cours))].sort();
       
-      // Vider le filtre
-      while (coursFilter.options.length > 1) {
-        coursFilter.remove(1);
-      }
-      
-      // Ajouter les options
-      cours.forEach(cours => {
-        const option = document.createElement("option");
-        option.value = cours;
-        option.textContent = cours;
-        coursFilter.appendChild(option);
+      coursFilter.innerHTML = '<option value="">Tous les cours</option>';
+      cours.forEach(c => {
+        coursFilter.innerHTML += `<option value="${c}">${c}</option>`;
       });
     }
     
@@ -686,7 +949,7 @@
         console.error('Erreur lors de la suppression:', error);
         showNotification('Erreur lors de la suppression', false);
       }
-
+    }
     
     // Convertir un fichier en vidéo
     function convertToVideo(id) {
@@ -715,6 +978,24 @@
     document.getElementById("coursFilter").addEventListener("change", filterFiles);
     document.getElementById("dateFilter").addEventListener("input", filterFiles);
     
+    // Fonction de tri
+    function sortFiles(field, ascending) {
+      allFiles.sort((a, b) => {
+        const direction = ascending ? 1 : -1;
+        
+        switch(field) {
+          case 'id':
+            return direction * (parseInt(a.id) - parseInt(b.id));
+          case 'date':
+            return direction * (new Date(a.dateAjout || 0) - new Date(b.dateAjout || 0));
+          default:
+            return 0;
+        }
+      });
+      
+      filterFiles();
+    }
+
     function filterFiles() {
       const searchTerm = document.getElementById("searchInput").value.toLowerCase();
       const typeFilter = document.getElementById("typeFilter").value;
@@ -738,7 +1019,9 @@
         // Vérifier le filtre de date
         let matchesDate = true;
         if (dateFilter) {
-          matchesDate = file.dateAjout && file.dateAjout.toLowerCase().includes(dateFilter);
+          const fileDate = new Date(file.dateAjout);
+          const searchDate = dateFilter.split('/').reverse().join('-'); // Convertir JJ/MM/AAAA en AAAA-MM-JJ
+          matchesDate = file.dateAjout && file.dateAjout.includes(searchDate);
         }
         
         return matchesSearch && matchesType && matchesCours && matchesDate;
@@ -746,13 +1029,108 @@
       
       displayFiles(filteredFiles);
     }
-    }
     
     // Écouter la touche Entrée pour la connexion
     document.getElementById("password").addEventListener("keypress", function(event) {
       if (event.key === "Enter") {
         login();
       }
+    });
+
+    // Fonction pour charger les fichiers
+    async function loadFiles() {
+      try {
+        const response = await fetch('/get-files');
+        const data = await response.json();
+        
+        if (data.success) {
+          // Vider le tableau existant
+          allFiles.length = 0;
+          
+          // Ajouter les nouveaux fichiers
+          data.files.forEach(file => {
+            allFiles.push(file);
+          });
+          
+          // Mettre à jour les options de cours
+          const coursFilter = document.getElementById("coursFilter");
+          const cours = [...new Set(allFiles.map(file => file.cours))].sort();
+          
+          // Sauvegarder l'option sélectionnée
+          const selectedCours = coursFilter.value;
+          
+          // Vider et recréer les options
+          coursFilter.innerHTML = '<option value="">Tous les cours</option>';
+          cours.forEach(cours => {
+            const option = document.createElement('option');
+            option.value = cours;
+            option.textContent = cours;
+            if (cours === selectedCours) option.selected = true;
+            coursFilter.appendChild(option);
+          });
+          
+          // Afficher les fichiers filtrés
+          filterFiles();
+        } else {
+          showNotification('Erreur : ' + data.message, false);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des fichiers:', error);
+        showNotification('Erreur lors du chargement des fichiers', false);
+      }
+    }
+
+    // Fonction pour charger les fichiers
+    async function loadFiles() {
+      console.log('Début du chargement des fichiers...');
+      try {
+        const response = await fetch('/get-files');
+        console.log('Réponse reçue:', response);
+        const files = await response.json();
+        console.log('Données reçues:', files);
+        
+        if (Array.isArray(files)) {
+          // Vider le tableau existant
+          allFiles.length = 0;
+          
+          // Ajouter les nouveaux fichiers
+          files.forEach(file => {
+            allFiles.push(file);
+          });
+          console.log('Fichiers chargés:', allFiles);
+          
+          // Mettre à jour les options de cours
+          const coursFilter = document.getElementById("coursFilter");
+          const cours = [...new Set(allFiles.map(file => file.cours))].sort();
+          
+          // Sauvegarder l'option sélectionnée
+          const selectedCours = coursFilter.value;
+          
+          // Vider et recréer les options
+          coursFilter.innerHTML = '<option value="">Tous les cours</option>';
+          cours.forEach(cours => {
+            const option = document.createElement('option');
+            option.value = cours;
+            option.textContent = cours;
+            if (cours === selectedCours) option.selected = true;
+            coursFilter.appendChild(option);
+          });
+          
+          // Afficher les fichiers filtrés
+          filterFiles();
+        } else {
+          console.error('Format de données invalide:', files);
+          showNotification('Format de données invalide', false);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des fichiers:', error);
+        showNotification('Erreur lors du chargement des fichiers', false);
+      }
+    }
+
+    // Charger les fichiers au démarrage
+    document.addEventListener('DOMContentLoaded', () => {
+      // Les fichiers seront chargés après la connexion réussie
     });
   </script>
 </body>

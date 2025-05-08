@@ -24,6 +24,8 @@ Cette plateforme a été conçue pour faciliter le partage de ressources académ
 - Icônes distinctes pour les PDF (📄), les ZIP (💼) et les vidéos (🎬)
 - Formulaire de contact intégré
 - Interface responsive adaptée aux différents appareils
+- Interface d'administration avec tri des synthèses par date ou ID
+- Système de commentaires intégré pour les administrateurs
 - Sections pliables/dépliables pour une meilleure organisation
 - Style inspiré de Java avec mots-clés colorés
 - Animations subtiles pour améliorer l'expérience utilisateur
@@ -221,6 +223,11 @@ Chaque cours est représenté par une icône Unicode thématique :
 - Organisation hiérarchique claire
 - Navigation fluide entre les sections
 
+#### Administration
+- Tri des synthèses par date ou ID pour une meilleure organisation
+- Système de commentaires pour les administrateurs permettant de suivre les modifications
+- Interface intuitive pour la gestion des fichiers et des métadonnées
+
 #### Animations et Effets
 - Transitions douces pour les interactions
 - Bordure arc-en-ciel animée sur la photo
@@ -268,6 +275,10 @@ Chaque cours est représenté par une icône Unicode thématique :
 - Amélioration de l'affichage des synthèses avec l'utilisation de l'URL complète
 - Restructuration de la gestion des uploads pour mieux gérer les PDF et vidéos (modification et suppression)
 - Optimisation du traitement des formulaires avec FormData et JSON
+- Correction de la fonction loadFiles pour gérer correctement le format de réponse du serveur
+- Ajout de la fonctionnalité de tri des synthèses par date ou par ID dans l'interface d'administration
+- Implémentation d'un système de commentaires pour les administrateurs
+- Amélioration de l'affichage des notifications dans l'interface d'administration
 
 ### 07/05/2025
 - Ajout de la fonctionnalité d'upload multiple avec création automatique d'archives ZIP
