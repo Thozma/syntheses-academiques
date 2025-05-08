@@ -276,6 +276,12 @@ Tous droits réservés © 2025
 
 ## Journal des modifications
 
+### 08/05/2025
+- Correction des erreurs de configuration SMTP
+- Amélioration de l'affichage des synthèses avec l'utilisation de l'URL complète
+- Restructuration de la gestion des uploads pour mieux gérer les PDF et vidéos
+- Optimisation du traitement des formulaires avec FormData et JSON
+
 ### 07/05/2025
 - Ajout de la fonctionnalité d'upload multiple avec création automatique d'archives ZIP
 - Ajout de la prise en charge des fichiers ZIP
