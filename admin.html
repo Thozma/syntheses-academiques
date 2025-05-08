@@ -25,7 +25,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Administration - Synthèses Académiques</title>
   <link rel="stylesheet" href="style/style.css">
-  <link rel="stylesheet" href="style/admin.css">
+  <link rel="stylesheet" href="style/admin.css?v=1">
 </head>
 <body>
   <div class="admin-container" id="loginContainer">
@@ -63,14 +63,17 @@
         <option value="">Tous les cours</option>
         <!-- Les options seront ajoutées dynamiquement -->
       </select>
+      
+      <input type="text" id="dateFilter" placeholder="Rechercher par date (JJ/MM/AAAA)">
     </div>
     
     <div class="table-container" id="tableContainer">
       <table class="file-table">
         <thead>
           <tr>
-            <th style="min-width:70px; width:70px;">Type</th>
-            <th style="min-width:350px; width:350px;">Titre</th>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Titre</th>
             <th>Cours</th>
             <th>Nom/Discord</th>
             <th>Taille</th>
@@ -91,12 +94,16 @@
       <span class="close" onclick="closeModal()">&times;</span>
       <h3>Modifier les informations du fichier</h3>
       <form id="editForm">
-        <input type="hidden" id="editIndex">
+        <input type="hidden" id="editId">
+        <div class="form-group">
+          <label>ID: <span id="displayId" class="id-display"></span></label>
+        </div>
         
         <div class="form-group">
-          <label for="editType">Type</label>
-          <select id="editType">
-            <!-- Les options seront ajoutées dynamiquement en fonction du type original -->
+          <label>Type actuel: <span id="currentType" class="type-display"></span></label>
+          <select id="editType" class="form-control">
+            <option value="keep">Garder le type actuel</option>
+            <option value="video">Convertir en vidéo</option>
           </select>
         </div>
         
@@ -147,19 +154,6 @@
     </div>
   </div>
   
-  <!-- Modal de confirmation pour la suppression -->
-  <div id="deleteModal" class="modal">
-    <div class="modal-content" style="max-width: 400px;">
-      <span class="close" onclick="closeDeleteModal()">&times;</span>
-      <h3>Confirmer la suppression</h3>
-      <p>Êtes-vous sûr de vouloir supprimer ce fichier ? Cette action est irréversible.</p>
-      <input type="hidden" id="deleteIndex">
-      <div class="form-actions">
-        <button type="button" class="cancel-btn" onclick="closeDeleteModal()">Annuler</button>
-        <button type="button" class="delete-btn" onclick="confirmDelete()">Supprimer</button>
-      </div>
-    </div>
-  </div>
   
   <script>
     // Protection globale contre l'erreur toUpperCase sur les valeurs undefined
@@ -185,6 +179,98 @@
       };
     })();
     
+
+
+    // Fonction pour afficher les fichiers dans le tableau
+    function displayFiles(files) {
+      const tbody = document.getElementById('fileTableBody');
+      tbody.innerHTML = '';
+      
+      files.forEach(file => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span class="id-box">${file.id}</span></td>
+          <td>${getTypeIcon(file.type)}</td>
+          <td>${file.titre}</td>
+          <td>${file.cours}</td>
+          <td>${file.nom}</td>
+          <td>${getFileSizeHtml(file)}</td>
+          <td>${getFileDate(file)}</td>
+          <td>
+            <button class="action-btn edit-btn" onclick="openEditModal(${JSON.stringify(file)})">Modifier</button>
+            <button class="action-btn delete-btn" onclick="deleteFile(${JSON.stringify(file.id)})">Supprimer</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Fonction pour obtenir l'icône en fonction du type de fichier
+    function getTypeIcon(type) {
+      switch(type) {
+        case 'pdf':
+          return '📄 PDF';
+        case 'zip':
+          return '📂 ZIP';
+        case 'video':
+          return '🎥 Vidéo';
+        default:
+          return '📄 Doc';
+      }
+    }
+
+    // Fonction pour formater la taille du fichier avec un lien
+    function getFileSizeHtml(file) {
+      if (file.type === 'video') {
+        return `<a href="${file.url}" target="_blank">Vidéo</a>`;
+      }
+      
+      const size = file.poidsFichier || file.taille || 0;
+      const sizeInMB = (size / 1048576).toFixed(2);
+      const fileUrl = file.path;
+      
+      if (fileUrl) {
+        return `<a href="${fileUrl}" target="_blank">${sizeInMB} MB</a>`;
+      }
+      
+      return `${sizeInMB} MB`;
+    }
+
+    // Fonction pour formater la date
+    function getFileDate(file) {
+      if (file.dateAjout) {
+        return file.dateAjout;
+      }
+      if (file.date) {
+        try {
+          const dateObj = new Date(file.date);
+          if (!isNaN(dateObj.getTime())) {
+            return dateObj.toLocaleDateString('fr-FR');
+          }
+        } catch (e) {
+          console.log("Erreur de format de date pour", file.titre, e);
+        }
+      }
+      return 'N/A';
+    }
+
+    // Fonction pour afficher les notifications
+    function showNotification(message, isSuccess = true) {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.textContent = message;
+      notification.style.backgroundColor = isSuccess ? '#4CAF50' : '#f44336';
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+          document.body.removeChild(notification);
+        }, 500);
+      }, 3000);
+    }
+
     // Fonction utilitaire pour sécuriser l'accès aux propriétés
     function safeGet(obj, path, defaultValue = '') {
       if (!obj) return defaultValue;
@@ -240,7 +326,7 @@
       const password = document.getElementById("password").value;
       
       // Envoyer le mot de passe au serveur pour vérification
-      fetch("/admin/login", {
+      fetch(window.location.origin + "/admin/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -284,9 +370,14 @@
     let allFiles = [];
     
     function loadFiles() {
-      fetch("/get-files")
-        .then(response => response.json())
+      console.log('Chargement des fichiers depuis:', window.location.origin + '/get-files');
+      fetch(window.location.origin + "/get-files")
+        .then(response => {
+          console.log('Réponse reçue:', response);
+          return response.json();
+        })
         .then(files => {
+          console.log('Données reçues:', files);
           // S'assurer que tous les fichiers ont une propriété type valide
           allFiles = files.map(file => {
             // Si le type est manquant, définir un type par défaut en fonction des propriétés disponibles
@@ -303,6 +394,29 @@
             return file;
           });
           
+          // Trier les fichiers par date (plus récent en haut)
+          allFiles.sort((a, b) => {
+            // Fonction pour convertir une date au format JJ/MM/AAAA en objet Date
+            const parseDate = (dateStr) => {
+              if (!dateStr) return new Date(0); // Date par défaut si non définie
+              
+              // Format JJ/MM/AAAA
+              const parts = dateStr.split('/');
+              if (parts.length === 3) {
+                return new Date(parts[2], parts[1] - 1, parts[0]);
+              }
+              
+              // Essayer comme date standard
+              return new Date(dateStr);
+            };
+            
+            const dateA = parseDate(a.dateAjout || a.date);
+            const dateB = parseDate(b.dateAjout || b.date);
+            
+            // Tri décroissant (plus récent en haut)
+            return dateB - dateA;
+          });
+          
           console.log('Fichiers chargés avec succès:', allFiles.length);
           
           // Remplir le filtre de cours
@@ -316,7 +430,8 @@
         })
         .catch(error => {
           console.error("Erreur lors du chargement des fichiers:", error);
-          showNotification('Erreur lors du chargement des fichiers', false);
+          console.error("Stack trace:", error.stack);
+          showNotification('Erreur lors du chargement des fichiers: ' + error.message, false);
         });
     }
     
@@ -341,155 +456,56 @@
     
     // Afficher les fichiers dans le tableau
     function displayFiles(files) {
-      const tableBody = document.getElementById("fileTableBody");
-      tableBody.innerHTML = "";
+      const tbody = document.getElementById("fileTableBody");
+      tbody.innerHTML = "";
       
       if (files.length === 0) {
         const row = document.createElement("tr");
         row.innerHTML = `<td colspan="7" style="text-align: center;">Aucun fichier trouvé</td>`;
-        tableBody.appendChild(row);
+        tbody.appendChild(row);
         return;
       }
       
-      files.forEach((file, displayIndex) => {
-        // Trouver l'index réel dans allFiles
-        const realIndex = allFiles.findIndex(f => 
-          f.path === file.path && 
-          f.titre === file.titre && 
-          f.nomDiscord === file.nomDiscord
-        );
-        
+      files.forEach((file) => {
         const row = document.createElement("tr");
-        
-        // Formater la taille du fichier
-        let fileSize = "N/A";
-        if (file.taille !== undefined) {
-          // Si la taille est 0, c'est probablement une vidéo ou un fichier non trouvé
-          if (file.taille === 0) {
-            fileSize = file.type === 'video' ? "Vidéo" : "0 MB";
-          } else if (file.taille < 1024) {
-            // Convertir les octets en MB
-            fileSize = (file.taille / 1048576).toFixed(2) + " MB";
-          } else if (file.taille < 1048576) {
-            // Convertir les KB en MB
-            fileSize = (file.taille / 1048576).toFixed(2) + " MB";
-          } else {
-            // Déjà en MB, mais avec 2 décimales pour plus de précision
-            fileSize = (file.taille / 1048576).toFixed(2) + " MB";
-          }
-        }
-        
-        // Formater la date
-        let fileDate = "N/A";
-        if (file.date) {
-          try {
-            const dateObj = new Date(file.date);
-            if (!isNaN(dateObj.getTime())) {
-              fileDate = dateObj.toLocaleDateString('fr-FR');
-            }
-          } catch (e) {
-            console.log("Erreur de format de date pour", file.titre, e);
-          }
-        }
-        
-        // Icône en fonction du type (avec vérification que le type existe)
-        let typeIcon = "📄"; // Par défaut: document
-        if (file.type) {
-          if (file.type === "zip") typeIcon = "🗂️";
-          if (file.type === "video") typeIcon = "🎬";
-        }
-        
-        // Stocker l'index réel comme attribut de données
-        row.setAttribute('data-index', realIndex >= 0 ? realIndex : displayIndex);
-        
-        // Utiliser l'index correct
-        const indexToUse = realIndex >= 0 ? realIndex : displayIndex;
-        
-        // Utiliser notre fonction sécurisée pour le type
-        const fileType = safeToUpperCase(safeGet(file, 'type'));
-        
         row.innerHTML = `
-          <td style="min-width:70px; width:70px; white-space:nowrap;">${typeIcon} <small>${fileType}</small></td>
+          <td>${file.id}</td>
+          <td>${getTypeIcon(file.type)}</td>
           <td style="min-width:350px; width:350px;">${safeGet(file, 'titre', 'Sans titre')}</td>
           <td>${safeGet(file, 'cours', 'N/A')}</td>
           <td>${safeGet(file, 'nomDiscord', 'N/A')}</td>
-          <td>${fileSize}</td>
-          <td>${fileDate || 'N/A'}</td>
+          <td>${getFileSizeHtml(file)}</td>
+          <td>${getFileDate(file) || 'N/A'}</td>
           <td>
-            <button class="action-btn edit-btn" onclick="openEditModal(${indexToUse})">Modifier</button>
-            <button class="action-btn delete-btn" onclick="openDeleteModal(${indexToUse})">Supprimer</button>
+            <button class="action-btn edit-btn" onclick="editFile(${file.id})">Modifier</button>
+            <button class="action-btn delete-btn" onclick="deleteFile(${file.id})">Supprimer</button>
             ${(safeGet(file, 'type') === 'zip' || safeGet(file, 'type') === 'pdf') ? 
-              `<button class="action-btn convert-btn" onclick="convertToVideo(${indexToUse})">→ Vidéo</button>` : ''}
+              `<button class="action-btn convert-btn" onclick="convertToVideo(${file.id})">→ Vidéo</button>` : ''}
           </td>
         `;
         
-        tableBody.appendChild(row);
+        tbody.appendChild(row);
       });
     }
     
     // Ouvrir la modal d'édition
-    function openEditModal(index) {
-      // Vérifier que l'index est valide
-      if (index < 0 || index >= allFiles.length) {
-        showNotification('Erreur: Index de fichier invalide', false);
-        return;
-      }
+    function editFile(id) {
+      const file = allFiles.find(f => f.id === id);
+      if (!file) return;
       
-      const file = allFiles[index];
-      console.log("Ouverture de la modal pour le fichier:", file);
-      console.log("Index:", index);
-      
-      // Vérifier que le fichier existe
-      if (!file) {
-        showNotification('Erreur: Fichier introuvable', false);
-        return;
-      }
-      
-      // Récupérer le type original du fichier
-      const originalType = safeGet(file, 'type', 'pdf');
-      
-      // Remplir le sélecteur de type avec seulement les options pertinentes
-      const typeSelect = document.getElementById("editType");
-      typeSelect.innerHTML = ''; // Vider les options existantes
-      
-      // Ajouter l'option pour le type original
-      const originalOption = document.createElement('option');
-      originalOption.value = originalType;
-      
-      // Afficher un nom convivial pour le type
-      if (originalType === 'pdf') {
-        originalOption.textContent = 'PDF (original)';
-      } else if (originalType === 'zip') {
-        originalOption.textContent = 'ZIP (original)';
-      } else if (originalType === 'video') {
-        originalOption.textContent = 'Vidéo (original)';
-      } else {
-        originalOption.textContent = originalType.toUpperCase() + ' (original)';
-      }
-      
-      typeSelect.appendChild(originalOption);
-      
-      // Si ce n'est pas déjà une vidéo, ajouter l'option vidéo
-      if (originalType !== 'video') {
-        const videoOption = document.createElement('option');
-        videoOption.value = 'video';
-        videoOption.textContent = 'Vidéo';
-        typeSelect.appendChild(videoOption);
-      }
-      
-      // Sélectionner le type original
-      typeSelect.value = originalType;
-      
-      // Remplir les autres champs
-      document.getElementById("editIndex").value = index;
-      document.getElementById("editTitre").value = safeGet(file, 'titre', '');
-      document.getElementById("editCours").value = safeGet(file, 'cours', '');
-      document.getElementById("editNom").value = safeGet(file, 'nomDiscord', '');
-      document.getElementById("editDescription").value = safeGet(file, 'description', '');
+      // Préremplir les champs du formulaire d'édition
+      document.getElementById("editId").value = id;
+      document.getElementById("displayId").textContent = id;
+      document.getElementById("currentType").textContent = file.type;
+      document.getElementById("editType").value = "keep";
+      document.getElementById("editTitre").value = file.titre;
+      document.getElementById("editCours").value = file.cours;
+      document.getElementById("editNom").value = file.nomDiscord;
+      document.getElementById("editDescription").value = file.description || "";
       
       // Afficher/masquer le champ URL en fonction du type
       const videoUrlGroup = document.getElementById("videoUrlGroup");
-      if (file.type && file.type === "video") {
+      if (file.type === "video") {
         videoUrlGroup.style.display = "block";
         document.getElementById("editUrl").value = file.url || "";
       } else {
@@ -526,24 +542,24 @@
     
     // Enregistrer les modifications
     function saveChanges() {
-      const index = parseInt(document.getElementById("editIndex").value);
-      const type = document.getElementById("editType").value;
-      const titre = document.getElementById("editTitre").value;
-      const cours = document.getElementById("editCours").value;
-      const nomDiscord = document.getElementById("editNom").value;
-      const description = document.getElementById("editDescription").value;
-      
-      // Préparer les mises à jour
+      const id = parseInt(document.getElementById("editId").value);
+      const file = allFiles.find(f => f.id === id);
+      if (!file) return;
       const updates = {
-        type,
-        titre,
-        cours,
-        nomDiscord,
-        description
+        type: document.getElementById("editType").value,
+        titre: document.getElementById("editTitre").value,
+        cours: document.getElementById("editCours").value,
+        nomDiscord: document.getElementById("editNom").value,
+        description: document.getElementById("editDescription").value,
       };
       
+      // Si on garde le type actuel, utiliser le type d'origine
+      if (updates.type === "keep") {
+        const file = allFiles.find(f => f.id === id);
+        updates.type = file.type;
+      }
       // Si c'est une vidéo, ajouter l'URL
-      if (type === "video") {
+      if (updates.type === "video") {
         updates.url = document.getElementById("editUrl").value;
       }
       
@@ -591,12 +607,12 @@
       }
       
       // Envoyer les mises à jour au serveur
-      fetch("/admin/update-file", {
+      fetch("/edit-file", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ index, updates })
+        body: JSON.stringify({ id, ...updates })
       })
       .then(response => {
         // Vérifier si la réponse est OK avant de parser le JSON
@@ -610,7 +626,10 @@
       .then(data => {
         if (data.success) {
           // Mettre à jour la liste locale
-          allFiles[index] = { ...allFiles[index], ...updates };
+          const fileIndex = allFiles.findIndex(f => f.id === id);
+          if (fileIndex !== -1) {
+            allFiles[fileIndex] = { ...file, ...updates };
+          }
           
           // Rafraîchir l'affichage
           displayFiles(allFiles);
@@ -639,56 +658,42 @@
       });
     }
     
-    // Ouvrir la modal de confirmation de suppression
-    function openDeleteModal(index) {
-      document.getElementById("deleteIndex").value = index;
-      document.getElementById("deleteModal").style.display = "block";
-    }
-    
-    // Fermer la modal de confirmation de suppression
-    function closeDeleteModal() {
-      document.getElementById("deleteModal").style.display = "none";
-    }
-    
-    // Confirmer la suppression
-    function confirmDelete() {
-      const index = document.getElementById("deleteIndex").value;
-      const file = allFiles[index];
+    // Fonction pour supprimer un fichier
+    async function deleteFile(id) {
+      if (!confirm('Voulez-vous vraiment supprimer ce fichier ?')) {
+        return;
+      }
       
-      fetch("/admin/delete-file", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ index: parseInt(index) })
-      })
-      .then(response => response.json())
-      .then(data => {
+      try {
+        console.log('Suppression du fichier:', id);
+        const response = await fetch(`/delete-file/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        const data = await response.json();
+        console.log('Réponse du serveur:', data);
+        
         if (data.success) {
-          // Supprimer de la liste locale
-          allFiles.splice(index, 1);
-          
-          // Rafraîchir l'affichage
-          displayFiles(allFiles);
-          
-          // Fermer la modal
-          closeDeleteModal();
+          showNotification('Fichier supprimé avec succès');
+          await loadFiles(); // Recharger la liste
         } else {
-          alert("Erreur lors de la suppression: " + data.message);
+          showNotification('Erreur : ' + data.message, false);
         }
-      })
-      .catch(error => {
-        console.error("Erreur lors de la suppression:", error);
-        alert("Erreur lors de la suppression. Consultez la console pour plus de détails.");
-      });
-    }
+      } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+        showNotification('Erreur lors de la suppression', false);
+      }
+
     
     // Convertir un fichier en vidéo
-    function convertToVideo(index) {
-      const file = allFiles[index];
+    function convertToVideo(id) {
+      const file = allFiles.find(f => f.id === id);
       
       // Préremplir les champs du formulaire d'édition
-      document.getElementById("editIndex").value = index;
+      document.getElementById("editId").value = id;
       document.getElementById("editType").value = "video";
       document.getElementById("editTitre").value = file.titre;
       document.getElementById("editCours").value = file.cours;
@@ -708,11 +713,13 @@
     document.getElementById("searchInput").addEventListener("input", filterFiles);
     document.getElementById("typeFilter").addEventListener("change", filterFiles);
     document.getElementById("coursFilter").addEventListener("change", filterFiles);
+    document.getElementById("dateFilter").addEventListener("input", filterFiles);
     
     function filterFiles() {
       const searchTerm = document.getElementById("searchInput").value.toLowerCase();
       const typeFilter = document.getElementById("typeFilter").value;
       const coursFilter = document.getElementById("coursFilter").value;
+      const dateFilter = document.getElementById("dateFilter").value.toLowerCase();
       
       const filteredFiles = allFiles.filter(file => {
         // Vérifier le terme de recherche
@@ -728,10 +735,17 @@
         // Vérifier le filtre de cours
         const matchesCours = coursFilter === "" || file.cours === coursFilter;
         
-        return matchesSearch && matchesType && matchesCours;
+        // Vérifier le filtre de date
+        let matchesDate = true;
+        if (dateFilter) {
+          matchesDate = file.dateAjout && file.dateAjout.toLowerCase().includes(dateFilter);
+        }
+        
+        return matchesSearch && matchesType && matchesCours && matchesDate;
       });
       
       displayFiles(filteredFiles);
+    }
     }
     
     // Écouter la touche Entrée pour la connexion

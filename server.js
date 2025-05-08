@@ -37,7 +37,138 @@ const config = require('./config');     // Fichier de configuration avec les don
 
 // ========== CONFIGURATION DE BASE ==========
 const app = express();                  // Création de l'application Express
-const port = config.server.port;        // Port sur lequel le serveur va écouter
+
+// Servir les fichiers statiques
+// Configuration des middlewares
+app.use(express.static(__dirname));
+app.use(express.json());    // Pour parser le JSON
+app.use(express.urlencoded({ extended: true })); // Pour parser les données de formulaire
+
+// Route pour la page d'accueil
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Route pour éditer un fichier
+app.post('/edit-file', async (req, res) => {
+  try {
+    const { id, type, titre, cours, nomDiscord, description, url } = req.body;
+    const fichiersPath = path.join(__dirname, 'fichiers.json');
+    
+    // Lire le fichier JSON
+    const fichiers = JSON.parse(fs.readFileSync(fichiersPath, 'utf8'));
+    
+    // Trouver le fichier à modifier
+    const fileIndex = fichiers.findIndex(f => f.id === id);
+    if (fileIndex === -1) {
+      return res.status(404).json({ success: false, message: 'Fichier non trouvé' });
+    }
+    
+    const file = fichiers[fileIndex];
+    const oldPath = file.path;
+    
+    // Si le cours a changé, déplacer le fichier
+    if (cours && cours !== file.cours && file.path) {
+      const oldFilePath = path.join(__dirname, file.path);
+      const newPath = `/Les synthèses des invités/${cours}/${file.nomFichier}`;
+      const newFilePath = path.join(__dirname, newPath);
+      
+      // Créer le dossier du cours s'il n'existe pas
+      const coursDir = path.join(__dirname, 'Les synthèses des invités', cours);
+      if (!fs.existsSync(coursDir)) {
+        fs.mkdirSync(coursDir, { recursive: true });
+      }
+      
+      // Déplacer le fichier
+      if (fs.existsSync(oldFilePath)) {
+        fs.renameSync(oldFilePath, newFilePath);
+        file.path = newPath;
+      }
+    }
+    
+    // Mettre à jour les métadonnées
+    Object.assign(file, {
+      type: type || file.type,
+      titre: titre || file.titre,
+      cours: cours || file.cours,
+      nomDiscord: nomDiscord || file.nomDiscord,
+      description: description || file.description,
+      url: url || file.url
+    });
+    
+    // Sauvegarder le fichier JSON
+    fs.writeFileSync(fichiersPath, JSON.stringify(fichiers, null, 2));
+    
+    res.json({ success: true, message: 'Fichier modifié avec succès' });
+  } catch (error) {
+    console.error('Erreur lors de la modification:', error);
+    res.status(500).json({ success: false, message: 'Une erreur est survenue lors de la modification du fichier' });
+  }
+});
+
+// Exporter l'app pour app.js
+module.exports = app;
+
+// Route pour supprimer un fichier
+app.delete('/delete-file/:id', async (req, res) => {
+  try {
+    const fileId = parseInt(req.params.id);
+    const fichiersPath = path.join(__dirname, 'fichiers.json');
+    
+    // Lire le fichier JSON
+    const fichiers = JSON.parse(fs.readFileSync(fichiersPath, 'utf8'));
+    
+    // Trouver le fichier à supprimer
+    const fileIndex = fichiers.findIndex(f => f.id === fileId);
+    if (fileIndex === -1) {
+      return res.json({ success: false, message: 'Fichier non trouvé' });
+    }
+    
+    const file = fichiers[fileIndex];
+    
+    // Supprimer le fichier physique
+    if (file.path) {
+      const filePath = path.join(__dirname, file.path);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+    
+    // Supprimer l'entrée du JSON
+    fichiers.splice(fileIndex, 1);
+    
+    // Sauvegarder le fichier JSON
+    fs.writeFileSync(fichiersPath, JSON.stringify(fichiers, null, 2));
+    
+    res.json({ success: true, message: 'Fichier supprimé avec succès' });
+  } catch (error) {
+    console.error('Erreur lors de la suppression:', error);
+    res.json({ success: false, message: error.message });
+  }
+});
+
+// Route pour l'admin
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+// Exporter l'application
+module.exports = app;
+
+
+// Fonction pour obtenir le prochain ID disponible
+function getNextAvailableId() {
+  try {
+    const fileData = fs.readFileSync('fichiers.json', 'utf8');
+    const files = JSON.parse(fileData);
+    if (files.length === 0) return 1;
+    const maxId = Math.max(...files.map(file => file.id));
+    return maxId + 1;
+  } catch (error) {
+    console.error('Erreur lors de la lecture des IDs:', error);
+    return 1;
+  }
+}
 
 // Configuration pour servir les fichiers statiques et parser les requêtes
 app.use(express.static(__dirname));    // Sert les fichiers du répertoire courant
@@ -304,6 +435,7 @@ app.post('/upload-multi', uploadMulti.array('fichiers'), async (req, res) => {
     
     // Création des métadonnées du fichier
     const fileMetadata = {
+      id: nextId,
       type: 'zip',
       path: `/Les synthèses des invités/${cours}/${zipFileName}`,
       nomFichier: zipFileName,
@@ -369,7 +501,75 @@ app.post('/upload-multi', uploadMulti.array('fichiers'), async (req, res) => {
   }
 });
 
-app.post('/upload', (req, res) => {
+// Route pour modifier un fichier
+app.post('/edit-file', async (req, res) => {
+  try {
+    const { id, type, titre, cours, nomDiscord, description, url } = req.body;
+    
+    // Lire le fichier JSON
+    const jsonPath = path.join(__dirname, 'fichiers.json');
+    const fileData = fs.readFileSync(jsonPath, 'utf8');
+    const files = JSON.parse(fileData);
+    
+    // Trouver le fichier à modifier
+    const fileIndex = files.findIndex(f => f.id === id);
+    if (fileIndex === -1) {
+      return res.status(404).json({ success: false, message: 'Fichier non trouvé' });
+    }
+    
+    const oldFile = files[fileIndex];
+    const oldPath = path.join(__dirname, oldFile.path);
+    
+    // Si les métadonnées ont changé, on doit renommer/déplacer le fichier
+    if (cours !== oldFile.cours || type !== oldFile.type || titre !== oldFile.titre || nomDiscord !== oldFile.nomDiscord) {
+      // Créer le nouveau dossier si nécessaire
+      const newDir = path.join(__dirname, 'Les synthèses des invités', cours);
+      if (!fs.existsSync(newDir)) {
+        fs.mkdirSync(newDir, { recursive: true });
+      }
+      
+      // Générer le nouveau nom de fichier
+      const extension = type === 'video' ? '' : (type === 'zip' ? '.zip' : '.pdf');
+      const newFileName = `${cours}_${titre}_${nomDiscord}_${new Date().toLocaleDateString('fr-FR').replace(/\//g, '-')}${extension}`;
+      const newPath = path.join(newDir, newFileName);
+      
+      // Si c'est un fichier physique (pas une vidéo), le déplacer
+      if (oldFile.type !== 'video' && type !== 'video') {
+        fs.renameSync(oldPath, newPath);
+      }
+      
+      // Mettre à jour le chemin dans les métadonnées
+      files[fileIndex].path = `/Les synthèses des invités/${cours}/${newFileName}`;
+    }
+    
+    // Mettre à jour les métadonnées
+    files[fileIndex] = {
+      ...oldFile,
+      type,
+      titre,
+      cours,
+      nomDiscord,
+      description,
+      url: type === 'video' ? url : undefined
+    };
+    
+    // Sauvegarder les modifications
+    fs.writeFileSync(jsonPath, JSON.stringify(files, null, 2));
+    
+    res.json({ success: true });
+    
+  } catch (error) {
+    console.error('Erreur lors de la modification du fichier:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Une erreur est survenue lors de la modification du fichier'
+    });
+  }
+});
+
+app.post('/upload', async (req, res) => {
+  // Obtenir le prochain ID disponible
+  const nextId = getNextAvailableId();
   // Utiliser une approche différente pour déterminer le type d'upload
   // Nous allons d'abord vérifier si c'est un upload de fichier ou de vidéo
   // en examinant le content-type de la requête
@@ -425,6 +625,7 @@ app.post('/upload', (req, res) => {
          * Ces métadonnées seront stockées dans un fichier JSON et utilisées pour afficher la liste des fichiers
          */
         const fileMetadata = {
+          id: nextId,
           type: fileType,
           path: `/Les synthèses des invités/${req.body.cours}/${file.filename}`,
           nomFichier: file.filename,
@@ -556,6 +757,7 @@ async function handleVideoUpload(req, res) {
     
     // Création de l'objet à stocker dans fichiers.json
     const videoEntry = {
+      id: nextId,
       type: 'video',
       url: videoUrl,
       nomDiscord,
@@ -634,6 +836,35 @@ app.get('/get-files', (req, res) => {
   try {
     // Utiliser un chemin absolu pour fichiers.json
     const jsonPath = path.join(__dirname, 'fichiers.json');
+    console.log('Chemin du fichier JSON:', jsonPath);
+
+    // Si le fichier n'existe pas encore, renvoyer un tableau vide
+    if (!fs.existsSync(jsonPath)) {
+      console.log('Fichier JSON introuvable, renvoi d\'un tableau vide');
+      return res.json([]);
+    }
+
+    // Lire et parser le fichier JSON
+    const fileContent = fs.readFileSync(jsonPath, 'utf8');
+    console.log('Contenu du fichier JSON lu avec succès');
+    
+    const files = JSON.parse(fileContent);
+    console.log(`${files.length} fichiers trouvés`);
+
+    res.json(files);
+  } catch (error) {
+    console.error('Erreur lors de la lecture des fichiers:', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des fichiers' });
+  }
+});
+app.post('/edit-file', (req, res) => {
+  const fileId = parseInt(req.body.id);
+  if (!fileId) {
+    return res.status(400).json({ error: 'ID de fichier manquant' });
+  }
+  try {
+    // Utiliser un chemin absolu pour fichiers.json
+    const jsonPath = path.join(__dirname, 'fichiers.json');
     // Si le fichier n'existe pas encore, renvoyer un tableau vide
     if (!fs.existsSync(jsonPath)) {
       console.log('Fichier JSON introuvable');
@@ -644,203 +875,19 @@ app.get('/get-files', (req, res) => {
     let fichiers = JSON.parse(fileContent);
     console.log(`Nombre de fichiers trouvés: ${fichiers.length}`);
     
-    // Ajouter des informations de taille et de date pour chaque fichier
-    fichiers = fichiers.map(fichier => {
-      // Garantir que tous les fichiers ont un type
-      if (!fichier.type) {
-        if (fichier.url) {
-          fichier.type = 'video';
-        } else if (fichier.path && fichier.path.endsWith('.zip')) {
-          fichier.type = 'zip';
-        } else {
-          fichier.type = 'pdf';
-        }
-        console.log(`Type manquant détecté, assigné: ${fichier.type} pour le fichier: ${fichier.titre || 'sans titre'}`);
-      }
-      
-      // Si c'est une vidéo, on ne peut pas obtenir la taille du fichier
-      if (fichier.type === 'video') {
-        const result = { 
-          ...fichier, 
-          taille: fichier.taille || 0, 
-          date: fichier.date || new Date().toISOString() 
-        };
-        console.log(`Vidéo: ${fichier.titre}, taille: ${result.taille}, date: ${result.date}`);
-        return result;
-      }
-      
-      // Pour les fichiers physiques, récupérer la taille et la date de modification
-      if (fichier.path) {
-        try {
-          const filePath = path.join(__dirname, fichier.path);
-          console.log(`Vérification du fichier: ${filePath}`);
-          
-          if (fs.existsSync(filePath)) {
-            const stats = fs.statSync(filePath);
-            const result = {
-              ...fichier,
-              taille: stats.size,
-              date: fichier.date || stats.mtime.toISOString()
-            };
-            console.log(`Fichier ${fichier.titre}: taille = ${result.taille} octets, date = ${result.date}`);
-            return result;
-          } else {
-            console.log(`Fichier non trouvé: ${filePath}`);
-            return { ...fichier, taille: 0, date: fichier.date || new Date().toISOString() };
-          }
-        } catch (err) {
-          console.log(`Impossible de lire les stats pour ${fichier.path}:`, err.message);
-          return { ...fichier, taille: 0, date: fichier.date || new Date().toISOString() };
-        }
-      }
-      
-      // Cas par défaut: assurer que tous les fichiers ont une taille et une date
-      const result = { 
-        ...fichier, 
-        taille: fichier.taille || 0, 
-        date: fichier.date || new Date().toISOString() 
-      };
-      console.log(`Fichier sans chemin: ${fichier.titre}, taille: ${result.taille}, date: ${result.date}`);
-      return result;
-    });
-    
-    console.log(`Envoi de ${fichiers.length} fichiers avec taille et date`);
-    
-    // Trier les fichiers par date en ordre décroissant (du plus récent au plus ancien)
-    fichiers.sort((a, b) => {
-      // Convertir les dates en objets Date pour la comparaison
-      const dateA = new Date(a.date || 0);
-      const dateB = new Date(b.date || 0);
-      // Ordre décroissant (du plus récent au plus ancien)
-      return dateB - dateA;
-    });
-    
-    res.json(fichiers);
-  } catch (error) {
-    console.error('Erreur lors de la récupération des fichiers:', error);
-    res.status(500).json({ success: false, message: 'Erreur lors de la récupération des fichiers' });
-  }
-});
-
-/**
- * Routes d'administration pour gérer les fichiers
- * Ces routes permettent de modifier et supprimer des fichiers
- */
-
-// Chemin vers le fichier JSON contenant les métadonnées des fichiers
-const fichiersJsonPath = path.join(__dirname, 'fichiers.json');
-
-// Route pour mettre à jour les informations d'un fichier
-app.post('/admin/update-file', (req, res) => {
-  try {
-    console.log('Début de la mise à jour du fichier');
-    const { index, updates } = req.body;
-    
-    // Vérifier que les données nécessaires sont présentes
-    if (index === undefined || !updates) {
-      console.log('Données invalides:', { index, updates });
-      return res.status(400).json({ success: false, message: 'Données invalides' });
+    // Recherche du fichier à modifier
+    const fileIndex = fichiers.findIndex(file => file.id === fileId);
+    if (fileIndex === -1) {
+      console.log('Fichier introuvable');
+      return res.status(404).json({ success: false, message: 'Fichier introuvable' });
     }
     
-    // Lire le fichier JSON
-    const fichiers = JSON.parse(fs.readFileSync(fichiersJsonPath, 'utf8'));
+    // Mise à jour du fichier
+    const updatedFile = { ...fichiers[fileIndex], ...req.body };
+    fichiers[fileIndex] = updatedFile;
     
-    // Vérifier que l'index est valide
-    if (index < 0 || index >= fichiers.length) {
-      console.log('Index invalide:', index);
-      return res.status(400).json({ success: false, message: 'Index invalide' });
-    }
-    
-    const fichierOriginal = fichiers[index];
-    console.log('Fichier original:', fichierOriginal);
-    console.log('Mises à jour:', updates);
-    
-    // Vérifier si le type de fichier change
-    const typeChange = updates.type && updates.type !== fichierOriginal.type;
-    
-    // Vérifier si le cours change
-    const coursChange = updates.cours && updates.cours !== fichierOriginal.cours;
-    
-    // Si le type change de PDF/ZIP à vidéo, supprimer le fichier physique
-    // car les vidéos sont juste des liens
-    if (typeChange && updates.type === 'video' && fichierOriginal.path) {
-      console.log('Conversion en vidéo - Suppression du fichier physique');
-      
-      try {
-        // Chemin complet du fichier à supprimer
-        const fileToDelete = path.join(__dirname, fichierOriginal.path);
-        console.log('Fichier à supprimer:', fileToDelete);
-        
-        // Vérifier si le fichier existe
-        if (fs.existsSync(fileToDelete)) {
-          // Supprimer le fichier
-          fs.unlinkSync(fileToDelete);
-          console.log('Fichier supprimé avec succès');
-        } else {
-          console.log('Le fichier n\'existe pas, aucune suppression nécessaire');
-        }
-        
-        // Pour les vidéos, nous n'avons pas besoin de path car c'est juste un lien
-        updates.path = null;
-      } catch (deleteError) {
-        console.error('Erreur lors de la suppression du fichier:', deleteError);
-        // On continue malgré l'erreur de suppression, car la conversion peut quand même fonctionner
-        updates.path = null;
-      }
-    }
-    // Si le cours change et que c'est un fichier physique (pas une vidéo), déplacer le fichier
-    else if (coursChange && fichierOriginal.path && (fichierOriginal.type === 'pdf' || fichierOriginal.type === 'zip')) {
-      try {
-        console.log('Déplacement du fichier suite au changement de cours');
-        
-        // Obtenir le chemin du fichier original
-        const oldPath = path.join(__dirname, fichierOriginal.path);
-        
-        // Vérifier si le fichier existe
-        if (!fs.existsSync(oldPath)) {
-          console.error('Fichier introuvable:', oldPath);
-          return res.status(404).json({ success: false, message: 'Fichier introuvable' });
-        }
-        
-        // Créer le nouveau chemin en remplaçant l'ancien cours par le nouveau
-        const newPath = fichierOriginal.path.replace(
-          /Les synthèses des invités\/[^\/]+\//,
-          `Les synthèses des invités/${updates.cours}/`
-        );
-        
-        // Créer le répertoire de destination s'il n'existe pas
-        const newDir = path.join(__dirname, 'Les synthèses des invités', updates.cours);
-        if (!fs.existsSync(newDir)) {
-          console.log('Création du répertoire:', newDir);
-          fs.mkdirSync(newDir, { recursive: true });
-        }
-        
-        // Chemin complet du nouveau fichier
-        const newFullPath = path.join(__dirname, newPath);
-        
-        console.log('Déplacement de', oldPath, 'vers', newFullPath);
-        
-        // Déplacer le fichier
-        fs.renameSync(oldPath, newFullPath);
-        
-        // Mettre à jour le chemin dans les mises à jour
-        updates.path = newPath;
-        console.log('Nouveau chemin:', updates.path);
-      } catch (moveError) {
-        console.error('Erreur lors du déplacement du fichier:', moveError);
-        return res.status(500).json({ 
-          success: false, 
-          message: 'Erreur lors du déplacement du fichier: ' + moveError.message 
-        });
-      }
-    }
-    
-    // Mettre à jour le fichier
-    fichiers[index] = { ...fichierOriginal, ...updates };
-    console.log('Fichier mis à jour:', fichiers[index]);
-    
-    // Enregistrer les modifications
-    fs.writeFileSync(fichiersJsonPath, JSON.stringify(fichiers, null, 2), 'utf8');
+    // Sauvegarde du fichier JSON mis à jour
+    fs.writeFileSync(jsonPath, JSON.stringify(fichiers, null, 2));
     console.log('Fichier JSON mis à jour avec succès');
     
     res.json({ success: true, message: 'Fichier mis à jour avec succès' });
@@ -851,58 +898,57 @@ app.post('/admin/update-file', (req, res) => {
 });
 
 // Route pour supprimer un fichier
-app.post('/admin/delete-file', (req, res) => {
+app.post('/delete-file', (req, res) => {
+  const fileId = parseInt(req.body.id);
+  if (!fileId) {
+    return res.status(400).json({ error: 'ID de fichier manquant' });
+  }
+
   try {
-    console.log('Début de la suppression du fichier');
-    const { index } = req.body;
-    console.log('Index à supprimer:', index);
+    console.log('Début de la suppression du fichier avec ID:', fileId);
+
+    // Utiliser un chemin absolu pour fichiers.json
+    const jsonPath = path.join(__dirname, 'fichiers.json');
     
-    // Vérifier que l'index est présent
-    if (index === undefined) {
-      console.log('Erreur: Index non spécifié');
-      return res.status(400).json({ success: false, message: 'Index non spécifié' });
+    // Vérifier si le fichier JSON existe
+    if (!fs.existsSync(jsonPath)) {
+      console.log('Fichier JSON introuvable');
+      return res.status(404).json({ success: false, message: 'Fichier JSON introuvable' });
     }
-    
+
     // Lire le fichier JSON
-    console.log('Lecture du fichier JSON:', fichiersJsonPath);
-    const fichiers = JSON.parse(fs.readFileSync(fichiersJsonPath, 'utf8'));
-    console.log('Nombre de fichiers dans la base de données:', fichiers.length);
-    
-    // Vérifier que l'index est valide
-    if (index < 0 || index >= fichiers.length) {
-      console.log('Erreur: Index invalide:', index);
-      return res.status(400).json({ success: false, message: 'Index invalide' });
+    const fichiers = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+
+    // Trouver l'index du fichier à supprimer
+    const fileIndex = fichiers.findIndex(file => file.id === fileId);
+    if (fileIndex === -1) {
+      console.log('Fichier avec ID', fileId, 'non trouvé');
+      return res.status(404).json({ success: false, message: 'Fichier non trouvé' });
     }
-    
+
     // Récupérer le fichier à supprimer
-    const fichier = fichiers[index];
-    console.log('Fichier à supprimer:', fichier);
+    const fichierASupprimer = fichiers[fileIndex];
+    console.log('Fichier à supprimer:', fichierASupprimer);
     
-    // Si c'est un fichier physique (PDF ou ZIP), supprimer le fichier du système de fichiers
-    if (fichier.type !== 'video' && fichier.path) {
-      try {
-        const filePath = path.join(__dirname, fichier.path);
-        console.log('Chemin du fichier physique à supprimer:', filePath);
-        
-        if (fs.existsSync(filePath)) {
-          console.log('Le fichier existe, suppression en cours...');
-          fs.unlinkSync(filePath);
-          console.log('Fichier physique supprimé avec succès');
-        } else {
-          console.log('Le fichier physique n\'existe pas, aucune suppression nécessaire');
-        }
-      } catch (deleteError) {
-        console.error('Erreur lors de la suppression du fichier physique:', deleteError);
-        // On continue malgré l'erreur de suppression du fichier physique
+    // Si c'est un fichier physique (PDF ou ZIP), le supprimer du système de fichiers
+    if (fichierASupprimer.path && (fichierASupprimer.type === 'pdf' || fichierASupprimer.type === 'zip')) {
+      const filePath = path.join(__dirname, fichierASupprimer.path);
+      console.log('Suppression du fichier physique:', filePath);
+      
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+        console.log('Fichier physique supprimé avec succès');
+      } else {
+        console.log('Fichier physique introuvable, poursuite de la suppression des métadonnées');
       }
-    } else {
-      console.log('Pas de fichier physique à supprimer (vidéo ou chemin manquant)');
     }
     
-    // Supprimer l'entrée du tableau
-    fichiers.splice(index, 1);
-    console.log('Entrée supprimée du tableau, nouveau nombre de fichiers:', fichiers.length);
+    // Supprimer l'entrée du fichier JSON
+    fichiers.splice(fileIndex, 1);
+    console.log('Entrée supprimée du fichier JSON');
     
+    // Enregistrer le fichier JSON mis à jour
+    fs.writeFileSync(jsonPath, JSON.stringify(fichiers, null, 2));
     // Enregistrer les modifications
     fs.writeFileSync(fichiersJsonPath, JSON.stringify(fichiers, null, 2), 'utf8');
     console.log('Fichier JSON mis à jour avec succès');
@@ -922,6 +968,37 @@ app.post('/admin/delete-file', (req, res) => {
  * @param {Object} req - Requête HTTP contenant les données du formulaire
 {{ ... }}
  */
+// Route pour supprimer un fichier
+app.delete('/delete-file/:id', async (req, res) => {
+  try {
+    const fileId = req.params.id;
+    
+    // Lire le fichier JSON actuel
+    const jsonData = JSON.parse(fs.readFileSync('fichiers.json', 'utf8'));
+    
+    // Trouver le fichier à supprimer
+    const fileToDelete = jsonData.find(file => file.id === fileId);
+    if (!fileToDelete) {
+      return res.status(404).json({ success: false, message: 'Fichier non trouvé' });
+    }
+    
+    // Supprimer le fichier physique
+    const filePath = path.join(__dirname, fileToDelete.path);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+    
+    // Mettre à jour fichiers.json
+    const updatedFiles = jsonData.filter(file => file.id !== fileId);
+    fs.writeFileSync('fichiers.json', JSON.stringify(updatedFiles, null, 2));
+    
+    res.json({ success: true, message: 'Fichier supprimé avec succès' });
+  } catch (error) {
+    console.error('Erreur lors de la suppression:', error);
+    res.status(500).json({ success: false, message: 'Erreur lors de la suppression du fichier' });
+  }
+});
+
 app.post('/ask-question', async (req, res) => {
   try {
     // Extraction des données du formulaire
@@ -1010,19 +1087,3 @@ app.post('/admin/login', (req, res) => {
     res.status(500).json({ success: false, message: 'Erreur lors de l\'authentification' });
   }
 });
-
-/**
- * Démarrage du serveur sur le port spécifié
- */
-const startServer = () => {
-  const server = app.listen(port, () => {
-    console.log(`Serveur démarré sur http://localhost:${port}`);
-  });
-  return server;
-};
-
-// Exporter l'application et la fonction de démarrage du serveur
-module.exports = {
-  app: app,
-  startServer: startServer
-};

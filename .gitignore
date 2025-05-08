@@ -5,10 +5,11 @@ config.js
 # Dossier des modules Node.js
 node_modules/
 
-# Fichiers uploadés
+# Fichiers uploadés et temporaires
 Les synthèses des invités/
+temp/
 
-# Fichier de métadonnées
+# Fichiers de données
 fichiers.json
 
 # Fichiers système

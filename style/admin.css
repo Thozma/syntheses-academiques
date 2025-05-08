@@ -1,284 +1,191 @@
+/* ======================================================
+   CONTENEUR PRINCIPAL
+   ====================================================== */
+
 /**
- * Feuille de style pour l'interface d'administration
- * Contient tous les styles spécifiques à la page d'administration
+ * Feuille de style de l'interface d'administration
+ * Contient tous les styles pour la page d'administration du site
  * 
- * Cette feuille de style définit l'apparence du panneau d'administration
+ * Cette feuille de style définit l'apparence de l'interface d'administration
  * pour la gestion des synthèses académiques. Elle inclut les styles pour
- * le tableau de fichiers, les formulaires, les boutons d'action et les
- * fenêtres modales.
+ * le tableau de fichiers, les formulaires d'édition, et les fenêtres modales.
+ * 
+ * Fonctionnalités spéciales :
+ * - Tableau de gestion des fichiers avec colonnes redimensionnables
+ * - Formulaires d'édition dans des fenêtres modales
+ * - Boutons d'action pour convertir, éditer et supprimer les fichiers
+ * - Filtres de recherche et de tri des fichiers
  * 
  * @author Thomas Bauwens
- * @version 1.1.0
+ * @version 1.0
  * @date Mai 2025
- * @lastModified 7 mai 2025
+ * @lastModified 8 mai 2025
  */
 
 /* ======================================================
-   MISE EN PAGE PRINCIPALE
+   CONTENEUR PRINCIPAL
    ====================================================== */
 
 /**
- * Conteneur principal de l'administration
- * Définit la largeur maximale, les marges et l'apparence générale
- * du panneau d'administration.
+ * Conteneur principal de la page d'administration
+ * Définit la largeur maximale et l'apparence générale de la page
+ * avec un fond blanc et une ombre légère
  */
 .admin-container {
-  max-width: 1400px;     /* Largeur maximale du conteneur */
-  margin: 30px auto;     /* Marge supérieure et inférieure de 30px, centré horizontalement */
-  background: #fff;      /* Fond blanc */
-  border-radius: 10px;   /* Coins arrondis */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);  /* Ombre légère */
-  padding: 20px;         /* Espacement interne */
-  width: 95%;            /* Largeur relative pour s'adapter aux différents écrans */
+  max-width: 1400px;
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 95%;
 }
 
+/* ======================================================
+   FORMULAIRE DE CONNEXION
+   ====================================================== */
+
 /**
- * Formulaire de connexion 
- * Style pour le formulaire de connexion affiché avant l'accès au panneau d'administration.
+ * Formulaire de connexion administrateur
+ * Centré sur la page avec une largeur maximale de 400px
  */
 .login-form {
-  max-width: 400px;      /* Largeur maximale du formulaire */
-  margin: 0 auto;        /* Centré horizontalement */
-  text-align: center;    /* Texte centré */
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 /* ======================================================
-   EN-TÊTE ET NAVIGATION
+   EN-TÊTE ADMINISTRATEUR
    ====================================================== */
 
 /**
- * En-tête d'administration 
- * Contient le titre et le bouton de déconnexion.
+ * En-tête de la page d'administration
+ * Contient le titre et les actions principales
+ * avec une bordure de séparation en bas
  */
 .admin-header {
-  display: flex;                /* Disposition flexible */
-  justify-content: space-between; /* Espace entre les éléments */
-  align-items: center;          /* Alignement vertical centré */
-  margin-bottom: 20px;          /* Marge inférieure */
-  border-bottom: 1px solid #eee; /* Bordure inférieure légère */
-  padding-bottom: 10px;         /* Espacement interne inférieur */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
 }
 
-/**
- * Titre du panneau d'administration
- * Utilise la couleur rouge Java (#f50000) pour le titre principal.
- */
 .admin-title {
-  color: #f50000;        /* Couleur rouge Java */
-  margin: 0;             /* Supprime les marges par défaut */
-}
-
-/**
- * Bouton de déconnexion
- * Bouton rouge pour se déconnecter du panneau d'administration.
- */
-.logout-btn {
-  background-color: #f44336;  /* Fond rouge */
-  color: white;               /* Texte blanc */
-  border: none;               /* Pas de bordure */
-  padding: 8px 16px;          /* Espacement interne */
-  border-radius: 4px;         /* Coins arrondis */
-  cursor: pointer;            /* Curseur en forme de main */
+  color: #d73a49;
+  font-family: Arial, sans-serif;
+  font-size: 1.5em;
+  margin: 0;
 }
 
 /* ======================================================
-   TABLEAU DE FICHIERS
+   TABLEAU DES FICHIERS
    ====================================================== */
 
 /**
- * Conteneur du tableau avec défilement horizontal
- * Permet de faire défiler le tableau horizontalement sur les petits écrans.
+ * Conteneur du tableau des fichiers
+ * Permet le défilement horizontal si nécessaire
+ * et ajoute une bordure autour du tableau
  */
 .table-container {
-  width: 100%;                /* Largeur totale */
-  overflow-x: scroll;         /* Force l'affichage de la barre de défilement */
-  -webkit-overflow-scrolling: touch; /* Défilement fluide sur appareils tactiles */
-  margin-bottom: 20px;        /* Marge inférieure */
-  position: relative;         /* Position relative pour les indicateurs */
-  border-radius: 5px;         /* Coins arrondis */
-  box-shadow: inset 0 0 5px rgba(0,0,0,0.1); /* Ombre intérieure subtile */
-  padding-bottom: 5px;        /* Espace pour la barre de défilement */
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
-/**
- * Personnalisation de la barre de défilement
- * Styles pour une barre de défilement plus visible et esthétique.
- */
-.table-container::-webkit-scrollbar {
-  height: 10px;               /* Hauteur de la barre de défilement */
-  background-color: #f5f5f5;  /* Couleur de fond */
-  border-radius: 5px;         /* Coins arrondis */
-}
-
-.table-container::-webkit-scrollbar-thumb {
-  background-color: #f50000;  /* Couleur rouge Java pour le curseur */
-  border-radius: 5px;         /* Coins arrondis */
-  border: 2px solid #f5f5f5;  /* Bordure pour un effet de padding */
-}
-
-.table-container::-webkit-scrollbar-thumb:hover {
-  background-color: #cc0000;  /* Rouge plus foncé au survol */
-}
-
-/**
- * Tableau principal des fichiers
- * Affiche la liste de tous les fichiers avec leurs propriétés et actions.
- */
 .file-table {
-  width: 100%;               /* Largeur totale */
-  border-collapse: collapse; /* Fusion des bordures */
-  margin-top: 20px;          /* Marge supérieure */
-  table-layout: fixed;       /* Largeurs de colonnes fixes */
-  min-width: 1200px;         /* Largeur minimale pour forcer le défilement */
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1200px;
 }
 
-/**
- * Cellules du tableau (en-tête et données)
- * Définit l'apparence et le comportement des cellules du tableau.
- */
-.file-table th, .file-table td {
-  padding: 4px 6px;          /* Espacement interne réduit pour gagner de l'espace */
-  border: 1px solid #ddd;     /* Bordure légère */
-  white-space: nowrap;        /* Empêche le retour à la ligne */
-  overflow: hidden;           /* Cache le contenu qui dépasse */
-  text-overflow: ellipsis;    /* Ajoute des points de suspension si le texte est tronqué */
-  vertical-align: middle;     /* Alignement vertical au milieu */
-  text-align: left;           /* Alignement du texte à gauche */
-  font-size: 0.8em;           /* Taille de police réduite pour plus de contenu */
+.file-table th,
+.file-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/**
- * Style spécifique pour les cellules de type vidéo
- * S'assure que le texte "Vidéo" s'affiche complètement.
- */
-.video-type {
-  min-width: 100px !important;       /* Largeur minimale forcée */
-  white-space: nowrap !important;     /* Empêche le retour à la ligne */
-  font-weight: bold;                  /* Texte en gras */
-  color: #f50000;                     /* Couleur rouge Java */
+.file-table th:last-child,
+.file-table td:last-child {
+  border-right: none;
 }
 
-.video-type span {
-  display: inline-block;              /* Permet d'appliquer des styles */
-  min-width: 50px;                    /* Largeur minimale pour le texte */
-}
-
-/**
- * Largeurs des colonnes
- * Définit des largeurs spécifiques pour chaque colonne du tableau.
- */
-.file-table th:nth-child(1) { width: 100px; }  /* Type - élargi pour afficher 'Vidéo' complètement */
-.file-table th:nth-child(2) { width: 300px; } /* Titre - élargi pour les titres plus longs */
-.file-table th:nth-child(3) { width: 250px; } /* Cours */
-.file-table th:nth-child(4) { width: 150px; } /* Nom/Discord */
-.file-table th:nth-child(5) { width: 80px; }  /* Taille */
-.file-table th:nth-child(6) { width: 100px; } /* Date */
-.file-table th:nth-child(7) { width: 200px; } /* Actions */
-
-/**
- * En-têtes de colonnes
- * Style spécifique pour les en-têtes du tableau, avec position fixe lors du défilement.
- */
 .file-table th {
-  background-color: #f2f2f2;   /* Fond gris clair */
-  position: sticky;           /* Position fixe lors du défilement */
-  top: 0;                     /* Collé au sommet */
-  font-weight: bold;          /* Texte en gras */
-  z-index: 10;                /* Assure que les en-têtes restent au-dessus du contenu */
+  background: #f6f8fa;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 /**
- * Largeurs des colonnes
- * Définit la largeur de chaque colonne du tableau pour optimiser l'espace.
- * Les colonnes les plus importantes (Titre et Cours) ont plus d'espace.
+ * Définition des largeurs des colonnes du tableau
+ * Chaque colonne a une largeur fixe pour maintenir
+ * une mise en page cohérente
  */
-.file-table th:nth-child(1) { width: 5%; }   /* Type - Icône et type de fichier */
-.file-table th:nth-child(2) { width: 30%; }  /* Titre - Titre du document (plus large pour les longs titres) */
-.file-table th:nth-child(3) { width: 25%; }  /* Cours - Nom du cours associé */
-.file-table th:nth-child(4) { width: 8%; }   /* Nom/Discord - Nom de l'auteur */
-.file-table th:nth-child(5) { width: 5%; }   /* Taille - Taille du fichier */
-.file-table th:nth-child(6) { width: 7%; }   /* Date - Date d'ajout ou de modification */
-.file-table th:nth-child(7) { width: 20%; }  /* Actions - Boutons d'action (modifier, supprimer, etc.) */
-
-/**
- * Lignes paires du tableau
- * Ajoute un fond légèrement coloré aux lignes paires pour faciliter la lecture.
- */
-.file-table tr:nth-child(even) {
-  background-color: #f9f9f9;    /* Fond gris très clair */
-}
-
-/**
- * Optimisation pour les colonnes de titre et de cours
- * Assure que le contenu reste sur une seule ligne et soit tronqué si nécessaire.
- * La propriété max-width: 0 force l'utilisation de text-overflow: ellipsis.
- */
-.file-table td:nth-child(2), .file-table td:nth-child(3) {
-  max-width: 0;    /* Force l'utilisation de text-overflow */
-}
-
-/**
- * Effet de survol sur les lignes
- * Change la couleur de fond lorsque l'utilisateur survole une ligne avec la souris.
- */
-.file-table tr:hover {
-  background-color: #f1f1f1;    /* Fond gris légèrement plus foncé au survol */
-}
-
-/**
- * Style spécifique pour les colonnes de taille et date
- * Réduit encore la taille du texte et centre le contenu pour ces colonnes.
- */
-.file-table td:nth-child(5), .file-table td:nth-child(6) {
-  font-size: 0.75em;     /* Taille de police encore plus petite */
-  text-align: center;    /* Texte centré */
-}
+.file-table th:nth-child(1),
+.file-table td:nth-child(1) { width: 60px; }  /* ID */
+.file-table th:nth-child(2),
+.file-table td:nth-child(2) { width: 80px; }  /* Type */
+.file-table th:nth-child(3),
+.file-table td:nth-child(3) { width: 250px; } /* Titre */
+.file-table th:nth-child(4),
+.file-table td:nth-child(4) { width: 200px; } /* Cours */
+.file-table th:nth-child(5),
+.file-table td:nth-child(5) { width: 120px; } /* Nom/Discord */
+.file-table th:nth-child(6),
+.file-table td:nth-child(6) { width: 80px; }  /* Taille */
+.file-table th:nth-child(7),
+.file-table td:nth-child(7) { width: 100px; } /* Date */
+.file-table th:nth-child(8),
+.file-table td:nth-child(8) { width: 120px; } /* Actions */
 
 /* ======================================================
    BOUTONS D'ACTION
    ====================================================== */
 
 /**
- * Boutons d'action génériques
- * Style de base pour tous les boutons d'action (modifier, supprimer, convertir).
+ * Styles communs pour tous les boutons d'action
+ * dans le tableau (convertir, éditer, supprimer)
  */
 .action-btn {
-  margin-right: 5px;       /* Espacement entre les boutons */
-  padding: 4px 8px;        /* Espacement interne */
-  border: none;            /* Pas de bordure */
-  border-radius: 3px;      /* Coins légèrement arrondis */
-  cursor: pointer;         /* Curseur en forme de main */
-  font-size: 0.85em;       /* Taille de police légèrement réduite */
-  display: inline-block;   /* Comportement de bloc en ligne */
-  min-width: 60px;         /* Largeur minimale pour l'alignement */
-  text-align: center;      /* Texte centré */
+  padding: 4px 8px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 4px;
+  color: white;
 }
 
-/**
- * Bouton Modifier
- * Bouton vert pour modifier les informations d'un fichier.
- */
-.edit-btn {
-  background-color: #4CAF50;   /* Vert */
-  color: white;                /* Texte blanc */
-}
-
-/**
- * Bouton Supprimer
- * Bouton rouge pour supprimer un fichier.
- */
-.delete-btn {
-  background-color: #f44336;   /* Rouge */
-  color: white;                /* Texte blanc */
-}
-
-/**
- * Bouton Convertir
- * Bouton bleu pour convertir un fichier en vidéo.
- */
 .convert-btn {
-  background-color: #2196F3;   /* Bleu */
-  color: white;                /* Texte blanc */
+  background: #2196F3;
+}
+
+.edit-btn {
+  background: #28a745;
+}
+
+.delete-btn {
+  background: #dc3545;
+}
+
+.logout-btn {
+  background: #dc3545;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 /* ======================================================
@@ -286,52 +193,54 @@
    ====================================================== */
 
 /**
- * Conteneur de fenêtre modale
- * Crée un fond semi-transparent qui couvre toute la page et contient la fenêtre modale.
+ * Fenêtre modale pour l'édition et la confirmation
+ * Affichée en superposition sur le contenu principal
+ * avec un fond semi-transparent
  */
 .modal {
-  display: none;                    /* Caché par défaut */
-  position: fixed;                  /* Position fixe par rapport à la fenêtre */
-  z-index: 1000;                    /* Niveau de superposition élevé */
-  left: 0;                          /* Aligné à gauche */
-  top: 0;                           /* Aligné en haut */
-  width: 100%;                      /* Largeur totale */
-  height: 100%;                     /* Hauteur totale */
-  background-color: rgba(0,0,0,0.5); /* Fond noir semi-transparent */
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
 }
 
-/**
- * Contenu de la fenêtre modale
- * Définit l'apparence de la boîte de dialogue modale elle-même.
- */
 .modal-content {
-  background-color: #fff;           /* Fond blanc */
-  margin: 10% auto;                 /* Marge supérieure et centré horizontalement */
-  padding: 20px;                    /* Espacement interne */
-  border-radius: 5px;               /* Coins arrondis */
-  width: 60%;                       /* Largeur relative */
-  max-width: 600px;                 /* Largeur maximale */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Ombre portée */
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+  margin: 5% auto;
+  padding: 30px;
+  width: 90%;
+  max-width: 600px;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border: 1px solid #e9ecef;
 }
 
-/**
- * Bouton de fermeture de la fenêtre modale
- * Affiche un 'X' en haut à droite de la fenêtre modale pour la fermer.
- */
 .close {
-  color: #aaa;                      /* Couleur grise */
-  float: right;                     /* Aligné à droite */
-  font-size: 28px;                  /* Grande taille de police */
-  font-weight: bold;                /* Texte en gras */
-  cursor: pointer;                  /* Curseur en forme de main */
-  line-height: 0.8;                 /* Ajustement de la hauteur de ligne */
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  line-height: 1;
+  padding: 5px;
 }
 
-/**
- * Effet de survol sur le bouton de fermeture
- */
 .close:hover {
-  color: #000;                      /* Noir au survol */
+  color: #333;
+}
+
+.modal h3 {
+  margin: 0 0 20px 0;
+  color: #1a237e;
+  font-size: 1.5em;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e8eaf6;
 }
 
 /* ======================================================
@@ -339,171 +248,128 @@
    ====================================================== */
 
 /**
- * Groupe de formulaire
- * Conteneur pour un élément de formulaire (label + input/select).
+ * Styles des groupes de formulaires
+ * Chaque groupe contient un label et un champ de saisie
  */
 .form-group {
-  margin-bottom: 15px;              /* Espacement entre les groupes */
+  margin-bottom: 15px;
 }
 
-/**
- * Étiquettes de formulaire
- * Style pour les étiquettes des champs de formulaire.
- */
 .form-group label {
-  display: block;                   /* Affichage en bloc (une ligne par étiquette) */
-  margin-bottom: 5px;               /* Espace sous l'étiquette */
-  font-weight: bold;                /* Texte en gras */
-  color: #333;                      /* Couleur de texte foncée */
+  display: block;
+  margin-bottom: 5px;
 }
 
-/**
- * Champs de saisie, sélecteurs et zones de texte
- * Style commun pour tous les éléments de formulaire interactifs.
- */
-.form-group input, .form-group select, .form-group textarea {
-  width: 100%;                      /* Largeur totale */
-  padding: 8px;                     /* Espacement interne */
-  border: 1px solid #ddd;           /* Bordure légère */
-  border-radius: 4px;               /* Coins arrondis */
-  font-family: Arial, sans-serif;   /* Police de caractères */
-  font-size: 0.9em;                 /* Taille de police */
-  transition: border-color 0.3s;    /* Animation de transition */
+.form-group {
+  margin-bottom: 20px;
 }
 
-/**
- * État de focus des champs de formulaire
- * Style appliqué lorsqu'un champ reçoit le focus.
- */
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-  border-color: #4CAF50;            /* Bordure verte */
-  outline: none;                    /* Supprime le contour par défaut */
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3); /* Légère lueur verte */
+/* Styles communs pour les affichages d'informations */
+.id-display,
+.type-display {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  margin-left: 8px;
 }
 
-/**
- * Zone des boutons d'action du formulaire
- * Conteneur pour les boutons de soumission et d'annulation.
- */
+/* Style spécifique pour l'ID */
+.id-display {
+  background: #e3f2fd;
+  border: 1px solid #2196f3;
+  color: #1565c0;
+}
+
+/* Style spécifique pour le type */
+.type-display {
+  background: #fff3e0;
+  border: 1px solid #ff9800;
+  color: #e65100;
+  text-transform: uppercase;
+}
+
+/* Style pour tous les champs de formulaire */
+.form-control,
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.form-control:focus,
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #2196f3;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+/* Alignement des labels */
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #1a237e;
+  font-size: 0.95em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #3f51b5;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.15);
+  background-color: #fafafa;
+}
+
 .form-actions {
-  text-align: right;                /* Alignement à droite */
-  margin-top: 20px;                 /* Marge supérieure */
-  display: flex;                    /* Disposition flexible */
-  justify-content: flex-end;        /* Alignement à droite */
-  gap: 10px;                        /* Espacement entre les boutons */
+  margin-top: 30px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
-/**
- * Boutons de formulaire
- * Style commun pour tous les boutons dans la zone d'actions du formulaire.
- */
 .form-actions button {
-  padding: 8px 16px;                /* Espacement interne */
-  border: none;                     /* Pas de bordure */
-  border-radius: 4px;               /* Coins arrondis */
-  cursor: pointer;                  /* Curseur en forme de main */
-  font-weight: bold;                /* Texte en gras */
-  transition: background-color 0.2s; /* Animation de transition */
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  border: none;
 }
 
-/**
- * Bouton de sauvegarde
- * Bouton vert pour enregistrer les modifications.
- */
 .save-btn {
-  background-color: #4CAF50;        /* Fond vert */
-  color: white;                     /* Texte blanc */
+  background: #28a745;
+  color: white;
 }
 
-/**
- * Effet de survol sur le bouton de sauvegarde
- */
-.save-btn:hover {
-  background-color: #45a049;        /* Vert légèrement plus foncé */
-}
-
-/**
- * Bouton d'annulation
- * Bouton rouge pour annuler les modifications.
- */
 .cancel-btn {
-  background-color: #f44336;        /* Fond rouge */
-  color: white;                     /* Texte blanc */
-}
-
-/**
- * Effet de survol sur le bouton d'annulation
- */
-.cancel-btn:hover {
-  background-color: #d32f2f;        /* Rouge légèrement plus foncé */
-}
-
-/* Conteneur de tableau avec défilement */
-.table-container {
-  max-height: 700px;
-  overflow-y: auto;
-  overflow-x: auto;
-  position: relative;
-}
-
-/* ======================================================
-   BARRE DE DÉFILEMENT PERSONNALISÉE
-   ====================================================== */
-
-/**
- * Conteneur du tableau avec défilement
- * Définit les propriétés de défilement et l'apparence des barres de défilement.
- */
-.table-container {
-  overflow-x: auto;                     /* Défilement horizontal automatique si nécessaire */
-  overflow-y: auto;                     /* Défilement vertical automatique si nécessaire */
-  scrollbar-width: thin;                /* Barre de défilement fine pour Firefox */
-  scrollbar-color: #4CAF50 #f1f1f1;     /* Couleurs pour Firefox (pouce et piste) */
-  padding-bottom: 5px;                  /* Espace pour la barre de défilement */
-  max-height: 700px;                    /* Hauteur maximale avant défilement vertical */
-  position: relative;                   /* Pour le positionnement des éléments enfants */
-}
-
-/**
- * Personnalisation de la barre de défilement pour WebKit (Chrome, Safari, etc.)
- * Définit la taille des barres de défilement.
- */
-.table-container::-webkit-scrollbar {
-  height: 14px;                         /* Hauteur de la barre horizontale */
-  width: 14px;                          /* Largeur de la barre verticale */
-}
-
-/**
- * Piste de la barre de défilement (arrière-plan)
- */
-.table-container::-webkit-scrollbar-track {
-  background: #f1f1f1;                  /* Fond gris très clair */
-  border-radius: 10px;                  /* Coins arrondis */
-  box-shadow: inset 0 0 5px rgba(0,0,0,0.1); /* Légère ombre intérieure */
-}
-
-/**
- * Pouce de la barre de défilement (partie mobile)
- */
-.table-container::-webkit-scrollbar-thumb {
-  background: #4CAF50;                  /* Couleur verte assortie aux boutons */
-  border-radius: 10px;                  /* Coins arrondis */
-  border: 2px solid #f1f1f1;            /* Bordure pour un effet de relief */
-}
-
-/**
- * Effet de survol sur le pouce de la barre de défilement
- */
-.table-container::-webkit-scrollbar-thumb:hover {
-  background: #45a049;                  /* Vert légèrement plus foncé au survol */
-}
-
-/**
- * Indicateur visuel pour le défilement horizontal
- * Ajoute une bordure verte en bas du tableau quand le défilement horizontal est nécessaire.
- */
-.has-horizontal-scroll {
-  border-bottom: 3px solid #4CAF50;     /* Bordure verte en bas */
+  background: #dc3545;
+  color: white;
 }
 
 /* ======================================================
@@ -511,43 +377,30 @@
    ====================================================== */
 
 /**
- * Barre de recherche
- * Conteneur pour le champ de recherche.
+ * Barre de recherche et options de filtrage
+ * Permet de filtrer et rechercher dans la liste des fichiers
  */
 .search-bar {
-  margin-bottom: 20px;              /* Espacement sous la barre de recherche */
+  margin-bottom: 15px;
 }
 
-/**
- * Champ de saisie de la recherche
- * Style du champ de texte pour la recherche de fichiers.
- */
 .search-bar input {
-  width: 100%;                      /* Largeur totale */
-  padding: 10px;                    /* Espacement interne */
-  border: 1px solid #ddd;           /* Bordure légère */
-  border-radius: 4px;               /* Coins arrondis */
-  font-size: 16px;                  /* Taille de police */
+  width: 100%;
+  max-width: 500px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
-/**
- * Options de filtrage
- * Conteneur pour les sélecteurs de filtres (type, cours).
- */
 .filter-options {
-  display: flex;                    /* Disposition flexible */
-  gap: 10px;                        /* Espacement entre les éléments */
-  margin-bottom: 20px;              /* Marge inférieure */
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
-/**
- * Sélecteurs de filtres
- * Style des listes déroulantes pour filtrer les fichiers.
- */
 .filter-options select {
-  padding: 8px;                     /* Espacement interne */
-  border: 1px solid #ddd;           /* Bordure légère */
-  border-radius: 4px;               /* Coins arrondis */
-  background-color: white;          /* Fond blanc */
-  cursor: pointer;                  /* Curseur en forme de main */
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-width: 150px;
 }

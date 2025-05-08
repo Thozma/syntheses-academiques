@@ -20,10 +20,14 @@
  */
 
 // Import du serveur
-const { startServer } = require('./server');
+const app = require('./server');
+const config = require('./config');
 
 // Démarrer le serveur
-const server = startServer();
+const port = config.server.port || 3001;
+const server = app.listen(port, () => {
+  console.log(`Serveur démarré sur le port ${port}`);
+});
 
 // Gestion des erreurs non capturées
 process.on('uncaughtException', (err) => {

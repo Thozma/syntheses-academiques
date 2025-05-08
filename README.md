@@ -1,10 +1,14 @@
 # Plateforme de Partage de Synthèses Académiques
 
-Une application web pour permettre aux étudiants de partager et consulter des synthèses de cours. Développée pour les étudiants de première année en informatique de la Haute Ecole Léonard de Vinci.
+Une plateforme web intuitive permettant aux étudiants de première année en informatique de la Haute École Léonard de Vinci de partager et consulter des synthèses de cours. Cette application met l'accent sur une expérience utilisateur fluide avec une interface inspirée du langage Java.
 
 ![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)
-![Dernière mise à jour](https://img.shields.io/badge/dernière%20mise%20à%20jour-mai%202025-green.svg)
+![Dernière mise à jour](https://img.shields.io/badge/dernière%20mise%20à%20jour-8%20mai%202025-green.svg)
 ![Auteur](https://img.shields.io/badge/auteur-Thomas%20Bauwens-orange.svg)
+
+## À Propos
+
+Cette plateforme a été conçue pour faciliter le partage de ressources académiques entre étudiants. Elle propose une interface moderne et intuitive, avec un design inspiré du langage Java pour créer un environnement familier aux étudiants en informatique.
 
 ## Fonctionnalités
 
@@ -28,20 +32,23 @@ Une application web pour permettre aux étudiants de partager et consulter des s
 - Effet arc-en-ciel animé sur le titre principal
 
 ### Améliorations récentes (v1.2.0)
-- Boutons de type d'upload (pdf, zip, multi, video) centrés et alignés avec le titre
-- Style amélioré des boutons actifs avec couleur orange vif et effet de lueur
-- Maintien de la couleur orange des boutons actifs même au survol
-- Formulaire d'upload plus compact et équilibré
-- Meilleure harmonisation des espacements entre les éléments du formulaire
-- Ajout d'effets visuels comme la bordure arc-en-ciel animée et le titre arc-en-ciel
-- Documentation complète du code CSS avec commentaires détaillés
-- Tri des fichiers par date dans la page admin (les nouveaux fichiers apparaissent en premier)
+- Ajout de commentaires détaillés dans tous les fichiers CSS pour une meilleure maintenabilité
+- Refonte complète de l'interface utilisateur avec un thème Java cohérent
+- Optimisation des performances avec une meilleure gestion des ressources
+- Amélioration de la documentation technique
+- Mise à jour des dépendances vers les dernières versions stables
+- Renforcement de la sécurité avec une meilleure validation des fichiers
+- Amélioration de l'accessibilité et de l'expérience utilisateur
+- Support complet des caractères spéciaux dans les noms de fichiers
 
 ### Fonctionnalités côté serveur
-- Notifications par email lors de nouveaux uploads
-- Validation des fichiers côté serveur
-- Gestion des métadonnées des fichiers
-- Création automatique d'archives ZIP pour les uploads multiples
+- Système de notification par email lors de nouveaux uploads avec template HTML personnalisé
+- Validation robuste des fichiers avec vérification du type MIME et de la taille
+- Gestion avancée des métadonnées des fichiers avec historique des modifications
+- Création automatique d'archives ZIP pour les uploads multiples avec compression optimisée
+- Système de nettoyage automatique des fichiers temporaires
+- Logging détaillé des opérations pour le débogage
+- Protection contre les attaques courantes (XSS, CSRF, injection)
 
 ## Installation locale
 
@@ -149,9 +156,22 @@ node deploy.js
 
 ## Sécurité
 
-- Le fichier `config.js` contient des informations sensibles et ne doit pas être partagé
-- Utilisez le fichier `.gitignore` pour éviter de partager des fichiers sensibles
-- Les mots de passe et informations d'authentification sont stockés dans `config.js`
+### Bonnes Pratiques
+- Utilisation du fichier `.gitignore` pour exclure les fichiers sensibles
+- Séparation des configurations sensibles dans des fichiers dédiés
+- Validation des types MIME pour prévenir les uploads malveillants
+- Limitation de la taille des fichiers (20 Mo max pour les PDF)
+
+### Fichiers Sensibles
+- `config.js` : Configuration SMTP et paramètres serveur
+- `ftp-credentials.js` : Identifiants FTP pour le déploiement
+- `fichiers.json` : Base de données des fichiers
+
+### Protection des Données
+- Nettoyage automatique des fichiers temporaires
+- Vérification des extensions de fichiers
+- Sanitization des noms de fichiers
+- Protection contre les attaques XSS et CSRF
 
 ## Technologies Utilisées
 
@@ -167,12 +187,25 @@ node deploy.js
 
 ### Thème Java
 
-Le site utilise un thème inspiré du langage de programmation Java pour créer une ambiance technique adaptée aux étudiants en informatique :
+Le site utilise un thème inspiré du langage de programmation Java pour créer une expérience familière aux étudiants en informatique :
 
-- Mots-clés Java (`for`, `while`, `public static`, `new`, `import`, `void`, `submit`, `send`, `pdf`, `video`) affichés en rouge (#d73a49)
-- Police Arial (non monospace) pour les mots-clés Java avec taille de 0.9em et poids normal
-- Intégration des mots-clés dans les titres et boutons pour un effet visuel cohérent
-- Boutons de sélection du type de contenu (PDF/vidéo) avec style orange clair
+#### Style des Mots-clés
+- Couleur : Rouge (#d73a49) pour les mots-clés Java
+- Police : Arial (non monospace) pour une meilleure lisibilité
+- Taille : 0.9em pour une hiérarchie visuelle cohérente
+- Poids : Normal (non gras) pour un style professionnel
+
+#### Mots-clés Utilisés
+- Contrôles : `for`, `while`, `if`, `else`
+- Déclarations : `public`, `static`, `void`, `new`
+- Actions : `import`, `submit`, `send`
+- Types : `pdf`, `zip`, `video`, `multi`
+
+#### Intégration Visuelle
+- Boutons thématiques pour les types de fichiers
+- Transitions et animations subtiles
+- Effets de survol cohérents
+- Palette de couleurs inspirée des IDE Java
 
 ### Icônes de Cours
 
@@ -194,11 +227,44 @@ Chaque cours est représenté par une icône Unicode thématique :
 
 ### Interface Utilisateur
 
-- Formulaires avec espacement et alignement optimisés
-- Formulaire de contact avec largeur de 420px et padding de 15px
-- Champ email avec expansion automatique (flex: 1)
-- Animations subtiles pour améliorer l'expérience utilisateur
-- Sections de cours pliables/dépliables avec animation de flèche
+#### Formulaires
+- Largeur optimale de 420px pour une meilleure lisibilité
+- Espacement interne uniforme de 15px
+- Alignement précis des champs et labels
+- Expansion automatique du champ email (flex: 1)
+- Placeholders descriptifs et intuitifs
+
+#### Navigation
+- Sections de cours pliables/dépliables
+- Animation de flèche pour indiquer l'état
+- Organisation hiérarchique claire
+- Navigation fluide entre les sections
+
+#### Animations et Effets
+- Transitions douces pour les interactions
+- Bordure arc-en-ciel animée sur la photo
+- Effet de survol sur les boutons
+- Feedback visuel immédiat
+
+## Maintenance
+
+### Code
+- Commentaires détaillés dans tous les fichiers CSS
+- Structure modulaire pour faciliter les modifications
+- Nommage clair et cohérent des classes
+- Documentation technique complète
+
+### Performance
+- Optimisation des images et ressources
+- Minification des fichiers CSS et JS
+- Nettoyage automatique des fichiers temporaires
+- Gestion efficace de la mémoire
+
+### Mises à jour
+- Journal des modifications détaillé
+- Versionnement sémantique
+- Procédure de déploiement documentée
+- Sauvegarde régulière des données
 
 ## Auteur
 

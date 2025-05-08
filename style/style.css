@@ -14,127 +14,207 @@
  * - Boutons de type d'upload centrés qui changent de couleur (orange) lorsqu'ils sont actifs
  * 
  * @author Thomas Bauwens
- * @version 1..0
+ * @version 1.0
  * @date Mai 2025
  * @lastModified 7 mai 2025
  */
 
-/* Reset et styles de base pour toute la page */
+/* ======================================================
+   STYLES DE BASE
+   ====================================================== */
+
+/**
+ * Styles de base et reset pour toute la page
+ * Définit les styles fondamentaux qui s'appliquent à l'ensemble du site
+ * Utilise une approche minimaliste pour éviter les styles indésirables par défaut
+ */
 body {
-    font-family: Arial, sans-serif;          /* Police par défaut pour tout le site */
-    margin: 0;                               /* Supprime les marges externes par défaut */
-    padding: 30px 0 0 0;                     /* Ajoute un padding en haut pour descendre tout le contenu */
-    background-color: #f4f4f4;             /* Couleur de fond gris clair */
+    font-family: Arial, sans-serif;          /* Police sans-serif moderne et lisible */
+    margin: 0;                               /* Réinitialise les marges pour un contrôle précis */
+    padding: 30px 0 0 0;                     /* Espace en haut pour la hiérarchie visuelle */
+    background-color: #f4f4f4;                /* Fond gris clair pour un contraste doux */
 }
 
-/* Style pour la section de présentation */
+/* ======================================================
+   SECTION DE PRÉSENTATION
+   ====================================================== */
+
+/**
+ * Section de présentation en haut de la page
+ * Contient l'image de profil, les informations de l'école
+ * et le formulaire de contact
+ */
+/**
+ * Section de présentation principale
+ * Utilise flexbox pour organiser le contenu en colonnes
+ */
 .presentation {
-    display: flex;
-    padding: 15px;
-    background-color: #fff;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;                           /* Disposition flexible pour le contenu */
+    padding: 15px;                           /* Espacement interne uniforme */
+    background-color: #fff;                  /* Fond blanc pour contraster */
+    border-radius: 10px;                     /* Coins arrondis pour l'esthétique */
+    margin-bottom: 20px;                     /* Espace avec les éléments suivants */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombre légère pour la profondeur */
 }
 
+/**
+ * Conteneur principal de l'en-tête
+ * Organise le contenu horizontalement
+ */
 .header-main {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
+    display: flex;                           /* Layout flexible */
+    justify-content: space-between;          /* Espace entre les éléments */
+    align-items: center;                     /* Alignement vertical centré */
+    width: 100%;                            /* Occupe toute la largeur */
 }
 
+/**
+ * Partie gauche de l'en-tête
+ * Contient le logo et les informations principales
+ */
 .header-left {
-    display: flex;
-    align-items: flex-end;
-    gap: 20px;
-    flex: 1;
-    min-width: 60%;
+    display: flex;                           /* Layout flexible */
+    align-items: flex-end;                   /* Aligne les éléments en bas */
+    gap: 20px;                              /* Espace entre les éléments */
+    flex: 1;                                /* Prend l'espace disponible */
+    min-width: 60%;                         /* Largeur minimale garantie */
 }
 
+/**
+ * Sous-titres dans la section texte
+ * Style pour la hiérarchie visuelle
+ */
 .texte h3 {
-    margin: 5px 0;
+    margin: 5px 0;                           /* Espacement vertical compact */
 }
 
+/**
+ * Informations de l'école
+ * Style distinctif pour les informations institutionnelles
+ */
 .school-info {
-    font-size: 0.9em !important;
-    color: #666 !important;
-    font-weight: normal !important;
-    white-space: nowrap;
+    font-size: 0.9em !important;             /* Taille de texte réduite */
+    color: #666 !important;                   /* Couleur grise pour distinction */
+    font-weight: normal !important;           /* Poids normal pour lisibilité */
+    white-space: nowrap;                     /* Évite le retour à la ligne */
 }
 
+/**
+ * Formulaire de contact
+ * Style pour le formulaire de contact avec un design épuré
+ */
 .contact-info {
-    background-color: #f5f5f5;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    width: 420px;
-    margin-left: 20px;
-    align-self: center;
+    background-color: #f5f5f5;                /* Fond gris clair pour distinction */
+    padding: 15px;                           /* Espacement interne uniforme */
+    border-radius: 8px;                      /* Coins arrondis pour cohérence */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Ombre légère pour profondeur */
+    width: 420px;                            /* Largeur fixe pour mise en page */
+    margin-left: 20px;                       /* Espace à gauche */
+    align-self: center;                      /* Centrage vertical */
 }
 
+/**
+ * Titre du formulaire
+ * Style pour le titre du formulaire de contact
+ */
 .contact-info h4 {
-    margin: 0 0 8px 0;
-    color: #333;
-    font-size: 0.9em;
-    text-align: center;
+    margin: 0 0 8px 0;                       /* Marge en bas uniquement */
+    color: #333;                             /* Couleur sombre pour lisibilité */
+    font-size: 0.9em;                        /* Taille réduite pour hiérarchie */
+    text-align: center;                      /* Centrage du texte */
 }
 
+/**
+ * Ligne de formulaire
+ * Conteneur flexible pour les champs alignés
+ */
 .form-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 8px;
+    display: flex;                           /* Layout flexible */
+    gap: 8px;                               /* Espace entre les champs */
+    margin-bottom: 8px;                      /* Espace sous chaque ligne */
 }
 
+/**
+ * Dernière ligne de formulaire
+ * Supprime la marge inférieure pour le dernier élément
+ */
 .form-row:last-child {
-    margin-bottom: 0;
+    margin-bottom: 0;                        /* Pas de marge pour le dernier */
 }
 
+/**
+ * Champs de saisie
+ * Style commun pour les inputs et textareas
+ */
 .contact-info input,
 .contact-info textarea {
-    padding: 6px 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 0.9em;
-    font-family: Arial, sans-serif;
+    padding: 6px 10px;                       /* Espacement interne pour le texte */
+    border: 1px solid #ddd;                  /* Bordure légère */
+    border-radius: 4px;                      /* Coins arrondis */
+    font-size: 0.9em;                        /* Taille de texte réduite */
+    font-family: Arial, sans-serif;          /* Police cohérente */
 }
 
+/**
+ * Champ de texte
+ * Style spécifique pour les champs de type texte
+ */
 .contact-info input[type="text"] {
-    width: 120px;
+    width: 120px;                           /* Largeur fixe pour nom/discord */
 }
 
+/**
+ * Champ email
+ * Style spécifique pour le champ email
+ */
 .contact-info input[type="email"] {
-    flex: 1;
+    flex: 1;                                /* Prend l'espace restant */
 }
 
+/**
+ * Zone de texte
+ * Style pour la zone de message
+ */
 .contact-info textarea {
-    flex: 1;
-    height: 34px;
-    resize: none;
-    box-sizing: border-box;
+    flex: 1;                                /* Prend l'espace disponible */
+    height: 34px;                           /* Hauteur fixe */
+    resize: none;                           /* Désactive le redimensionnement */
+    box-sizing: border-box;                 /* Inclut padding dans la taille */
 }
 
+/**
+ * Bouton d'envoi
+ * Style pour le bouton de soumission
+ */
 .contact-info button {
-    padding: 5px 15px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 0.85em;
-    transition: background-color 0.2s;
+    padding: 5px 15px;                       /* Espacement interne */
+    background-color: #4CAF50;               /* Vert pour action positive */
+    color: white;                           /* Texte blanc pour contraste */
+    border: none;                           /* Pas de bordure */
+    border-radius: 3px;                      /* Coins légèrement arrondis */
+    cursor: pointer;                        /* Curseur de type pointeur */
+    font-size: 0.85em;                      /* Taille de texte réduite */
+    transition: background-color 0.2s;       /* Transition douce au survol */
 }
 
+/**
+ * Effet de survol du bouton
+ * Change la couleur au survol pour feedback visuel
+ */
 .contact-info button:hover {
-    background-color: #45a049;
+    background-color: #45a049;               /* Vert plus foncé au survol */
 }
 
+/**
+ * Message de confirmation
+ * Style pour le message de succès
+ */
 .confirmation-message {
-    display: none;
-    color: green;
-    font-size: 0.85em;
-    margin-top: 8px;
-    text-align: center;
+    display: none;                          /* Caché par défaut */
+    color: green;                           /* Couleur verte pour succès */
+    font-size: 0.85em;                      /* Taille de texte réduite */
+    margin-top: 8px;                        /* Espace au-dessus */
+    text-align: center;                     /* Texte centré */
 }
 
 /* Style du conteneur de présentation en haut de la page */
@@ -150,7 +230,14 @@ body {
     gap: 30px;                                  /* Espace entre les éléments */
 }
 
-/* Style de l'image de profil */
+/* ======================================================
+   IMAGE DE PROFIL
+   ====================================================== */
+
+/**
+ * Style de l'image de profil avec bordure arc-en-ciel animée
+ * L'image est circulaire et a une taille fixe
+ */
 .image {
     width: 120px;                            /* Largeur fixe */
     height: 120px;                           /* Hauteur fixe */
@@ -166,8 +253,14 @@ body {
     animation: rainbow-border 8s linear infinite; /* Animation plus lente pour mieux voir les couleurs */
 }
 
-/* Animation de la bordure arc-en-ciel */
-/* Définit le mouvement du dégradé pour créer l'effet arc-en-ciel animé */
+/* ======================================================
+   ANIMATIONS
+   ====================================================== */
+
+/**
+ * Animation de la bordure arc-en-ciel
+ * Crée un effet de dégradé animé autour de l'image de profil
+ */
 @keyframes rainbow-border {
     0% { background-position: 0% 50%; }   /* Position de départ du dégradé */
     50% { background-position: 100% 50%; } /* Position médiane du dégradé */
@@ -218,41 +311,64 @@ h1 {
 
 /* Style des sous-titres */
 h3 {
-    font-size: 16px;                         /* Taille de police */
-    color: #666;                           /* Couleur gris foncé */
-    margin: 8px 0;                           /* Espacement vertical */
+    font-size: 16px;                         /* Taille de police standard pour les sous-titres */
+    color: #666;                             /* Couleur gris foncé pour une meilleure lisibilité */
+    margin: 8px 0;                           /* Espacement vertical pour séparer du contenu adjacent */
 }
 
-/* Section liste des fichiers */
+/* ======================================================
+   SECTION LISTE DES FICHIERS
+   ====================================================== */
+
+/**
+ * Conteneur principal pour la liste des fichiers
+ * Utilise un fond blanc avec une ombre pour créer un effet de carte
+ */
 .files-container {
-    background: #fff;                         /* Fond blanc */
-    border-radius: 10px;                        /* Coins arrondis */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);    /* Ombre portée légère */
-    padding: 20px;                              /* Espacement interne */
-    max-width: 1000px;                          /* Largeur maximale */
-    margin: 20px auto;                          /* Centrage avec marge en haut */
+    background: #fff;                         /* Fond blanc pour contraster avec le fond de page */
+    border-radius: 10px;                      /* Coins arrondis pour un aspect moderne */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);   /* Ombre portée légère pour effet de profondeur */
+    padding: 20px;                           /* Espacement interne pour le contenu */
+    max-width: 1000px;                       /* Largeur maximale pour la lisibilité */
+    margin: 20px auto;                       /* Centrage horizontal avec marge verticale */
 }
 
+/**
+ * Titre de la section des fichiers
+ * Style cohérent avec le thème général
+ */
 .files-container h2 {
-    color: #333;                             /* Couleur du texte */
-    margin: 0 0 20px 0;                        /* Marge en bas uniquement */
-    font-size: 1.5em;                         /* Taille de police */
+    color: #333;                             /* Couleur sombre pour une bonne lisibilité */
+    margin: 0 0 20px 0;                      /* Marge en bas pour séparer du contenu */
+    font-size: 1.5em;                        /* Taille plus grande pour hiérarchie visuelle */
 }
 
+/**
+ * Liste des fichiers
+ * Organisation verticale avec espacement uniforme
+ */
 .files-list {
-    display: flex;                           /* Disposition en flexbox */
-    flex-direction: column;                  /* Empilé verticalement */
-    gap: 5px;                               /* Espace réduit entre les éléments */
+    display: flex;                           /* Utilise flexbox pour le contrôle du layout */
+    flex-direction: column;                  /* Organise les éléments en colonne */
+    gap: 5px;                               /* Petit espacement uniforme entre les fichiers */
 }
 
-/* Style des sections de cours */
+/* ======================================================
+   SECTIONS DE COURS
+   ====================================================== */
+
+/**
+ * Style des sections contenant les fichiers de chaque cours
+ * Chaque section a un fond blanc, des coins arrondis et une ombre
+ */
 .course-section {
-    background: #fff;                         /* Fond blanc */
-    border-radius: 8px;                        /* Coins arrondis */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);   /* Ombre légère */
-    padding: 10px;                              /* Espacement interne réduit */
-    margin-bottom: 10px;                      /* Espace en bas augmenté */
-    border: 2px solid #999;                   /* Bordure grise plus foncée */
+    background: #fff;                         /* Fond blanc pour contraster avec l'arrière-plan */
+    border-radius: 8px;                       /* Coins arrondis pour un aspect moderne */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);   /* Légère ombre pour effet de profondeur */
+    padding: 10px;                            /* Espacement interne pour le contenu */
+    margin-bottom: 10px;                      /* Espace entre les sections de cours */
+    transition: box-shadow 0.3s;              /* Animation douce pour l'effet de survol */
+    border: 2px solid #999;                   /* Bordure visible pour délimiter la section */
 }
 
 .course-section h3 {
@@ -998,7 +1114,6 @@ h3 {
     display: flex;                           /* Disposition en flexbox */
     flex-direction: column;                  /* Empilé verticalement */
     gap: 5px;                                /* Espace réduit entre les éléments */
-    margin-bottom: 20px;                     /* Espace en bas */
 }
 
 /**
@@ -1006,12 +1121,13 @@ h3 {
  * Conteneur pour chaque catégorie de cours avec ses fichiers associés.
  */
 .course-section {
-    background: #fff;                         /* Fond blanc */
-    border-radius: 8px;                       /* Coins arrondis */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);   /* Ombre légère */
-    padding: 10px;                            /* Espacement interne réduit */
-    margin-bottom: 10px;                      /* Espace en bas augmenté */
-    transition: box-shadow 0.3s;              /* Transition pour l'effet de survol */
+    background: #fff;                         /* Définit le fond blanc pour contraster avec le fond de page */
+    border-radius: 8px;                       /* Définit les coins arrondis pour la section */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);   /* Définit l'ombre légère pour la section */
+    padding: 10px;                            /* Définit l'espace interne réduit pour la section */
+    margin-bottom: 10px;                      /* Définit l'espace en bas augmenté pour la section */
+    transition: box-shadow 0.3s;              /* Définit la transition pour l'effet de survol */
+    border: 2px solid #999;                   /* Définit la bordure grise plus foncée pour la section */
     border: 2px solid #999;                   /* Bordure grise plus foncée */
 }
 
