@@ -705,6 +705,16 @@ app.get('/get-files', (req, res) => {
     });
     
     console.log(`Envoi de ${fichiers.length} fichiers avec taille et date`);
+    
+    // Trier les fichiers par date en ordre décroissant (du plus récent au plus ancien)
+    fichiers.sort((a, b) => {
+      // Convertir les dates en objets Date pour la comparaison
+      const dateA = new Date(a.date || 0);
+      const dateB = new Date(b.date || 0);
+      // Ordre décroissant (du plus récent au plus ancien)
+      return dateB - dateA;
+    });
+    
     res.json(fichiers);
   } catch (error) {
     console.error('Erreur lors de la récupération des fichiers:', error);

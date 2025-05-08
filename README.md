@@ -35,6 +35,7 @@ Une application web pour permettre aux étudiants de partager et consulter des s
 - Meilleure harmonisation des espacements entre les éléments du formulaire
 - Ajout d'effets visuels comme la bordure arc-en-ciel animée et le titre arc-en-ciel
 - Documentation complète du code CSS avec commentaires détaillés
+- Tri des fichiers par date dans la page admin (les nouveaux fichiers apparaissent en premier)
 
 ### Fonctionnalités côté serveur
 - Notifications par email lors de nouveaux uploads
