@@ -122,25 +122,6 @@ node deploy.js
 - `style/style.css` : Styles CSS de l'application avec commentaires détaillés
 - `package.json` : Définition des dépendances et scripts
 
-## Prochaines étapes et améliorations futures
-
-### Interface utilisateur
-- Ajouter un mode sombre pour réduire la fatigue oculaire
-- Implémenter un système de filtrage avancé pour les synthèses
-- Créer une vue en grille alternative pour les synthèses
-- Ajouter des animations de transition entre les pages
-
-### Fonctionnalités
-- Implémenter un système de notation des synthèses
-- Ajouter un système de commentaires pour les synthèses
-- Créer un système de recommandation basé sur les préférences de l'utilisateur
-- Intégrer une prévisualisation des fichiers PDF directement dans l'interface
-
-### Performance
-- Optimiser le chargement des images et des ressources
-- Implémenter le lazy loading pour les listes de synthèses
-- Améliorer la compatibilité avec les navigateurs plus anciens
-
 ### Configuration et déploiement
 - `config.js` : Configuration de l'application (SMTP, etc.)
 - `config.example.js` : Exemple de configuration
@@ -274,12 +255,32 @@ Thomas Bauwens
 
 Tous droits réservés © 2025
 
+
+
+
+## Prochaines étapes et améliorations futures
+
+### Interface utilisateur
+- Création d'une interface pour mobile
+
+### Fonctionnalités
+- Implémenter un système de notation des synthèses
+- Ajouter un système de commentaires pour les synthèses
+- Créer un système de recommandation basé sur les préférences de l'utilisateur
+- Ajouter une fonctionnalité pour trier les synthèses par année
+
+### Performance
+- Améliorer la compatibilité avec les navigateurs plus anciens
+
+
+
+
 ## Journal des modifications
 
 ### 08/05/2025
 - Correction des erreurs de configuration SMTP
 - Amélioration de l'affichage des synthèses avec l'utilisation de l'URL complète
-- Restructuration de la gestion des uploads pour mieux gérer les PDF et vidéos
+- Restructuration de la gestion des uploads pour mieux gérer les PDF et vidéos (modification et suppression)
 - Optimisation du traitement des formulaires avec FormData et JSON
 
 ### 07/05/2025
