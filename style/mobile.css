@@ -1,0 +1,696 @@
+/**
+ * Styles mobiles pour le site Synthèses Académiques
+ * Contient les adaptations pour les appareils mobiles
+ * 
+ * @author Thomas Bauwens
+ * @version 1.1
+ * @date Mai 2025
+ */
+
+/* Styles pour les écrans de taille moyenne (tablettes) */
+@media screen and (max-width: 992px) {
+  /* Ajustement de l'en-tête principal */
+  .header-main {
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 95%;
+    margin: 0 auto;
+  }
+  
+  /* Ajustement de la partie gauche de l'en-tête */
+  .header-left {
+    width: 100%;
+    justify-content: center;
+    padding: 5px;
+    background-color: #fff;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  
+  /* Ajustement du formulaire de contact */
+  .contact-info {
+    width: 75%;
+    max-width: 200px;
+    margin: -10px auto -10px;
+    padding: 2px 2px 0;
+    transform: scale(0.75);
+    transform-origin: center;
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Styles spécifiques pour le formulaire "Nous joindre" sur mobile */
+  .contact-info h4 {
+    font-size: 12px;
+    margin: 1px 0 2px 0;
+    color: #333;
+  }
+  
+  .contact-info .form-row {
+    margin-bottom: 2px;
+  }
+  
+  .contact-info input,
+  .contact-info textarea {
+    padding: 3px 5px;
+    font-size: 11px;
+    margin-bottom: 2px;
+    min-height: 22px;
+    border-radius: 3px;
+  }
+  
+  .contact-info textarea {
+    min-height: 35px;
+    resize: none;
+    margin-bottom: 1px;
+  }
+  
+  .contact-info button {
+    padding: 2px 0;
+    font-size: 11px;
+    margin-top: 1px;
+    height: 22px;
+    margin-bottom: 0;
+  }
+  
+  /* Ajustement de la grille du formulaire d'upload */
+  .form-grid {
+    grid-template-columns: 1fr;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  /* Ajustement des lignes d'input pour qu'elles soient verticales */
+  .input-row {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    margin-bottom: 10px !important;
+  }
+  
+  /* Tous les champs prennent 100% de la largeur */
+  .input-row input,
+  .input-row select,
+  .input-row textarea,
+  .input-row .file-input,
+  .input-row .video-input {
+    width: 100% !important;
+    margin-bottom: 5px !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Réduction de la taille des boutons verts */
+  .upload-type-btn,
+  button[type="submit"] {
+    padding: 5px 8px !important;
+    font-size: 0.8em !important;
+    height: auto !important;
+    min-height: 30px !important;
+    max-width: 100% !important;
+  }
+  
+  /* Style spécifique pour les boutons d'upload */
+  .upload-type-selector {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    margin-bottom: 10px !important;
+  }
+  
+  .upload-type-btn {
+    flex: 0 0 auto !important;
+    width: calc(50% - 5px) !important;
+    margin: 0 !important;
+  }
+  
+  /* Style pour le bouton de soumission */
+  #syntheseForm button[type="submit"] {
+    background-color: #4CAF50 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 4px !important;
+    padding: 8px 15px !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    width: 100% !important;
+    max-width: 200px !important;
+    margin: 10px auto !important;
+    display: block !important;
+  }
+  
+  /* Style pour le formulaire */
+  #syntheseForm .form-group {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  
+  /* Style pour la description */
+  #syntheseForm textarea#description {
+    width: 100% !important;
+    min-height: 80px !important;
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Ajustement des sections de cours */
+  .course-section {
+    margin-bottom: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+  }
+  
+  /* Amélioration de l'affichage des fichiers */
+  .course-files {
+    display: none !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    padding: 5px !important;
+    gap: 8px !important;
+  }
+  
+  /* Affichage des fichiers uniquement quand la section est ouverte */
+  .course-section.open .course-files {
+    display: flex !important;
+  }
+  
+  .file-item {
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 6px !important;
+    padding: 8px !important;
+    background-color: #f9f9f9 !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .file-header {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+  }
+  
+  .file-header a {
+    font-size: 14px !important;
+    font-weight: bold !important;
+    color: #2c3e50 !important;
+    margin-bottom: 3px !important;
+    line-height: 1.3 !important;
+    display: block !important;
+  }
+  
+  .file-info {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 5px 10px !important;
+    font-size: 12px !important;
+    color: #666 !important;
+  }
+  
+  .file-description {
+    font-size: 12px !important;
+    color: #555 !important;
+    margin-top: 5px !important;
+    line-height: 1.4 !important;
+    font-style: italic !important;
+  }
+}
+
+/* Styles pour les petits écrans (smartphones) */
+@media screen and (max-width: 768px) {
+  /* Amélioration de l'affichage des fichiers sur smartphone */
+  .file-item {
+    padding: 6px !important;
+    margin-bottom: 6px !important;
+  }
+  
+  .file-header a {
+    font-size: 13px !important;
+  }
+  
+  .file-info {
+    font-size: 11px !important;
+  }
+  
+  .file-description {
+    font-size: 11px !important;
+  }
+  
+  /* Style plus compact pour les sections de cours */
+  .course-section h3 {
+    font-size: 14px !important;
+    padding: 8px 10px !important;
+  }
+  /* Ajustement général du corps */
+  body {
+    padding: 15px 0 0 0;
+  }
+  
+  /* Ajustement de l'en-tête gauche */
+  .header-left {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+  
+  /* Ajustement de l'image pour qu'elle soit centrée */
+  .image {
+    display: block;
+    margin: 0 auto 5px auto;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+  }
+  
+  /* Ajustement du texte dans l'en-tête */
+  .texte {
+    text-align: center;
+    width: 100%;
+    padding: 0 5px;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  
+  /* Ajustement des titres */
+  h1 {
+    font-size: 15px;
+    margin: 0 0 3px 0;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+  
+  /* Uniformisation de tous les textes h3 */
+  h3 {
+    font-size: 12px !important;
+    margin: 2px 0;
+    line-height: 1.3 !important;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    color: #444;
+    padding: 0;
+    font-weight: normal !important;
+  }
+  
+  /* Style pour les informations de l'école */
+  .school-info {
+    font-size: 12px !important;
+    max-width: 100%;
+    display: inline-block;
+    white-space: normal;
+    margin: 1px 0;
+    color: #444 !important;
+  }
+  
+  /* Style des mots-clés Java */
+  .java-keyword {
+    color: #d73a49 !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 1em !important; /* Même taille que le texte parent */
+    font-weight: normal !important;
+    display: inline-block;
+  }
+  
+  /* Style spécifique pour la ligne while qui pose problème */
+  .school-info.while-line {
+    font-size: 12px !important;
+    line-height: 1.3 !important;
+    word-break: break-word;
+    hyphens: auto;
+    width: 100%;
+    display: block;
+    padding: 0 5px;
+  }
+  
+  /* Ajustement de la section de présentation */
+  .presentation {
+    padding: 0;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  /* Ajustement du conteneur de fichiers */
+  .files-container {
+    padding: 10px;
+  }
+  
+  /* Ajustement de la section d'upload */
+  .upload-section {
+    padding: 5px;
+  }
+  
+  /* Ajustement de l'en-tête avec titre et boutons */
+  .header-with-buttons {
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  /* Style du conteneur de titre */
+  .title-container {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  
+  /* Positionnement des boutons sous le titre */
+  .upload-type-selector {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Style des boutons individuels */
+  .upload-type-btn {
+    flex: 1;
+    margin: 0 1px;
+    padding: 3px 1px;
+    font-size: 10px;
+    white-space: nowrap;
+    min-width: 0;
+    height: 24px;
+    border-radius: 3px;
+  }
+  
+  /* Suppression de l'espacement */
+  .spacer {
+    display: none;
+  }
+  
+  /* Ajustement des lignes d'input */
+  .input-row {
+    flex-direction: column;
+  }
+  
+  .input-row > * {
+    width: 100%;
+    margin-bottom: 1px;
+  }
+  
+  /* Amélioration du formulaire de contact */
+  .contact-info form {
+    width: 100%;
+  }
+  
+  .contact-info h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .contact-info .form-row {
+    flex-direction: column;
+    margin-bottom: 10px;
+  }
+  
+  .contact-info input,
+  .contact-info textarea {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    font-size: 14px;
+    padding: 10px;
+    min-height: 40px;
+    text-overflow: ellipsis;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  /* Style spécifique pour le champ Nom/Discord */
+  .contact-info input[type="text"] {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Ajustement du formulaire d'upload */
+  #syntheseForm .form-grid {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  #syntheseForm .form-group {
+    width: 100%;
+    margin-bottom: 0;
+  }
+  
+  /* Ajustement du sélecteur de cours */
+  select#cours {
+    width: 100%;
+  }
+  
+  /* Réduction des écarts entre les champs du formulaire */
+  #syntheseForm textarea {
+    margin-top: 0;
+    min-height: 60px;
+    padding: 4px;
+  }
+  
+  #syntheseForm .file-input,
+  #syntheseForm .video-input {
+    margin-bottom: 0;
+    margin-top: 0;
+    padding: 0;
+  }
+  
+  #syntheseForm .file-format {
+    font-size: 9px;
+    margin: 0;
+    padding: 0;
+    display: block;
+    line-height: 1;
+    text-align: center;
+    color: #666;
+  }
+  
+  #syntheseForm input[type="text"],
+  #syntheseForm input[type="url"],
+  #syntheseForm select {
+    margin-bottom: 0;
+    margin-top: 0;
+    padding: 2px;
+    height: 24px;
+  }
+  
+  /* Style pour le conteneur de fichier */
+  #syntheseForm .file-input {
+    padding: 0;
+    background-color: transparent;
+    display: block;
+    width: 100%;
+    margin-bottom: 6px;
+  }
+  
+  /* Style pour le conteneur de fichier */
+  #syntheseForm .file-input {
+    margin-bottom: 6px;
+  }
+  
+  /* Style pour l'input file */
+  #syntheseForm input[type="file"] {
+    width: 100%;
+    height: 24px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: white;
+    box-sizing: border-box;
+    padding: 2px;
+  }
+  
+  /* Aligner les cadres */
+  #syntheseForm input[type="text"],
+  #syntheseForm input[type="file"],
+  #syntheseForm input[type="url"],
+  #syntheseForm select {
+    height: 24px;
+    box-sizing: border-box;
+  }
+  
+  /* Réduire l'espace entre le champ fichier et la description */
+  #syntheseForm .form-grid {
+    gap: 0;
+  }
+  
+  /* Ajuster les marges entre les éléments */
+  #syntheseForm * {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  
+  /* Ajouter un espace entre Format PDF et la description */
+  #syntheseForm textarea {
+    margin-top: 8px;
+  }
+  
+  /* Ajustement des boutons */
+  button {
+    width: 100%;
+  }
+  
+  /* Style spécifique pour le bouton submit */
+  #syntheseForm button[type="submit"] {
+    height: 32px;
+    font-size: 14px;
+    padding: 4px;
+    margin-top: 5px;
+  }
+  
+  /* Ajustement de l'en-tête avec boutons */
+  .header-with-buttons {
+    flex-direction: column;
+  }
+  
+  .title-container {
+    width: 100%;
+    text-align: center;
+  }
+  
+  /* Ajustement des éléments de fichier */
+  .file-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .file-details {
+    margin-top: 5px;
+    width: 100%;
+  }
+  
+  .file-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  /* Ajustement de l'en-tête de fichier */
+  .file-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .course-title {
+    margin-bottom: 5px;
+  }
+}
+
+/* Styles pour les très petits écrans */
+@media screen and (max-width: 480px) {
+  /* Ajustement de l'image */
+  .image {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 10px auto;
+    display: block;
+    border-radius: 50%;
+    border: 2px solid #f0f0f0;
+  }
+  
+  /* Ajustement du formulaire de contact */
+  .contact-info {
+    padding: 12px;
+    background-color: #f8f8f8;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0;
+    width: 100%;
+    max-width: none;
+    border-top: 1px solid #eee;
+  }
+  
+  /* Ajustement des sections de cours */
+  .course-section {
+    padding: 10px;
+  }
+  
+  /* Ajustement des éléments de fichier */
+  .file-item {
+    padding: 10px;
+  }
+}
+
+/* Optimisations pour le défilement sur mobile */
+@media screen and (max-width: 768px) {
+  /* Ajout d'un espacement entre les sections pour faciliter le défilement */
+  .files-container,
+  .upload-section,
+  .course-section {
+    scroll-margin-top: 20px; /* Pour le défilement avec les ancres */
+  }
+  
+  /* Amélioration de l'espacement vertical général */
+  body {
+    line-height: 1.5;
+  }
+  
+  /* Ajustement des marges pour un meilleur espacement */
+  .presentation,
+  .files-container,
+  .upload-section {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  
+  /* Optimisation pour les textes longs */
+  .file-description {
+    max-height: none; /* Permettre l'affichage complet des descriptions */
+  }
+}
+
+/* Améliorations pour les appareils tactiles */
+@media (pointer: coarse) {
+  /* Augmenter la taille des zones cliquables */
+  button, 
+  .upload-type-btn,
+  .file-link,
+  .course-section a,
+  input[type="submit"] {
+    min-height: 44px;
+    padding: 12px 15px;
+  }
+  
+  /* Espacement des éléments interactifs */
+  .file-item,
+  .form-row,
+  .input-row > * {
+    margin-bottom: 15px;
+  }
+  
+  /* Augmenter la taille des champs de formulaire */
+  input[type="text"],
+  input[type="email"],
+  input[type="url"],
+  textarea,
+  select {
+    font-size: 16px; /* Évite le zoom automatique sur iOS */
+    padding: 12px;
+  }
+  
+  /* Améliorer la lisibilité des textes */
+  .file-title,
+  .course-title {
+    font-size: 16px;
+  }
+  
+  /* Augmenter l'espacement vertical */
+  .files-container,
+  .upload-section {
+    margin-bottom: 30px;
+  }
+}

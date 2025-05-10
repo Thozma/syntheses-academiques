@@ -323,33 +323,97 @@ const archiver = require('archiver');
  */
 function createZipFromFiles(files, outputPath) {
   return new Promise((resolve, reject) => {
-    // Création du flux de sortie pour le fichier ZIP
-    const output = fs.createWriteStream(outputPath);
-    // Création de l'archive
-    const archive = archiver('zip', {
-      zlib: { level: 9 } // Niveau de compression maximum
-    });
-    
-    // Gestion des événements
-    output.on('close', () => {
-      console.log(`Archive créée: ${archive.pointer()} octets`);
-      resolve(outputPath);
-    });
-    
-    archive.on('error', (err) => {
-      reject(err);
-    });
-    
-    // Connexion de l'archive au flux de sortie
-    archive.pipe(output);
-    
-    // Ajout des fichiers à l'archive
-    files.forEach(file => {
-      archive.file(file.path, { name: file.originalname });
-    });
-    
-    // Finalisation de l'archive
-    archive.finalize();
+    try {
+      // Vérification que files est un tableau valide
+      if (!Array.isArray(files) || files.length === 0) {
+        throw new Error('Aucun fichier valide à inclure dans l\'archive');
+      }
+
+      // Vérification du répertoire de destination
+      const outputDir = path.dirname(outputPath);
+      if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
+      }
+
+      // Création du flux de sortie pour le fichier ZIP
+      const output = fs.createWriteStream(outputPath);
+      
+      // Création de l'archive
+      const archive = archiver('zip', {
+        zlib: { level: 9 } // Niveau de compression maximum
+      });
+      
+      // Gestion des événements
+      output.on('close', () => {
+        console.log(`Archive créée avec succès: ${archive.pointer()} octets`);
+        resolve(outputPath);
+      });
+      
+      output.on('error', (err) => {
+        console.error('Erreur sur le flux de sortie:', err);
+        reject(err);
+      });
+      
+      archive.on('error', (err) => {
+        console.error('Erreur lors de la création de l\'archive:', err);
+        reject(err);
+      });
+      
+      archive.on('warning', (err) => {
+        if (err.code === 'ENOENT') {
+          console.warn('Avertissement archiver:', err);
+        } else {
+          console.error('Erreur archiver:', err);
+          reject(err);
+        }
+      });
+      
+      // Connexion de l'archive au flux de sortie
+      archive.pipe(output);
+      
+      // Comptage des fichiers valides
+      let validFilesCount = 0;
+      
+      // Ajout des fichiers à l'archive
+      files.forEach((file, index) => {
+        // Vérification que le fichier existe et a les propriétés nécessaires
+        if (file && file.path && fs.existsSync(file.path)) {
+          try {
+            // Utilisation du nom original du fichier ou du nom du fichier si originalname n'est pas disponible
+            const fileName = file.originalname || path.basename(file.path);
+            console.log(`[${index + 1}/${files.length}] Ajout du fichier ${fileName} à l'archive`);
+            archive.file(file.path, { name: fileName });
+            validFilesCount++;
+          } catch (fileError) {
+            console.error(`Erreur lors de l'ajout du fichier ${file.path} à l'archive:`, fileError);
+          }
+        } else {
+          console.warn(`Fichier ignoré car invalide ou introuvable: ${file ? file.path : 'undefined'}`);
+        }
+      });
+      
+      // Vérification qu'au moins un fichier valide a été ajouté
+      if (validFilesCount === 0) {
+        throw new Error('Aucun fichier valide n\'a pu être ajouté à l\'archive');
+      }
+      
+      console.log(`Finalisation de l'archive avec ${validFilesCount} fichiers valides`);
+      // Finalisation de l'archive
+      archive.finalize();
+      
+    } catch (error) {
+      console.error('Erreur lors de la création du ZIP:', error);
+      // Si un fichier de sortie a été créé mais est incomplet, on le supprime
+      if (fs.existsSync(outputPath)) {
+        try {
+          fs.unlinkSync(outputPath);
+          console.log(`Fichier ZIP incomplet supprimé: ${outputPath}`);
+        } catch (unlinkError) {
+          console.error(`Erreur lors de la suppression du fichier ZIP incomplet:`, unlinkError);
+        }
+      }
+      reject(error);
+    }
   });
 }
 
@@ -432,6 +496,9 @@ app.post('/upload-multi', uploadMulti.array('fichiers'), async (req, res) => {
     // Calcul de la taille totale du ZIP
     const zipStats = fs.statSync(zipFilePath);
     const zipSize = zipStats.size;
+    
+    // Récupération du prochain ID disponible
+    const nextId = getNextAvailableId();
     
     // Création des métadonnées du fichier
     const fileMetadata = {
@@ -971,26 +1038,50 @@ app.post('/delete-file', (req, res) => {
 // Route pour supprimer un fichier
 app.delete('/delete-file/:id', async (req, res) => {
   try {
-    const fileId = req.params.id;
+    // Convertir l'ID en nombre si c'est un nombre
+    const fileId = parseInt(req.params.id, 10);
+    const fileIdStr = req.params.id;
     
     // Lire le fichier JSON actuel
     const jsonData = JSON.parse(fs.readFileSync('fichiers.json', 'utf8'));
     
-    // Trouver le fichier à supprimer
-    const fileToDelete = jsonData.find(file => file.id === fileId);
+    // Trouver le fichier à supprimer (vérifier à la fois comme nombre et comme chaîne)
+    let fileToDelete = jsonData.find(file => file.id === fileId || file.id === fileIdStr);
+    
     if (!fileToDelete) {
+      console.error(`Fichier non trouvé avec l'ID: ${fileIdStr} (ou ${fileId})`);
       return res.status(404).json({ success: false, message: 'Fichier non trouvé' });
     }
     
+    console.log(`Fichier à supprimer trouvé:`, fileToDelete);
+    
     // Supprimer le fichier physique
-    const filePath = path.join(__dirname, fileToDelete.path);
+    let filePath;
+    if (fileToDelete.path.startsWith('/')) {
+      // Si le chemin commence par /, on le considère comme relatif à la racine du projet
+      filePath = path.join(__dirname, fileToDelete.path);
+    } else {
+      // Sinon, on utilise le chemin tel quel
+      filePath = path.join(__dirname, fileToDelete.path);
+    }
+    
+    console.log(`Tentative de suppression du fichier physique: ${filePath}`);
+    
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
+      console.log(`Fichier physique supprimé avec succès: ${filePath}`);
+    } else {
+      console.warn(`Le fichier physique n'existe pas: ${filePath}`);
     }
     
     // Mettre à jour fichiers.json
-    const updatedFiles = jsonData.filter(file => file.id !== fileId);
+    const updatedFiles = jsonData.filter(file => {
+      // Filtrer à la fois par nombre et par chaîne
+      return file.id !== fileId && file.id !== fileIdStr;
+    });
+    
     fs.writeFileSync('fichiers.json', JSON.stringify(updatedFiles, null, 2));
+    console.log(`Entrée supprimée de fichiers.json, ${jsonData.length - updatedFiles.length} entrée(s) supprimée(s)`);
     
     res.json({ success: true, message: 'Fichier supprimé avec succès' });
   } catch (error) {

@@ -22,15 +22,17 @@
   <head>
     <!-- Métadonnées de base -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="Plateforme de partage de synthèses pour les étudiants de 1ère année en informatique">
     <meta name="author" content="Thomas Bauwens">
     
     <!-- Titre de la page -->
     <title>les Synthèses de 1ERE BIN - Bauwens Thomas</title>
     
-    <!-- Feuille de style CSS -->
+    <!-- Feuilles de style CSS -->
     <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="style/mobile.css">
+    <link rel="stylesheet" href="style/custom.css">
   </head>
 
   <body>
@@ -41,20 +43,21 @@
           <img
             src="image/image.png"
             alt="Photo de présentation de Bauwens Thomas"
-            class="image">
+            class="image"
+            loading="lazy">
           <div class="texte">
             <h1>Les synthèses des premières BIN</h1>
             <h3><span class="java-keyword">for</span> les élèves, <span class="java-keyword">by</span> les élèves !</h3>
             <h3><span class="java-keyword">public static</span> Créateur <span class="java-keyword">new</span> Bauwens Thomas</h3>
             <h3 class="school-info">Haute Ecole Léonard de Vinci</h3>
-            <h3 class="school-info"><span class="java-keyword">while</span> (2024 - 2025) Informatique - développement d'applications</h3>
+            <h3 class="school-info while-line"><span class="java-keyword">while</span> (2024 - 2025) Informatique - développement d'applications</h3>
           </div>
         </div>
         <div class="contact-info">
           <h4>Nous joindre</h4>
           <form id="questionForm" method="POST" onsubmit="return handleQuestionSubmit(event);">
             <div class="form-row">
-              <input type="text" id="nomDiscordQuestion" name="nomDiscord" placeholder="Nom / Discord" required>
+              <input type="text" id="nomDiscordQuestion" name="nomDiscord" placeholder="Nom / Discord" required size="20">
               <input type="email" id="email" name="email" placeholder="Email">
             </div>
             <div class="form-row">
@@ -546,6 +549,10 @@
             const courseSections = document.querySelectorAll('.course-section');
             
             // Toutes les sections sont fermées par défaut
+            courseSections.forEach(section => {
+              // Retire la classe 'open' pour s'assurer que toutes les sections sont fermées par défaut
+              section.classList.remove('open');
+            });
             
             // Ajoute un écouteur d'événements à chaque titre de section
             document.querySelectorAll('.course-section h3').forEach(header => {

@@ -26,6 +26,15 @@
   <title>Administration - Synthèses Académiques</title>
   <link rel="stylesheet" href="style/style.css">
   <link rel="stylesheet" href="style/admin.css?v=1">
+  <style>
+    /* Style pour le bouton de tri actif */
+    .sort-buttons button.active {
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+  </style>
 </head>
 <body>
   <div class="admin-container" id="loginContainer">
@@ -571,6 +580,8 @@
         // Afficher le panneau d'administration
         document.getElementById("loginContainer").style.display = "none";
         document.getElementById("adminPanel").style.display = "block";
+        // Stocker la préférence de tri par date dans localStorage
+        localStorage.setItem("sortPreference", "date");
         loadFiles();
       }
     });
@@ -667,34 +678,26 @@
             allFiles.push(file);
           });
           
-          // Trier les fichiers par date (plus récent en haut)
-          allFiles.sort((a, b) => {
-            const parseDate = (dateStr) => {
-              if (!dateStr) return new Date(0);
-              const parts = dateStr.split('/');
-              if (parts.length === 3) {
-                return new Date(parts[2], parts[1] - 1, parts[0]);
-              }
-              return new Date(dateStr);
-            };
-            
-            const dateA = parseDate(a.dateAjout || a.date);
-            const dateB = parseDate(b.dateAjout || b.date);
-            return dateB - dateA;
-          });
-          
-          // Mettre à jour les options de cours dans le filtre
-          const coursFilter = document.getElementById('coursFilter');
           // Mettre à jour les options de cours dans le filtre
           populateCoursFilter(allFiles);
           
-          // Afficher les fichiers
-          displayFiles(allFiles);
+          // Appliquer le tri par défaut (date décroissante)
+          // Force le tri par date au chargement, indépendamment des autres tris qui pourraient être appliqués
+          console.log('Application du tri par date par défaut...');
+          
+          // Forcer le tri par date (du plus récent au plus ancien)
+          sortFiles('date', false);
+          
+          // Ajouter la classe 'active' au bouton de tri par date
+          const dateButton = document.querySelector('button[onclick="sortFiles(\'date\', false)"]');
+          if (dateButton) {
+            dateButton.classList.add('active');
+          }
           
           // Vérifier la visibilité de la barre de défilement
           setTimeout(checkScrollbarVisibility, 500);
           
-          console.log('Fichiers chargés avec succès:', allFiles.length);
+          console.log('Fichiers chargés avec succès et triés par date:', allFiles.length);
         } else {
           console.error('Erreur lors du chargement des fichiers:', data.message);
           showNotification('Erreur: ' + data.message, false);
@@ -717,7 +720,7 @@
       });
     }
     
-    // Afficher les fichiers dans le tableau
+    // Fonction d'affichage des fichiers
     function displayFiles(files) {
       const tbody = document.getElementById("fileTableBody");
       tbody.innerHTML = "";
@@ -729,7 +732,25 @@
         return;
       }
       
-      files.forEach((file) => {
+      // Fonction pour analyser les dates au format français (JJ/MM/AAAA)
+      const parseDate = (dateStr) => {
+        if (!dateStr) return new Date(0);
+        const parts = dateStr.split('/');
+        if (parts.length === 3) {
+          return new Date(parts[2], parts[1] - 1, parts[0]);
+        }
+        return new Date(dateStr);
+      };
+      
+      // Trier les fichiers par date (plus récent en haut) avant affichage
+      const sortedFiles = [...files].sort((a, b) => {
+        const dateA = parseDate(a.dateAjout || a.date);
+        const dateB = parseDate(b.dateAjout || b.date);
+        return dateB - dateA; // Ordre décroissant (plus récent en premier)
+      });
+      
+      // Afficher les fichiers triés
+      sortedFiles.forEach((file) => {
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${file.id}</td>
@@ -749,6 +770,15 @@
         
         tbody.appendChild(row);
       });
+      
+      // Mettre en évidence le bouton de tri par date
+      document.querySelectorAll('.sort-buttons button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      const dateButton = document.querySelector('button[onclick="sortFiles(\'date\', false)"]');
+      if (dateButton) {
+        dateButton.classList.add('active');
+      }
     }
     
     // Ouvrir la modal d'édition
@@ -980,6 +1010,28 @@
     
     // Fonction de tri
     function sortFiles(field, ascending) {
+      // Enregistrer la préférence de tri
+      localStorage.setItem('sortField', field);
+      localStorage.setItem('sortAscending', ascending);
+      
+      console.log(`Tri des fichiers par ${field} en ordre ${ascending ? 'croissant' : 'décroissant'}`);
+      
+      // Mettre en évidence le bouton de tri actif
+      document.querySelectorAll('.sort-buttons button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // Trouver et activer le bouton correspondant au tri actuel
+      const buttonSelector = field === 'date' ? 
+        `button[onclick="sortFiles('date', ${ascending})"]` : 
+        `button[onclick="sortFiles('id', ${ascending})"]`;
+      
+      const activeButton = document.querySelector(buttonSelector);
+      if (activeButton) {
+        activeButton.classList.add('active');
+      }
+      
+      // Effectuer le tri
       allFiles.sort((a, b) => {
         const direction = ascending ? 1 : -1;
         
@@ -987,7 +1039,19 @@
           case 'id':
             return direction * (parseInt(a.id) - parseInt(b.id));
           case 'date':
-            return direction * (new Date(a.dateAjout || 0) - new Date(b.dateAjout || 0));
+            // Fonction pour analyser les dates au format français (JJ/MM/AAAA)
+            const parseDate = (dateStr) => {
+              if (!dateStr) return new Date(0);
+              const parts = dateStr.split('/');
+              if (parts.length === 3) {
+                return new Date(parts[2], parts[1] - 1, parts[0]);
+              }
+              return new Date(dateStr);
+            };
+            
+            const dateA = parseDate(a.dateAjout || a.date);
+            const dateB = parseDate(b.dateAjout || b.date);
+            return direction * (dateB - dateA);
           default:
             return 0;
         }

@@ -2,8 +2,8 @@
 
 Une plateforme web intuitive permettant aux étudiants de première année en informatique de la Haute École Léonard de Vinci de partager et consulter des synthèses de cours. Cette application met l'accent sur une expérience utilisateur fluide avec une interface inspirée du langage Java.
 
-![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)
-![Dernière mise à jour](https://img.shields.io/badge/dernière%20mise%20à%20jour-8%20mai%202025-green.svg)
+![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)
+![Dernière mise à jour](https://img.shields.io/badge/dernière%20mise%20à%20jour-10%20mai%202025-green.svg)
 ![Auteur](https://img.shields.io/badge/auteur-Thomas%20Bauwens-orange.svg)
 
 ## À Propos
@@ -23,17 +23,27 @@ Cette plateforme a été conçue pour faciliter le partage de ressources académ
 - Organisation par cours avec icônes thématiques
 - Icônes distinctes pour les PDF (📄), les ZIP (💼) et les vidéos (🎬)
 - Formulaire de contact intégré
-- Interface responsive adaptée aux différents appareils
+- Interface responsive optimisée pour mobile et desktop
 - Interface d'administration avec tri des synthèses par date ou ID
 - Système de commentaires intégré pour les administrateurs
 - Sections pliables/dépliables pour une meilleure organisation
-- Style inspiré de Java avec mots-clés colorés
+- Style inspiré de Java avec mots-clés colorés uniformes sur tous les appareils
 - Animations subtiles pour améliorer l'expérience utilisateur
 - Liens qui conservent leur couleur d'origine après avoir été visités
 - Bordure arc-en-ciel animée autour de la photo de profil
 - Effet arc-en-ciel animé sur le titre principal
+- Disposition verticale adaptative sur mobile pour une meilleure lisibilité
 
-### Améliorations récentes (v1.2.0)
+### Améliorations récentes (v1.3.0)
+- Optimisation complète de l'interface mobile avec disposition verticale adaptative
+- Uniformisation des styles des mots-clés Java entre les versions mobile et desktop
+- Amélioration de la gestion des sections sur mobile (fermées par défaut)
+- Correction des problèmes d'assemblage de fichiers dans les uploads multiples
+- Amélioration de la suppression des fichiers (correction du bug de suppression physique)
+- Ajustement des tailles de police pour une meilleure lisibilité sur tous les appareils
+- Optimisation des boutons avec texte blanc uniforme pour meilleure visibilité
+
+### Améliorations précédentes (v1.2.0)
 - Ajout de commentaires détaillés dans tous les fichiers CSS pour une meilleure maintenabilité
 - Refonte complète de l'interface utilisateur avec un thème Java cohérent
 - Optimisation des performances avec une meilleure gestion des ressources
@@ -121,7 +131,9 @@ node deploy.js
 - `app.js` : Point d'entrée principal de l'application, gère le cycle de vie
 - `server.js` : Serveur Node.js avec toutes les routes et la logique
 - `index.html` : Interface utilisateur principale
-- `style/style.css` : Styles CSS de l'application avec commentaires détaillés
+- `style/style.css` : Styles CSS pour la version desktop
+- `style/mobile.css` : Styles CSS optimisés pour les appareils mobiles
+- `style/custom.css` : Styles CSS partagés pour uniformiser l'apparence sur tous les appareils
 - `package.json` : Définition des dépendances et scripts
 
 ### Configuration et déploiement
@@ -269,6 +281,17 @@ Chaque cours est représenté par une icône Unicode thématique :
 - Améliorer la compatibilité avec les navigateurs plus anciens
 
 ## Journal des modifications
+
+### 10/05/2025
+- Optimisation complète de l'interface mobile avec disposition verticale adaptative
+- Uniformisation des styles des mots-clés Java entre les versions mobile et desktop
+- Création d'un fichier custom.css pour centraliser les styles communs
+- Correction du bug de suppression physique des fichiers ZIP et PDF
+- Amélioration de la fonction createZipFromFiles pour une meilleure gestion des erreurs
+- Ajustement des tailles de police pour une meilleure lisibilité sur mobile
+- Optimisation des boutons avec texte blanc uniforme pour meilleure visibilité
+- Amélioration de la gestion des sections sur mobile (fermées par défaut)
+- Mise à jour de la documentation (README) avec les nouvelles fonctionnalités
 
 ### 08/05/2025
 - Correction des erreurs de configuration SMTP
