@@ -1,0 +1,1756 @@
+/**
+ * Feuille de style principale du site Synthèses Académiques
+ * Contient tous les styles pour la page d'accueil et les pages publiques
+ * 
+ * Cette feuille de style définit l'apparence générale du site de synthèses académiques
+ * pour les étudiants de première année en informatique de la Haute Ecole Léonard de Vinci.
+ * Elle inclut les styles pour l'en-tête, la navigation, les cartes de cours,
+ * le formulaire de contact et le pied de page.
+ * 
+ * Fonctionnalités spéciales :
+ * - Thème inspiré du langage Java avec mots-clés colorés
+ * - Effets visuels comme la bordure arc-en-ciel animée autour de la photo de profil
+ * - Mise en page responsive avec flexbox et grid
+ * - Boutons de type d'upload centrés qui changent de couleur (orange) lorsqu'ils sont actifs
+ * 
+ * @author Thomas Bauwens
+ * @version 1.0
+ * @date Mai 2025
+ * @lastModified 7 mai 2025
+ */
+
+/* ======================================================
+   STYLES DE BASE
+   ====================================================== */
+
+/**
+ * Styles de base et reset pour toute la page
+ * Définit les styles fondamentaux qui s'appliquent à l'ensemble du site
+ * Utilise une approche minimaliste pour éviter les styles indésirables par défaut
+ */
+body {
+    font-family: Arial, sans-serif;          /* Police sans-serif moderne et lisible */
+    margin: 0;                               /* Réinitialise les marges pour un contrôle précis */
+    padding: 30px 0 0 0;                     /* Espace en haut pour la hiérarchie visuelle */
+    background-color: #f4f4f4;                /* Fond gris clair pour un contraste doux */
+}
+
+/* ======================================================
+   SECTION DE PRÉSENTATION
+   ====================================================== */
+
+/**
+ * Section de présentation en haut de la page
+ * Contient l'image de profil, les informations de l'école
+ * et le formulaire de contact
+ */
+/**
+ * Section de présentation principale
+ * Utilise flexbox pour organiser le contenu en colonnes
+ */
+.presentation {
+    display: flex;                           /* Disposition flexible pour le contenu */
+    padding: 15px;                           /* Espacement interne uniforme */
+    background-color: #fff;                  /* Fond blanc pour contraster */
+    border-radius: 10px;                     /* Coins arrondis pour l'esthétique */
+    margin-bottom: 20px;                     /* Espace avec les éléments suivants */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombre légère pour la profondeur */
+}
+
+/**
+ * Conteneur principal de l'en-tête
+ * Organise le contenu horizontalement
+ */
+.header-main {
+    display: flex;                           /* Layout flexible */
+    justify-content: space-between;          /* Espace entre les éléments */
+    align-items: center;                     /* Alignement vertical centré */
+    width: 100%;                            /* Occupe toute la largeur */
+}
+
+/**
+ * Partie gauche de l'en-tête
+ * Contient le logo et les informations principales
+ */
+.header-left {
+    display: flex;                           /* Layout flexible */
+    align-items: flex-end;                   /* Aligne les éléments en bas */
+    gap: 20px;                              /* Espace entre les éléments */
+    flex: 1;                                /* Prend l'espace disponible */
+    min-width: 60%;                         /* Largeur minimale garantie */
+}
+
+/**
+ * Sous-titres dans la section texte
+ * Style pour la hiérarchie visuelle
+ */
+.texte h3 {
+    margin: 5px 0;                           /* Espacement vertical compact */
+}
+
+/**
+ * Informations de l'école
+ * Style distinctif pour les informations institutionnelles
+ */
+.school-info {
+    font-size: 0.9em !important;             /* Taille de texte réduite */
+    color: #666 !important;                   /* Couleur grise pour distinction */
+    font-weight: normal !important;           /* Poids normal pour lisibilité */
+    white-space: nowrap;                     /* Évite le retour à la ligne */
+}
+
+/**
+ * Formulaire de contact
+ * Style pour le formulaire de contact avec un design épuré
+ */
+.contact-info {
+    background-color: #f5f5f5;                /* Fond gris clair pour distinction */
+    padding: 15px;                           /* Espacement interne uniforme */
+    border-radius: 8px;                      /* Coins arrondis pour cohérence */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Ombre légère pour profondeur */
+    width: 420px;                            /* Largeur fixe pour mise en page */
+    margin-left: 20px;                       /* Espace à gauche */
+    align-self: center;                      /* Centrage vertical */
+}
+
+/**
+ * Titre du formulaire
+ * Style pour le titre du formulaire de contact
+ */
+.contact-info h4 {
+    margin: 0 0 8px 0;                       /* Marge en bas uniquement */
+    color: #333;                             /* Couleur sombre pour lisibilité */
+    font-size: 0.9em;                        /* Taille réduite pour hiérarchie */
+    text-align: center;                      /* Centrage du texte */
+}
+
+/**
+ * Ligne de formulaire
+ * Conteneur flexible pour les champs alignés
+ */
+.form-row {
+    display: flex;                           /* Layout flexible */
+    gap: 8px;                               /* Espace entre les champs */
+    margin-bottom: 8px;                      /* Espace sous chaque ligne */
+}
+
+/**
+ * Dernière ligne de formulaire
+ * Supprime la marge inférieure pour le dernier élément
+ */
+.form-row:last-child {
+    margin-bottom: 0;                        /* Pas de marge pour le dernier */
+}
+
+/**
+ * Champs de saisie
+ * Style commun pour les inputs et textareas
+ */
+.contact-info input,
+.contact-info textarea {
+    padding: 6px 10px;                       /* Espacement interne pour le texte */
+    border: 1px solid #ddd;                  /* Bordure légère */
+    border-radius: 4px;                      /* Coins arrondis */
+    font-size: 0.9em;                        /* Taille de texte réduite */
+    font-family: Arial, sans-serif;          /* Police cohérente */
+}
+
+/**
+ * Champ de texte
+ * Style spécifique pour les champs de type texte
+ */
+.contact-info input[type="text"] {
+    width: 120px;                           /* Largeur fixe pour nom/discord */
+}
+
+/**
+ * Champ email
+ * Style spécifique pour le champ email
+ */
+.contact-info input[type="email"] {
+    flex: 1;                                /* Prend l'espace restant */
+}
+
+/**
+ * Zone de texte
+ * Style pour la zone de message
+ */
+.contact-info textarea {
+    flex: 1;                                /* Prend l'espace disponible */
+    height: 34px;                           /* Hauteur fixe */
+    resize: none;                           /* Désactive le redimensionnement */
+    box-sizing: border-box;                 /* Inclut padding dans la taille */
+}
+
+/**
+ * Bouton d'envoi
+ * Style pour le bouton de soumission
+ */
+.contact-info button {
+    padding: 5px 15px;                       /* Espacement interne */
+    background-color: #4CAF50;               /* Vert pour action positive */
+    color: white;                           /* Texte blanc pour contraste */
+    border: none;                           /* Pas de bordure */
+    border-radius: 3px;                      /* Coins légèrement arrondis */
+    cursor: pointer;                        /* Curseur de type pointeur */
+    font-size: 0.85em;                      /* Taille de texte réduite */
+    transition: background-color 0.2s;       /* Transition douce au survol */
+}
+
+/**
+ * Effet de survol du bouton
+ * Change la couleur au survol pour feedback visuel
+ */
+.contact-info button:hover {
+    background-color: #45a049;               /* Vert plus foncé au survol */
+}
+
+/**
+ * Message de confirmation
+ * Style pour le message de succès
+ */
+.confirmation-message {
+    display: none;                          /* Caché par défaut */
+    color: green;                           /* Couleur verte pour succès */
+    font-size: 0.85em;                      /* Taille de texte réduite */
+    margin-top: 8px;                        /* Espace au-dessus */
+    text-align: center;                     /* Texte centré */
+}
+
+/* Style du conteneur de présentation en haut de la page */
+.presentation {
+    background: #fff;                         /* Fond blanc */
+    border-radius: 10px;                        /* Coins arrondis */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);    /* Ombre portée légère */
+    padding: 20px;                              /* Espacement interne */
+    max-width: 1000px;                          /* Largeur maximale */
+    margin: 20px auto 50px;                     /* Marge réduite en haut (20px) */
+    display: flex;                              /* Disposition en flexbox */
+    align-items: center;                        /* Alignement vertical au centre */
+    gap: 30px;                                  /* Espace entre les éléments */
+}
+
+/* ======================================================
+   IMAGE DE PROFIL
+   ====================================================== */
+
+/**
+ * Style de l'image de profil avec bordure arc-en-ciel animée
+ * L'image est circulaire et a une taille fixe
+ */
+.image {
+    width: 120px;                            /* Largeur fixe */
+    height: 120px;                           /* Hauteur fixe */
+    border-radius: 50%;                      /* Forme circulaire */
+    object-fit: cover;                       /* Ajustement de l'image */
+    align-self: flex-end;                    /* Alignement vers le bas */
+    margin-bottom: 10px;                     /* Marge en bas pour ajuster la position */
+    position: relative;                      /* Position relative pour le pseudo-élément */
+    z-index: 1;                              /* Niveau de superposition */
+    padding: 2px;                            /* Espace encore plus réduit pour une bordure très fine */
+    background: linear-gradient(90deg, rgba(255,0,0,1) 0%, rgba(255,154,0,1) 10%, rgba(208,222,33,1) 20%, rgba(79,220,74,1) 30%, rgba(63,218,216,1) 40%, rgba(47,201,226,1) 50%, rgba(28,127,238,1) 60%, rgba(95,21,242,1) 70%, rgba(186,12,248,1) 80%, rgba(251,7,217,1) 90%, rgba(255,0,0,1) 100%);
+    background-size: 1000% 100%;             /* Taille du dégradé augmentée pour une rotation plus visible */
+    animation: rainbow-border 8s linear infinite; /* Animation plus lente pour mieux voir les couleurs */
+}
+
+/* ======================================================
+   ANIMATIONS
+   ====================================================== */
+
+/**
+ * Animation de la bordure arc-en-ciel
+ * Crée un effet de dégradé animé autour de l'image de profil
+ */
+@keyframes rainbow-border {
+    0% { background-position: 0% 50%; }   /* Position de départ du dégradé */
+    50% { background-position: 100% 50%; } /* Position médiane du dégradé */
+    100% { background-position: 0% 50%; } /* Retour à la position initiale */
+}
+
+/* Pseudo-élément pour créer l'effet de cercle intérieur */
+.image::after {
+    content: '';                             /* Contenu vide */
+    position: absolute;                      /* Position absolue */
+    top: 0;                                  /* Aligné en haut */
+    left: 0;                                 /* Aligné à gauche */
+    right: 0;                                /* Aligné à droite */
+    bottom: 0;                               /* Aligné en bas */
+    background: white;                       /* Fond blanc */
+    border-radius: 50%;                      /* Forme circulaire */
+    z-index: -1;                             /* Derrière l'image */
+}
+
+/* Conteneur du texte de présentation */
+.texte {
+    flex: 1;                                 /* Prend tout l'espace restant */
+}
+
+/* Style du titre principal avec effet arc-en-ciel */
+h1 {
+    font-size: 24px;                         /* Taille de police */
+    margin-bottom: 1px;                      /* Petit espace en bas */
+    position: relative;                      /* Pour le positionnement du pseudo-élément */
+    display: inline-block;                   /* Pour limiter la largeur au texte */
+    /* Effet arc-en-ciel avec dégradé de couleurs animé */
+    background-image: linear-gradient(90deg, #ff0000, #ffa500, #ffff00, #008000, #0000ff, #4b0082, #ee82ee, #ff0000);
+    background-size: 200% auto;              /* Taille du dégradé */
+    -webkit-background-clip: text;           /* Pour la compatibilité avec les navigateurs */
+    background-clip: text;                   /* Applique le dégradé au texte uniquement */
+    -webkit-text-fill-color: transparent;    /* Rend le texte transparent pour voir le dégradé */
+    color: transparent;                      /* Rend le texte transparent pour voir le dégradé */
+    animation: rainbow-text 8s linear infinite; /* Animation spécifique pour le texte */
+}
+
+/* Animation du texte arc-en-ciel */
+/* Définit le mouvement du dégradé pour créer l'effet arc-en-ciel animé */
+@keyframes rainbow-text {
+    0% { background-position: 0% 50%; }   /* Position de départ du dégradé */
+    50% { background-position: 100% 50%; } /* Position médiane du dégradé */
+    100% { background-position: 0% 50%; } /* Retour à la position initiale */
+}
+
+/* Style des sous-titres */
+h3 {
+    font-size: 16px;                         /* Taille de police standard pour les sous-titres */
+    color: #666;                             /* Couleur gris foncé pour une meilleure lisibilité */
+    margin: 8px 0;                           /* Espacement vertical pour séparer du contenu adjacent */
+}
+
+/* ======================================================
+   SECTION LISTE DES FICHIERS
+   ====================================================== */
+
+/**
+ * Conteneur principal pour la liste des fichiers
+ * Utilise un fond blanc avec une ombre pour créer un effet de carte
+ */
+.files-container {
+    background: #fff;                         /* Fond blanc pour contraster avec le fond de page */
+    border-radius: 10px;                      /* Coins arrondis pour un aspect moderne */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);   /* Ombre portée légère pour effet de profondeur */
+    padding: 20px;                           /* Espacement interne pour le contenu */
+    max-width: 1000px;                       /* Largeur maximale pour la lisibilité */
+    margin: 20px auto;                       /* Centrage horizontal avec marge verticale */
+}
+
+/**
+ * Titre de la section des fichiers
+ * Style cohérent avec le thème général
+ */
+.files-container h2 {
+    color: #333;                             /* Couleur sombre pour une bonne lisibilité */
+    margin: 0 0 20px 0;                      /* Marge en bas pour séparer du contenu */
+    font-size: 1.5em;                        /* Taille plus grande pour hiérarchie visuelle */
+}
+
+/**
+ * Liste des fichiers
+ * Organisation verticale avec espacement uniforme
+ */
+.files-list {
+    display: flex;                           /* Utilise flexbox pour le contrôle du layout */
+    flex-direction: column;                  /* Organise les éléments en colonne */
+    gap: 5px;                               /* Petit espacement uniforme entre les fichiers */
+}
+
+/* ======================================================
+   SECTIONS DE COURS
+   ====================================================== */
+
+/**
+ * Style des sections contenant les fichiers de chaque cours
+ * Chaque section a un fond blanc, des coins arrondis et une ombre
+ */
+.course-section {
+    background: #fff;                         /* Fond blanc pour contraster avec l'arrière-plan */
+    border-radius: 8px;                       /* Coins arrondis pour un aspect moderne */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);   /* Légère ombre pour effet de profondeur */
+    padding: 10px;                            /* Espacement interne pour le contenu */
+    margin-bottom: 10px;                      /* Espace entre les sections de cours */
+    transition: box-shadow 0.3s;              /* Animation douce pour l'effet de survol */
+    border: 2px solid #999;                   /* Bordure visible pour délimiter la section */
+}
+
+.course-section h3 {
+    margin: 0 0 10px 0;                        /* Marge en bas uniquement */
+    color: #333;                             /* Couleur du texte */
+    font-size: 0.9em;                         /* Taille de police réduite */
+    border-bottom: 1px solid #ccc;            /* Ligne de séparation plus visible */
+    padding: 6px 0;                           /* Espace au-dessus et sous le titre réduit */
+    cursor: pointer;                          /* Curseur main au survol */
+    display: flex;                            /* Flexbox pour aligner le titre et la flèche */
+    align-items: center;                      /* Alignement vertical */
+    justify-content: space-between;           /* Espacement entre titre et flèche */
+    background-color: #f5f5f5;                /* Fond gris clair pour le titre */
+    padding-left: 10px;                       /* Espacement à gauche */
+    border-radius: 5px;                       /* Coins arrondis */
+    font-weight: bold;                        /* Texte en gras */
+}
+
+/* Style pour la flèche */
+.course-toggle {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid #666;
+    margin-left: 10px;
+    transition: transform 0.3s ease;
+}
+
+/* Rotation de la flèche quand la section est ouverte */
+.course-section.open .course-toggle {
+    transform: rotate(180deg);
+}
+
+/* Cacher le contenu des sections fermées */
+.course-section:not(.open) .course-files {
+    display: none;
+}
+
+.course-files {
+    display: flex;                            /* Disposition en flexbox */
+    flex-direction: column;                   /* Empilé verticalement */
+    gap: 5px;                               /* Espace réduit entre les éléments */
+    gap: 5px;                                /* Espace réduit entre les fichiers */
+}
+
+/* Élément individuel de la liste */
+.file-item {
+    margin-bottom: 5px;                       /* Réduit l'écart entre les fichiers */
+    border: 1px solid #eee;                   /* Bordure fine grise */
+    border-radius: 5px;                       /* Coins arrondis */
+    padding: 5px;                            /* Espacement interne réduit */
+    transition: background-color 0.2s;        /* Animation au survol */
+    font-size: 0.9em;                         /* Taille de police très réduite */
+}
+
+/* En-tête du fichier avec titre, nom et infos */
+.file-header {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+/* Titre du fichier */
+.file-header a {
+    grid-column: 1;
+    font-weight: bold;
+    color: #2c3e50;
+    text-decoration: none;
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 1.3;
+    margin-bottom: 5px;
+}
+
+/* Conteneur pour nom */
+.file-discord {
+    grid-column: 2;
+    text-align: center;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Conteneur pour nom, taille et date */
+.file-meta {
+    grid-column: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+/* Nom, taille et date */
+.file-info, .file-size, .file-date {
+    color: #777;
+    white-space: nowrap;
+}
+
+.file-info {
+    margin-right: auto;
+}
+
+/* Style pour les labels */
+.label {
+    font-weight: bold;
+    color: #444;
+}
+
+/* Description du fichier */
+.file-description {
+    color: #666;
+    font-style: italic;
+    margin-top: 3px;
+    padding-left: 10px;
+    border-left: 2px solid #eee;
+    font-size: 0.9em;
+}
+
+/* Effet au survol des fichiers */
+.file-item:hover {
+    background-color: #f8f8f8;               /* Fond légèrement gris au survol */
+}
+
+/* Style du formulaire d'upload */
+.upload-section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 20px 20px 10px 20px;
+    max-width: 1000px;
+    margin: 20px auto;
+}
+
+.upload-section h2 {
+    color: #333;
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    align-items: start;
+}
+
+.input-row input,
+.input-row select {
+    width: 100%;
+    height: 34px;
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.file-input,
+.video-input {
+    width: 100%;
+}
+
+.file-input input[type="file"],
+.video-input input[type="url"] {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+/* Style pour les boutons de sélection du type d'upload */
+/* Centrage horizontal des boutons avec espacement uniforme */
+.upload-type-selector {
+    display: flex;
+    justify-content: center; /* Centre les boutons horizontalement */
+    gap: 10px; /* Espace uniforme entre les boutons */
+    margin-top: 5px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.upload-type-btn {
+    padding: 5px 10px;
+    background-color: #f0f0f0;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: all 0.2s ease;
+}
+
+/* Style pour les boutons actifs */
+/* Met en évidence le bouton sélectionné avec une couleur orange vif */
+.upload-type-btn.active {
+    background-color: #FF7000; /* Orange vif pour le bouton actif */
+    color: white;
+    border: 2px solid #FF6600; /* Bordure légèrement plus foncée */
+    font-weight: bold; /* Texte en gras pour plus de visibilité */
+    box-shadow: 0 0 5px rgba(255, 140, 0, 0.5); /* Effet de lueur subtil */
+}
+
+/* Style pour les boutons inactifs au survol */
+.upload-type-btn:hover {
+    background-color: #e0e0e0;
+}
+
+/* Style pour les boutons actifs au survol - plus spécifique pour garantir qu'il s'applique */
+/* Maintient l'apparence du bouton actif même lors des interactions utilisateur */
+.upload-type-btn.active:hover,
+.upload-type-btn.active:focus,
+.upload-type-btn.active:active {
+    background-color: #FF7000 !important; /* Force le maintien de la couleur orange */
+    color: white !important;
+    border: 2px solid #FF6600 !important;
+    font-weight: bold !important;
+    box-shadow: 0 0 5px rgba(255, 140, 0, 0.5) !important;
+    /* L'utilisation de !important garantit que ces styles ont priorité */
+}
+
+.file-format {
+    display: block;
+    color: #666;
+    font-size: 0.6em;
+    margin-top: 4px;
+}
+
+/* Style pour la zone de description */
+/* Zone de texte optimisée pour une saisie confortable */
+.upload-section textarea {
+    width: 100%;
+    min-height: 85px;           /* Hauteur minimale pour permettre une description détaillée */
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: Arial, sans-serif;
+    resize: none;               /* Désactive le redimensionnement manuel */
+    box-sizing: border-box;     /* Inclut padding et bordure dans la largeur totale */
+}
+
+/* En-tête avec boutons de type d'upload */
+/* Disposition flexible pour aligner le titre et les boutons */
+.header-with-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;         /* Espace entre l'en-tête et le contenu suivant */
+    position: relative;
+    margin-top: 5px;             /* Espace réduit en haut pour un design compact */
+}
+
+.upload-notice {
+    color: #666;
+    font-size: 0.6em;
+    margin-right: 15px;
+    animation: fade 2s infinite;
+    display: inline-block;
+}
+
+@keyframes fade {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+
+/* Zone des actions du formulaire (bouton submit et message de chargement) */
+/* Disposition flexible pour aligner le message et le bouton */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0;              /* Suppression de la marge supérieure pour un design compact */
+}
+
+/* Bouton de soumission du formulaire */
+/* Aligné à droite dans le conteneur des actions */
+.form-actions button {
+    margin-left: auto;          /* Pousse le bouton vers la droite */
+    display: block;             /* Affichage en bloc pour une meilleure visibilité */
+}
+
+.upload-section button {
+    padding: 0 20px;
+    height: 34px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.upload-section button:hover {
+    background-color: #45a049;
+}
+
+.upload-confirmation {
+    display: none;
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* Pied de page */
+.site-footer {
+    text-align: center;                      /* Centrage du texte */
+    padding: 15px 0;                         /* Espacement vertical */
+    margin-top: 30px;                        /* Marge supérieure */
+    background-color: #f5f5f5;               /* Fond gris clair */
+    border-top: 1px solid #e0e0e0;           /* Bordure supérieure */
+    color: #666;                             /* Couleur de texte gris foncé */
+    font-size: 0.9em;                        /* Taille de police réduite */
+}
+
+.site-footer p {
+    margin: 0;                               /* Pas de marge */
+}
+
+/* Message d'alerte */
+.alerte {
+    color: red;                            /* Texte en rouge */
+    font-weight: bold;                       /* Texte en gras */
+}
+
+/* Messages de succès et d'erreur */
+.message {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.success {
+    background-color: #dff0d8;
+    color: #3c763d;
+    border: 1px solid #d6e9c6;
+}
+
+.error {
+    background-color: #f2dede;
+    color: #a94442;
+    border: 1px solid #ebccd1;
+}
+
+.countdown {
+    font-size: 1.2em;
+    margin: 20px 0;
+    color: #333;
+    text-align: center;
+}
+
+.redirect-link {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.redirect-link a {
+    color: #007BFF;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.redirect-link a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Styles pour les mots-clés Java */
+.java-keyword {
+    color: #d73a49;
+    font-family: Arial, sans-serif;
+    font-size: 0.9em;
+    font-weight: normal;
+}
+
+/* Style spécifique pour les mots-clés Java dans les boutons */
+button .java-keyword {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+/* Styles pour les icônes de cours */
+.course-icon {
+    display: inline-block;
+    margin-right: 8px;
+    font-size: 1.2em;
+    vertical-align: middle;
+}
+
+/* Animation subtile pour les icônes au survol des sections */
+.course-section:hover .course-icon {
+    transform: scale(1.2);
+    transition: transform 0.2s ease;
+}
+
+/* Style pour les titres en bleu */
+.file-title {
+    color: #0066cc;
+    font-weight: bold;
+}
+
+/* Style pour les liens vidéo */
+.video-link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.video-link:hover {
+    text-decoration: underline;
+}
+
+.video-link .file-icon {
+    font-size: 1.2em;
+}
+
+/* ======================================================
+   EN-TÊTE ET PRÉSENTATION
+   ====================================================== */
+
+/**
+ * Section de présentation
+ * Conteneur principal pour l'en-tête du site avec le logo et les informations de contact.
+ * Utilise flexbox pour organiser les éléments côte à côte.
+ */
+.presentation {
+    display: flex;                      /* Disposition flexible */
+    padding: 15px;                      /* Espacement interne */
+    background-color: #fff;             /* Fond blanc */
+    border-radius: 10px;                /* Coins arrondis */
+    margin: 0 auto 20px;                /* Centré horizontalement avec marge inférieure */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombre légère */
+    max-width: 1000px;                  /* Largeur maximale */
+}
+
+/**
+ * Conteneur principal de l'en-tête
+ * Organise le contenu de l'en-tête avec le logo, le texte et le formulaire de contact.
+ */
+.header-main {
+    display: flex;                      /* Disposition flexible */
+    justify-content: space-between;     /* Espace entre les éléments */
+    align-items: flex-start;           /* Alignement en haut */
+    width: 100%;                        /* Largeur totale */
+}
+
+/**
+ * Partie gauche de l'en-tête
+ * Contient le logo et les informations du site.
+ */
+.header-left {
+    display: flex;                      /* Disposition flexible */
+    align-items: flex-start;           /* Alignement en haut */
+    gap: 20px;                         /* Espace entre le logo et le texte */
+    flex: 1;                           /* Occupe l'espace disponible */
+    min-width: 60%;                    /* Largeur minimale */
+}
+
+/**
+ * Titres dans la section texte
+ * Style pour les titres h3 dans la section de présentation.
+ */
+.texte h3 {
+    margin: 5px 0;                      /* Marge minimale */
+    color: #333;                        /* Couleur de texte foncée */
+    font-size: 1.2em;                   /* Taille de police */
+}
+
+/**
+ * Informations sur l'école
+ * Style pour les informations sur l'institution académique.
+ */
+.school-info {
+    font-size: 0.9em !important;        /* Taille de police réduite */
+    color: #666 !important;             /* Couleur de texte grise */
+    font-weight: normal !important;     /* Poids de police normal */
+    white-space: nowrap;                /* Évite le retour à la ligne */
+}
+
+/* ======================================================
+   FORMULAIRE DE CONTACT
+   ====================================================== */
+
+/**
+ * Conteneur du formulaire de contact
+ * Style pour la boîte contenant le formulaire de contact dans l'en-tête.
+ */
+.contact-info {
+    background-color: #f5f5f5;          /* Fond gris très clair */
+    padding: 15px;                      /* Espacement interne */
+    border-radius: 8px;                 /* Coins arrondis */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Ombre légère */
+    width: 420px;                       /* Largeur fixe */
+    margin-left: 20px;                  /* Marge à gauche */
+}
+
+/**
+ * Titre du formulaire de contact
+ * Style pour l'en-tête du formulaire de contact.
+ */
+.contact-info h4 {
+    margin: 0 0 8px 0;                  /* Marge inférieure uniquement */
+    color: #333;                        /* Couleur de texte foncée */
+    font-size: 0.9em;                   /* Taille de police réduite */
+}
+
+/**
+ * Ligne de formulaire
+ * Organise les champs de formulaire en ligne avec flexbox.
+ */
+.form-row {
+    display: flex;                      /* Disposition flexible */
+    gap: 8px;                           /* Espace entre les champs */
+    margin-bottom: 8px;                 /* Marge inférieure */
+}
+
+/**
+ * Dernière ligne de formulaire
+ * Supprime la marge inférieure pour la dernière ligne.
+ */
+.form-row:last-child {
+    margin-bottom: 0;                   /* Pas de marge inférieure */
+}
+
+/**
+ * Champs de saisie du formulaire
+ * Style commun pour tous les champs de saisie et zones de texte.
+ */
+.contact-info input,
+.contact-info textarea {
+    padding: 6px 10px;                  /* Espacement interne */
+    border: 1px solid #ddd;             /* Bordure légère */
+    border-radius: 4px;                 /* Coins arrondis */
+    font-size: 0.9em;                   /* Taille de police réduite */
+    font-family: Arial, sans-serif;     /* Police de caractères */
+    transition: border-color 0.2s;      /* Transition douce pour le focus */
+}
+
+/**
+ * État de focus des champs
+ * Style appliqué lorsqu'un champ reçoit le focus.
+ */
+.contact-info input:focus,
+.contact-info textarea:focus {
+    border-color: #4CAF50;              /* Bordure verte */
+    outline: none;                      /* Supprime le contour par défaut */
+    box-shadow: 0 0 3px rgba(76, 175, 80, 0.3); /* Légère lueur verte */
+}
+
+/**
+ * Champ de texte court
+ * Style spécifique pour les champs de texte (nom, prénom).
+ */
+.contact-info input[type="text"] {
+    width: 120px;                       /* Largeur fixe */
+}
+
+/**
+ * Champ d'email
+ * Style spécifique pour le champ d'email qui prend tout l'espace disponible.
+ */
+.contact-info input[type="email"] {
+    flex: 1;                            /* Prend l'espace restant */
+}
+
+/**
+ * Zone de texte pour le message
+ * Style spécifique pour la zone de texte du message.
+ */
+.contact-info textarea {
+    flex: 1;                            /* Prend l'espace restant */
+    height: 34px;                       /* Hauteur fixe */
+    resize: none;                       /* Désactive le redimensionnement */
+    box-sizing: border-box;             /* Inclut padding et bordure dans la largeur */
+}
+
+/**
+ * Bouton d'envoi du formulaire
+ * Style pour le bouton d'envoi du formulaire de contact.
+ */
+.contact-info button {
+    padding: 0 20px;                    /* Espacement horizontal */
+    background-color: #4CAF50;          /* Fond vert */
+    color: white;                       /* Texte blanc */
+    border: none;                       /* Pas de bordure */
+    border-radius: 4px;                 /* Coins arrondis */
+    cursor: pointer;                    /* Curseur en forme de main */
+    transition: background-color 0.2s;  /* Transition douce */
+    font-size: 0.9em;                   /* Taille de police réduite */
+    font-weight: 500;                   /* Poids de police semi-gras */
+    height: 34px;                       /* Hauteur fixe */
+}
+
+/**
+ * Effet de survol sur le bouton
+ * Change la couleur de fond au survol pour un retour visuel.
+ */
+.contact-info button:hover {
+    background-color: #45a049;          /* Vert légèrement plus foncé */
+}
+
+/**
+ * Message de confirmation
+ * Affiché après l'envoi réussi du formulaire de contact.
+ */
+.confirmation-message {
+    display: none;                      /* Caché par défaut */
+    color: green;                       /* Texte vert */
+    font-size: 0.85em;                  /* Taille de police réduite */
+    margin-top: 8px;                    /* Marge supérieure */
+    text-align: center;                 /* Texte centré */
+    font-weight: 500;                   /* Légèrement en gras */
+}
+
+/* ======================================================
+   CONTENU PRINCIPAL
+   ====================================================== */
+
+/* Note: La classe .presentation est déjà définie plus haut, 
+   ces styles sont donc redondants et pourraient causer des conflits. */
+
+/* .presentation {
+    Déjà défini plus haut
+} */
+
+/**
+ * Image de profil
+ * Style pour l'image de profil ou le logo affiché dans l'en-tête.
+ */
+.image {
+    width: 120px;                            /* Largeur fixe */
+    height: 120px;                           /* Hauteur fixe */
+    border-radius: 50%;                      /* Forme circulaire */
+    object-fit: cover;                       /* Ajustement de l'image */
+    border: 2px solid #f0f0f0;               /* Bordure légère */
+}
+
+/**
+ * Conteneur du texte de présentation
+ * Contient les informations textuelles dans l'en-tête.
+ */
+.texte {
+    flex: 1;                                 /* Prend tout l'espace restant */
+    line-height: 1.4;                        /* Espacement des lignes */
+}
+
+/**
+ * Titre principal
+ * Style pour le titre principal du site, utilisant la couleur rouge Java.
+ */
+h1 {
+    font-size: 24px;                         /* Taille de police */
+    color: #f50000;                          /* Couleur rouge Java */
+    margin-bottom: 1px;                      /* Petit espace en bas */
+    font-weight: bold;                       /* Texte en gras */
+}
+
+/**
+ * Sous-titres
+ * Style pour les sous-titres utilisés dans le contenu principal.
+ */
+h3 {
+    font-size: 16px;                         /* Taille de police */
+    color: #666;                             /* Couleur gris foncé */
+    margin: 8px 0;                           /* Espacement vertical */
+    font-weight: 500;                        /* Légèrement en gras */
+}
+
+/* ======================================================
+   LISTE DES FICHIERS
+   ====================================================== */
+
+/**
+ * Conteneur principal des fichiers
+ * Boîte contenant la liste des fichiers disponibles au téléchargement.
+ */
+.files-container {
+    background: #fff;                         /* Fond blanc */
+    border-radius: 10px;                      /* Coins arrondis */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);    /* Ombre portée légère */
+    padding: 20px;                            /* Espacement interne */
+    max-width: 1000px;                        /* Largeur maximale */
+    margin: 20px auto;                        /* Centrage avec marge en haut */
+    transition: transform 0.2s;               /* Animation au survol */
+}
+
+/**
+ * Titre de la section fichiers
+ * En-tête pour la section contenant la liste des fichiers.
+ */
+.files-container h2 {
+    color: #333;                             /* Couleur du texte */
+    margin: 0 0 20px 0;                      /* Marge en bas uniquement */
+    font-size: 1.5em;                        /* Taille de police */
+    border-bottom: 1px solid #eee;           /* Ligne de séparation */
+    padding-bottom: 10px;                    /* Espace sous le texte */
+}
+
+/**
+ * Liste des fichiers
+ * Conteneur pour l'ensemble des sections de cours et leurs fichiers.
+ */
+.files-list {
+    display: flex;                           /* Disposition en flexbox */
+    flex-direction: column;                  /* Empilé verticalement */
+    gap: 5px;                                /* Espace réduit entre les éléments */
+}
+
+/**
+ * Section de cours
+ * Conteneur pour chaque catégorie de cours avec ses fichiers associés.
+ */
+.course-section {
+    background: #fff;                         /* Définit le fond blanc pour contraster avec le fond de page */
+    border-radius: 8px;                       /* Définit les coins arrondis pour la section */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);   /* Définit l'ombre légère pour la section */
+    padding: 10px;                            /* Définit l'espace interne réduit pour la section */
+    margin-bottom: 10px;                      /* Définit l'espace en bas augmenté pour la section */
+    transition: box-shadow 0.3s;              /* Définit la transition pour l'effet de survol */
+    border: 2px solid #999;                   /* Définit la bordure grise plus foncée pour la section */
+    border: 2px solid #999;                   /* Bordure grise plus foncée */
+}
+
+/**
+ * En-tête de section de cours
+ * Titre de chaque section de cours, avec style pour l'interaction pliable.
+ */
+.course-section h3 {
+    margin: 0 0 10px 0;                      /* Marge en bas uniquement */
+    color: #333;                             /* Couleur du texte */
+    font-size: 0.9em;                        /* Taille de police réduite */
+    border-bottom: 1px solid #ccc;           /* Ligne de séparation plus visible */
+    padding: 6px 0;                          /* Espace au-dessus et sous le titre réduit */
+    cursor: pointer;                         /* Curseur main au survol */
+    display: flex;                           /* Flexbox pour aligner le titre et la flèche */
+    align-items: center;                     /* Alignement vertical */
+    justify-content: space-between;          /* Espacement entre titre et flèche */
+    background-color: #f5f5f5;               /* Fond gris clair pour le titre */
+    padding-left: 10px;                      /* Espacement à gauche */
+    border-radius: 5px;                      /* Coins arrondis */
+    font-weight: bold;                       /* Texte en gras */
+    transition: background-color 0.2s;       /* Transition douce au survol */
+}
+
+/**
+ * Indicateur de bascule (flèche)
+ * Crée une flèche qui indique si la section est ouverte ou fermée.
+ * Utilise des bordures CSS pour créer une forme de triangle.
+ */
+.course-toggle {
+    display: inline-block;                   /* Affichage en ligne */
+    width: 0;                                /* Largeur nulle pour le triangle */
+    height: 0;                               /* Hauteur nulle pour le triangle */
+    border-left: 6px solid transparent;      /* Côté gauche transparent */
+    border-right: 6px solid transparent;     /* Côté droit transparent */
+    border-top: 8px solid #666;              /* Sommet du triangle en gris */
+    margin-left: 10px;                       /* Marge à gauche */
+    transition: transform 0.3s ease;         /* Animation de rotation fluide */
+}
+
+/**
+ * Flèche en position ouverte
+ * Rotation de la flèche quand la section est ouverte (pointe vers le haut).
+ */
+.course-section.open .course-toggle {
+    transform: rotate(180deg);               /* Rotation de 180 degrés */
+}
+
+/**
+ * Masquage des fichiers dans les sections fermées
+ * Cache le contenu des sections qui ne sont pas ouvertes.
+ */
+.course-section:not(.open) .course-files {
+    display: none;                           /* Masque complètement l'élément */
+}
+
+/**
+ * Liste des fichiers d'un cours
+ * Conteneur pour les fichiers d'une section de cours spécifique.
+ */
+.course-files {
+    display: flex;                            /* Disposition en flexbox */
+    flex-direction: column;                   /* Empilé verticalement */
+    gap: 5px;                                /* Espace réduit entre les fichiers */
+    padding-left: 10px;                       /* Léger retrait à gauche */
+}
+
+/* ======================================================
+   ÉLÉMENTS DE FICHIER
+   ====================================================== */
+
+/**
+ * Élément individuel de fichier
+ * Représente un fichier individuel dans la liste des fichiers disponibles.
+ */
+.file-item {
+    margin-bottom: 5px;                       /* Réduit l'écart entre les fichiers */
+    border: 1px solid #eee;                   /* Bordure fine grise */
+    border-radius: 5px;                       /* Coins arrondis */
+    padding: 5px;                             /* Espacement interne réduit */
+    transition: background-color 0.2s;        /* Animation au survol */
+    font-size: 0.9em;                         /* Taille de police très réduite */
+    background-color: #fafafa;                /* Fond très légèrement gris */
+}
+
+/**
+ * En-tête du fichier
+ * Contient le titre du fichier et les informations associées.
+ * Utilise CSS Grid pour une mise en page flexible.
+ */
+.file-header {
+    display: grid;                            /* Disposition en grille */
+    grid-template-columns: 1fr;               /* Une seule colonne */
+    grid-gap: 10px;                           /* Espace entre les éléments */
+    width: 100%;                              /* Largeur totale */
+    margin-bottom: 5px;                       /* Espace en bas */
+}
+
+/**
+ * Lien de téléchargement du fichier
+ * Style pour le lien de téléchargement du fichier avec effet au survol.
+ */
+.file-header a {
+    grid-column: 1;                           /* Première colonne */
+    font-weight: bold;                        /* Texte en gras */
+    color: #2c3e50;                           /* Couleur bleu foncé */
+    text-decoration: none;                    /* Pas de soulignement */
+    transition: color 0.2s;                   /* Transition douce */
+    padding: 3px 0;                           /* Léger espacement vertical */
+    word-wrap: break-word;                    /* Retour à la ligne des mots longs */
+    line-height: 1.3;                         /* Hauteur de ligne augmentée */
+    margin-bottom: 5px;                      /* Marge inférieure */
+}
+
+/**
+ * Effet de survol sur le lien
+ * Change la couleur du lien au survol pour un retour visuel.
+ */
+.file-header a:hover {
+    color: #3498db;                           /* Bleu plus clair au survol */
+    text-decoration: underline;               /* Soulignement au survol */
+}
+
+/**
+ * Conteneur pour nom
+ * Affiche le nom du fichier.
+ */
+.file-discord {
+    grid-column: 2;
+    text-align: center;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/**
+ * Métadonnées du fichier
+ * Conteneur pour les informations supplémentaires comme le nom, la taille et la date.
+ */
+.file-meta {
+    grid-column: 1;                           /* Première colonne */
+    display: flex;                            /* Disposition flexible */
+    align-items: center;                      /* Alignement vertical */
+    justify-content: flex-start;              /* Alignement à gauche */
+    gap: 15px;                                /* Espace entre les éléments */
+    margin-top: 5px;                          /* Marge supérieure */
+    font-size: 0.85em;                        /* Taille de police réduite */
+}
+
+/**
+ * Informations sur le fichier
+ * Style commun pour les informations de nom, taille et date du fichier.
+ */
+.file-info, .file-size, .file-date {
+    color: #777;                               /* Couleur grise */
+    white-space: nowrap;                      /* Évite le retour à la ligne */
+    display: flex;                            /* Disposition flexible */
+    align-items: center;                      /* Alignement vertical */
+    gap: 5px;                                 /* Espace entre label et valeur */
+}
+
+/**
+ * Information principale
+ * Nom du fichier qui prend l'espace disponible.
+ */
+.file-info {
+    margin-right: auto;                       /* Pousse les autres éléments à droite */
+    overflow: hidden;                         /* Cache le débordement */
+    text-overflow: ellipsis;                  /* Ajoute des points de suspension */
+}
+
+/**
+ * Labels des informations
+ * Style pour les étiquettes des métadonnées (Nom:, Taille:, Date:).
+ */
+.label {
+    font-weight: bold;                        /* Texte en gras */
+    color: #444;                              /* Couleur plus foncée */
+    font-size: 0.9em;                         /* Légèrement plus petit */
+}
+
+/**
+ * Description du fichier
+ * Affiche la description du fichier avec un style distinct.
+ */
+.file-description {
+    color: #666;                              /* Couleur grise moyenne */
+    font-style: italic;                       /* Texte en italique */
+    margin-top: 3px;                          /* Marge supérieure */
+    padding-left: 10px;                       /* Retrait à gauche */
+    border-left: 2px solid #eee;              /* Bordure verticale à gauche */
+    font-size: 0.9em;                         /* Taille de police réduite */
+    line-height: 1.4;                         /* Hauteur de ligne augmentée */
+}
+
+/**
+ * Effet de survol sur un fichier
+ * Change légèrement l'apparence d'un fichier au survol.
+ */
+.file-item:hover {
+    background-color: #f0f0f0;                /* Fond gris clair au survol */
+    border-color: #ddd;                       /* Bordure plus visible au survol */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);   /* Légère ombre au survol */
+}
+
+/* ======================================================
+   FORMULAIRE D'UPLOAD
+   ====================================================== */
+
+/**
+ * Section d'upload de fichiers
+ * Conteneur pour le formulaire d'envoi de nouveaux fichiers.
+ */
+.upload-section {
+    background: #fff;                          /* Fond blanc */
+    border-radius: 10px;                       /* Coins arrondis */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);     /* Ombre portée */
+    padding: 20px;                             /* Espacement interne */
+    max-width: 1000px;                         /* Largeur maximale */
+    margin: 20px auto;                         /* Centrage avec marge */
+    border: 1px solid #eaeaea;                 /* Bordure légère */
+}
+
+/**
+ * Titre de la section d'upload
+ * Style pour l'en-tête du formulaire d'upload.
+ */
+.upload-section h2 {
+    color: #333;                               /* Couleur foncée */
+    margin: 0;                                 /* Pas de marge */
+    font-size: 1.5em;                          /* Taille de police */
+    padding-bottom: 10px;                      /* Espace sous le titre */
+}
+
+/**
+ * En-tête avec boutons
+ * Conteneur flexible pour le titre et les boutons d'action.
+ */
+.header-with-buttons {
+    display: flex;                             /* Disposition flexible */
+    align-items: center;                       /* Alignement vertical */
+    margin-bottom: 20px;                       /* Marge inférieure */
+    gap: 30px;                                 /* Espace entre les éléments */
+    flex-wrap: wrap;                           /* Retour à la ligne si nécessaire */
+}
+
+/**
+ * Grille du formulaire
+ * Structure en grille pour organiser les champs du formulaire.
+ */
+.form-grid {
+    display: grid;                             /* Disposition en grille */
+    grid-template-columns: 3fr 2fr;            /* Deux colonnes de tailles différentes */
+    gap: 20px;                                 /* Espace entre les colonnes */
+    max-width: 1000px;                         /* Largeur maximale */
+    margin: 0 auto;                            /* Centrage horizontal */
+}
+
+/**
+ * Groupe de champs de formulaire
+ * Conteneur pour un ensemble de champs de formulaire liés.
+ */
+.form-group {
+    display: flex;                             /* Disposition flexible */
+    flex-direction: column;                    /* Empilé verticalement */
+    gap: 12px;                                 /* Espace entre les champs */
+    margin-bottom: 15px;                       /* Marge inférieure */
+}
+
+/**
+ * Ligne de champs de formulaire
+ * Organise deux champs côte à côte dans le formulaire.
+ */
+.input-row {
+    display: grid;                             /* Disposition en grille */
+    grid-template-columns: 1fr 1fr;            /* Deux colonnes égales */
+    gap: 15px;                                 /* Espace entre les champs */
+    align-items: start;                        /* Alignement en haut */
+    margin-bottom: 5px;                        /* Marge inférieure */
+}
+
+/**
+ * Champs de saisie et listes déroulantes
+ * Style commun pour tous les champs de saisie et listes déroulantes du formulaire.
+ */
+.input-row input,
+.input-row select {
+    width: 100%;                               /* Largeur totale */
+    height: 34px;                              /* Hauteur fixe */
+    padding: 6px 10px;                         /* Espacement interne */
+    border: 1px solid #ddd;                    /* Bordure légère */
+    border-radius: 4px;                        /* Coins arrondis */
+    font-size: 0.9em;                          /* Taille de police réduite */
+    font-family: Arial, sans-serif;            /* Police de caractères */
+    box-sizing: border-box;                    /* Inclut padding et bordure dans la largeur */
+    background-color: white;                   /* Fond blanc */
+    transition: border-color 0.2s;             /* Transition douce pour le focus */
+}
+
+/**
+ * État de focus des champs
+ * Style appliqué lorsqu'un champ reçoit le focus.
+ */
+.input-row input:focus,
+.input-row select:focus {
+    border-color: #ffb74d;                     /* Bordure orange au focus */
+    outline: none;                             /* Supprime le contour par défaut */
+    box-shadow: 0 0 3px rgba(255, 183, 77, 0.3); /* Légère lueur orange */
+}
+
+/**
+ * Conteneurs des champs de fichier et vidéo
+ * Style pour les conteneurs des champs de téléchargement de fichier et URL vidéo.
+ */
+.file-input,
+.video-input {
+    width: 100%;                               /* Largeur totale */
+    margin-bottom: 10px;                       /* Marge inférieure */
+}
+
+/**
+ * Champs de fichier et URL vidéo
+ * Style spécifique pour les champs de téléchargement de fichier et URL vidéo.
+ */
+.file-input input[type="file"],
+.video-input input[type="url"] {
+    width: 100%;                               /* Largeur totale */
+    padding: 6px 10px;                         /* Espacement interne */
+    border: 1px solid #ddd;                    /* Bordure légère */
+    border-radius: 4px;                        /* Coins arrondis */
+    font-size: 0.9em;                          /* Taille de police réduite */
+    font-family: Arial, sans-serif;            /* Police de caractères */
+    box-sizing: border-box;                    /* Inclut padding et bordure dans la largeur */
+    background-color: white;                   /* Fond blanc */
+    cursor: pointer;                           /* Curseur en forme de main */
+}
+
+/* ======================================================
+   SÉLECTEURS DE TYPE D'UPLOAD
+   ====================================================== */
+
+/**
+ * Sélecteur de type d'upload
+ * Conteneur pour les boutons de sélection du type d'upload (fichier ou vidéo).
+ */
+.upload-type-selector {
+    display: flex;                             /* Disposition flexible */
+    gap: 10px;                                 /* Espace entre les boutons */
+    align-items: center;                       /* Alignement vertical */
+    margin-bottom: 15px;                       /* Marge inférieure */
+}
+
+/**
+ * Bouton de sélection du type d'upload
+ * Style pour les boutons permettant de choisir entre fichier et vidéo.
+ */
+.upload-type-btn {
+    padding: 5px 10px;                         /* Espacement interne */
+    background-color: #ffcc80;                 /* Orange clair */
+    border: 1px solid #ffb74d;                 /* Bordure orange */
+    border-radius: 4px;                        /* Coins arrondis */
+    cursor: pointer;                           /* Curseur en forme de main */
+    font-size: 0.85em;                         /* Taille de police réduite */
+    transition: all 0.2s ease;                /* Transition douce */
+    font-weight: 500;                          /* Légèrement en gras */
+    color: #333;                               /* Texte foncé */
+}
+
+/**
+ * Bouton de type d'upload actif
+ * Style pour le bouton de type d'upload actuellement sélectionné.
+ */
+.upload-type-btn.active {
+    background-color: #4CAF50;                 /* Vert */
+    border-color: #388E3C;                    /* Vert foncé */
+    color: white;                            /* Texte blanc */
+    font-weight: bold;                        /* Texte en gras */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);    /* Légère ombre */
+}
+
+/**
+ * Effet de survol sur le bouton de type d'upload
+ * Change la couleur de fond au survol pour un retour visuel.
+ */
+.upload-type-btn:hover {
+    background-color: #ffb74d;                 /* Orange plus foncé au survol */
+    border-color: #ffa726;                    /* Bordure orange foncé au survol */
+    transform: translateY(-1px);              /* Léger effet de soulèvement */
+}
+
+.upload-type-btn.active:hover {
+    background-color: #388E3C; /* Vert plus foncé au survol de l'état actif */
+}
+
+/* ======================================================
+   BOUTONS D'ACTION
+   ====================================================== */
+
+/**
+ * Bouton d'upload
+ * Style pour le bouton principal d'envoi du formulaire.
+ */
+.upload-btn {
+    padding: 8px 20px;                        /* Espacement interne */
+    background-color: #4CAF50;                /* Fond vert */
+    color: white;                             /* Texte blanc */
+    border: none;                             /* Pas de bordure */
+    border-radius: 4px;                       /* Coins arrondis */
+    cursor: pointer;                          /* Curseur en forme de main */
+    font-size: 1em;                           /* Taille de police */
+    transition: background-color 0.2s;        /* Transition douce */
+    margin-top: 10px;                         /* Marge supérieure */
+    font-weight: 500;                         /* Légèrement en gras */
+}
+
+/**
+ * Effet de survol sur le bouton d'upload
+ * Change la couleur de fond au survol pour un retour visuel.
+ */
+.upload-btn:hover {
+    background-color: #45a049;                /* Vert légèrement plus foncé */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);    /* Légère ombre au survol */
+}
+
+/**
+ * Message de statut d'upload
+ * Affiche le statut de l'upload (succès ou erreur).
+ */
+.upload-status {
+    margin-top: 10px;                         /* Marge supérieure */
+    padding: 10px;                            /* Espacement interne */
+    border-radius: 4px;                       /* Coins arrondis */
+    display: none;                            /* Caché par défaut */
+    font-size: 0.9em;                         /* Taille de police réduite */
+    text-align: center;                       /* Texte centré */
+}
+
+/**
+ * Bouton d'upload désactivé
+ * Style pour le bouton d'upload lorsqu'il est désactivé.
+ */
+.upload-btn:disabled {
+    background-color: #cccccc;                /* Fond gris */
+    cursor: not-allowed;                      /* Curseur interdit */
+    opacity: 0.7;                             /* Légèrement transparent */
+}
+
+/**
+ * Message d'erreur
+ * Style pour le message d'erreur de l'upload.
+ */
+.upload-error {
+    background-color: #f2dede;                /* Fond rouge clair */
+    color: #a94442;                           /* Texte rouge foncé */
+    border: 1px solid #ebccd1;                /* Bordure rouge claire */
+    animation: fadeIn 0.5s;                   /* Animation d'apparition */
+}
+
+/* ======================================================
+   PIED DE PAGE
+   ====================================================== */
+
+/**
+ * Pied de page du site
+ * Style pour le pied de page contenant le copyright.
+ */
+.site-footer {
+    text-align: center;                     /* Texte centré */
+    padding: 15px 0;                        /* Espacement vertical */
+    margin-top: 30px;                       /* Marge supérieure */
+    background-color: #f5f5f5;              /* Fond gris clair */
+    border-top: 1px solid #e0e0e0;          /* Bordure supérieure */
+    color: #666;                            /* Couleur de texte gris foncé */
+    font-size: 0.9em;                       /* Taille de police réduite */
+}
+
+/**
+ * Texte du copyright
+ * Style pour le texte du copyright dans le pied de page.
+ */
+.site-footer p {
+    margin: 0;                              /* Pas de marge */
+}
+
+/* ======================================================
+   ANIMATIONS
+   ====================================================== */
+
+/**
+ * Animation d'apparition
+ * Fait apparaître progressivement un élément.
+ */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/**
+ * Animation de rotation
+ * Fait tourner un élément sur lui-même.
+ */
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* ======================================================
+   LIENS ET REDIRECTIONS
+   ====================================================== */
+
+/**
+ * Liens de redirection
+ * Style pour les liens de redirection vers d'autres pages.
+ */
+
+.redirect-link {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.redirect-link a {
+    color: #007BFF;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.redirect-link a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Styles pour les mots-clés Java */
+.java-keyword {
+    color: #d73a49;
+    font-family: Arial, sans-serif;
+    font-size: 0.9em;
+    font-weight: normal;
+}
+
+/* Style spécifique pour les mots-clés Java dans les boutons */
+button .java-keyword {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+/* Styles pour les icônes de cours */
+.course-icon {
+    display: inline-block;
+    margin-right: 8px;
+    font-size: 1.2em;
+    vertical-align: middle;
+}
+
+/* Animation subtile pour les icônes au survol des sections */
+.course-section:hover .course-icon {
+    transform: scale(1.2);
+    transition: transform 0.2s ease;
+}
+
+/* Style pour les titres en bleu */
+.titre-bleu {
+    color: #0066cc;
+    font-weight: bold;
+}
+
+/* Style pour les liens vidéo */
+.video-link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.video-link:hover {
+    text-decoration: underline;
+}
+
+.video-link .file-icon {
+    font-size: 1.2em;
+}
+
+/* Style pour que les liens visités conservent la même couleur */
+a:visited {
+    color: inherit; /* Conserve la couleur du parent */
+}
+
+.file-link:visited {
+    color: inherit; /* Conserve la couleur du parent pour les liens de fichiers */
+}
+
+.file-header a:visited {
+    color: #2c3e50; /* Même couleur que les liens non visités dans les en-têtes de fichiers */
+}
+
+/* Boutons de liens vers les synthèses */
+.links-container {
+  display: flex;
+  justify-content: center;
+  gap: 2em;
+  margin: 2em 0;
+}
+
+.links-container .btn {
+  font-size: 1em;
+  padding: 0.7em 1.5em;
+  border-radius: 6px;
+  background: #f5f5f5;
+  color: #333;
+  font-weight: 500;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  border: 2px solid #28a745;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.links-container .btn:hover {
+  background: #e9ffe9;
+  color: #155724;
+  border-color: #218838;
+}

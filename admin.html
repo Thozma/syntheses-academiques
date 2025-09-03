@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<!--
+  Panneau d'administration - Synthèses Académiques
+  
+  Cette page permet aux administrateurs de gérer les synthèses académiques.
+  Fonctionnalités principales :
+  - Authentification par mot de passe
+  - Affichage de tous les fichiers avec filtrage et recherche
+  - Modification des informations des fichiers (titre, cours, etc.)
+  - Conversion de fichiers PDF/ZIP en liens vidéo
+  - Suppression de fichiers
+  - Ajout du script de validation AdSense
+  
+  La page utilise JavaScript vanilla pour les interactions et communique
+  avec le backend Node.js via des requêtes fetch API. Les styles sont
+  définis dans le fichier admin.css séparé.
+  
+  @author: Thomas Bauwens
+  @date: Mai 2025
+  @lastModified: 2 septembre 2025
+-->
+<html lang="fr">
+<head>
+    <!-- Script validation AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3549294158319032"
+     crossorigin="anonymous"></script>
+  <!-- Métadonnées SEO -->   
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration - Synthèses Académiques</title>
+  <link rel="stylesheet" href="style/style.css">
+  <link rel="stylesheet" href="style/admin.css?v=1">
+  <style>
+    /* Style pour le bouton de tri actif */
+    .sort-buttons button.active {
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container" id="loginContainer">
+    <div class="login-form">
+      <h2 class="admin-title">Administration</h2>
+      <p>Veuillez vous connecter pour accéder au panneau d'administration</p>
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" placeholder="Entrez le mot de passe">
+      </div>
+      <button class="action-btn edit-btn" onclick="login()">Connexion</button>
+      <p id="loginError" style="color: red; display: none;">Mot de passe incorrect</p>
+    </div>
+  </div>
+  
+  <div class="admin-container" id="adminPanel" style="display: none;">
+    <div class="admin-header">
+      <h2 class="admin-title">Panneau d'Administration</h2>
+      <button class="logout-btn" onclick="logout()">Déconnexion</button>
+    </div>
+    
+    <div class="content-section">
+      <div class="section-header">
+        <h3>Notes et Modifications à faire</h3>
+        <div class="notes-form">
+          <input type="text" id="adminName" placeholder="Votre nom...">
+          <textarea id="newNote" placeholder="Ajouter un commentaire..."></textarea>
+          <button onclick="window.saveNotes()" class="btn btn-primary">Ajouter</button>
+        </div>
+      </div>
+      <div class="section-content">
+        <div id="notesList">
+
+          <div id="notesContent">
+        </div>
+      </div>
+    </div>
+    
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Rechercher par titre, nom ou description...">
+    </div>
+    
+    <div class="filter-options">
+      <select id="typeFilter">
+        <option value="">Tous les types</option>
+        <option value="pdf">PDF</option>
+        <option value="zip">ZIP</option>
+        <option value="video">Vidéo</option>
+      </select>
+      
+      <select id="coursFilter">
+        <option value="">Tous les cours</option>
+        <!-- Les options seront ajoutées dynamiquement -->
+      </select>
+      
+      <input type="text" id="dateFilter" placeholder="Rechercher par date (JJ/MM/AAAA)">
+
+      <div class="sort-buttons">
+        <button onclick="sortFiles('date', false)" class="btn btn-sm">Trier par date ↓</button>
+        <button onclick="sortFiles('id', true)" class="btn btn-sm">Trier par ID ↑</button>
+      </div>
+    </div>
+    
+    <div class="table-container" id="tableContainer">
+      <table class="file-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Titre</th>
+            <th>Cours</th>
+            <th>Nom/Discord</th>
+            <th>Taille</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="fileTableBody">
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+  <!-- Modal pour modifier un fichier -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h3>Modifier les informations du fichier</h3>
+      <form id="editForm">
+        <input type="hidden" id="editId">
+        <div class="form-group">
+          <label>ID: <span id="displayId" class="id-display"></span></label>
+        </div>
+        
+        <div class="form-group">
+          <label>Type actuel: <span id="currentType" class="type-display"></span></label>
+          <select id="editType" class="form-control">
+            <option value="keep">Garder le type actuel</option>
+            <option value="video">Convertir en vidéo</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="editTitre">Titre</label>
+          <input type="text" id="editTitre">
+        </div>
+        
+        <div class="form-group">
+          <label for="editCours">Cours</label>
+          <select id="editCours">
+            <option value="STRUCTURE DE DONNEES">Structure de Données</option>
+            <option value="MATHEMATIQUE 1">Mathématique 1</option>
+            <option value="MATHEMATIQUE 2">Mathématique 2</option>
+            <option value="BASE DE DONNEES">Base de Données</option>
+            <option value="SYSTEMES D'EXPLOITATION / LINUX">Systèmes d'Exploitation / Linux</option>
+            <option value="JAVASCRIPT">JavaScript</option>
+            <option value="ANGLAIS">Anglais</option>
+            <option value="ALGO">Algorithmes</option>
+            <option value="APOO">APOO</option>
+            <option value="FONCTIONNEMENT DES ORDINATEURS">Fonctionnement des Ordinateurs</option>
+            <option value="GESTION COMPTABILITE ECONOMIE">Gestion, Comptabilité, Économie</option>
+            <option value="COMPETENCES NUMERIQUES">Compétences Numériques</option>
+            <option value="DIVERS">Divers</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="editNom">Nom/Discord</label>
+          <input type="text" id="editNom">
+        </div>
+        
+        <div class="form-group">
+          <label for="editDescription">Description</label>
+          <textarea id="editDescription" rows="3"></textarea>
+        </div>
+        
+        <div class="form-group" id="videoUrlGroup" style="display: none;">
+          <label for="editUrl">URL de la vidéo</label>
+          <input type="url" id="editUrl" placeholder="https://www.youtube.com/watch?v=...">
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="cancel-btn" onclick="closeModal()">Annuler</button>
+          <button type="button" class="save-btn" onclick="saveChanges()">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  
+  <script>
+    // Variable globale pour stocker tous les fichiers
+    const allFiles = [];
+
+    // Fonction de connexion
+    async function login() {
+      console.log('Tentative de connexion...');
+      const password = document.getElementById('password').value;
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ password })
+        });
+        console.log('Réponse de connexion reçue:', response);
+        const data = await response.json();
+        console.log('Données de connexion:', data);
+        
+        if (data.success) {
+          document.getElementById('loginContainer').style.display = 'none';
+          document.getElementById('adminPanel').style.display = 'block';
+          document.getElementById('loginError').style.display = 'none';
+          console.log('Connexion réussie, chargement des fichiers...');
+          await loadFiles(); // Attendre le chargement des fichiers
+        } else {
+          document.getElementById('loginError').style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Erreur de connexion:', error);
+        document.getElementById('loginError').style.display = 'block';
+      }
+    }
+
+    // Fonction d'affichage des fichiers
+    function displayFiles(files) {
+      const tbody = document.getElementById('fileTableBody');
+      tbody.innerHTML = '';
+      
+      files.forEach(file => {
+        const row = document.createElement('tr');
+        
+        // Formater la date
+        const date = new Date(file.dateAjout);
+        const formattedDate = date.toLocaleDateString('fr-FR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        
+        // Formater la taille
+        const size = file.taille ? `${(file.taille / 1024 / 1024).toFixed(2)} MB` : 'N/A';
+        
+        row.innerHTML = `
+          <td>${file.id}</td>
+          <td>${file.type || 'N/A'}</td>
+          <td>${file.titre}</td>
+          <td>${file.cours}</td>
+          <td>${file.nomDiscord}</td>
+          <td>${size}</td>
+          <td>${formattedDate}</td>
+          <td>
+            <button class="action-btn edit-btn" onclick="editFile(${file.id})">Modifier</button>
+            <button class="action-btn delete-btn" onclick="deleteFile(${file.id})">Supprimer</button>
+            ${file.type !== 'video' ? `<button class="action-btn convert-btn" onclick="convertToVideo(${file.id})">Convertir</button>` : ''}
+          </td>
+        `;
+        
+        tbody.appendChild(row);
+      });
+    }
+
+    // Fonction pour afficher les notifications
+    function showNotification(message, isSuccess = true) {
+      alert(message); // Version simple avec alert pour l'instant
+    }
+    
+    // Charger les notes sauvegardées au démarrage
+    document.addEventListener('DOMContentLoaded', () => {
+      // Charger le dernier nom utilisé
+      const savedName = localStorage.getItem('adminName');
+      if (savedName) {
+        document.getElementById('adminName').value = savedName;
+      }
+      
+      // Afficher les notes sauvegardées
+      displayNotes();
+      
+      // Ajouter l'event listener pour la touche Entrée
+      document.getElementById('newNote').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          saveNotes();
+        }
+      });
+    });
+    
+    window.saveNotes = function() {
+      const adminName = document.getElementById('adminName').value.trim();
+      if (!adminName) {
+        showNotification('Veuillez entrer votre nom', false);
+        return;
+      }
+      
+      const newNote = document.getElementById('newNote').value.trim();
+      if (!newNote) {
+        showNotification('Veuillez entrer un commentaire', false);
+        return;
+      }
+      
+      const now = new Date();
+      const date = now.toLocaleDateString('fr-FR');
+      const time = now.toLocaleTimeString('fr-FR');
+      
+      const noteId = Date.now().toString(); // Identifiant unique pour le commentaire
+      const noteData = {
+        id: noteId,
+        date: date,
+        time: time,
+        name: adminName,
+        text: newNote
+      };
+      
+      let notes = JSON.parse(localStorage.getItem('adminNotes') || '[]');
+      notes.unshift(noteData); // Ajouter au début du tableau
+      
+      localStorage.setItem('adminNotes', JSON.stringify(notes));
+      localStorage.setItem('adminName', adminName);
+      
+      displayNotes();
+      document.getElementById('newNote').value = '';
+      
+      showNotification('Commentaire ajouté');
+    };
+    
+    let currentSort = { field: 'date', ascending: false };
+
+    function toggleSort(field) {
+      if (currentSort.field === field) {
+        currentSort.ascending = !currentSort.ascending;
+      } else {
+        currentSort.field = field;
+        currentSort.ascending = true;
+      }
+      
+      // Mettre à jour les indicateurs de tri
+      document.getElementById('dateSort').textContent = 
+        currentSort.field === 'date' ? (currentSort.ascending ? '↑' : '↓') : '';
+      document.getElementById('idSort').textContent = 
+        currentSort.field === 'id' ? (currentSort.ascending ? '↑' : '↓') : '';
+      
+      sortNotes();
+    }
+
+    // Fonction de tri des notes
+    function sortNotes() {
+      let notes = JSON.parse(localStorage.getItem('adminNotes') || '[]');
+      
+      notes.sort((a, b) => {
+        if (currentSort.field === 'id') {
+          return currentSort.ascending ? a.id - b.id : b.id - a.id;
+        } else if (currentSort.field === 'date') {
+          const dateA = new Date(`${a.date} ${a.time}`);
+          const dateB = new Date(`${b.date} ${b.time}`);
+          return currentSort.ascending ? dateA - dateB : dateB - dateA;
+        }
+        return 0;
+      });
+      
+      localStorage.setItem('adminNotes', JSON.stringify(notes));
+      displayNotes();
+    }
+
+    // Afficher les notes
+    function displayNotes() {
+      const notesContent = document.getElementById('notesContent');
+      notesContent.innerHTML = ''; // Vider la liste
+      
+      const notes = JSON.parse(localStorage.getItem('adminNotes') || '[]');
+      
+      notes.forEach(note => {
+        const noteElement = document.createElement('div');
+        noteElement.className = 'note-item';
+        noteElement.style.display = 'flex';
+        noteElement.style.justifyContent = 'space-between';
+        noteElement.style.alignItems = 'flex-start';
+        noteElement.style.marginBottom = '4px';
+        noteElement.style.padding = '4px 6px';
+        noteElement.style.backgroundColor = '#f8f9fa';
+        noteElement.style.borderRadius = '3px';
+        noteElement.style.border = '1px solid #eee';
+        
+        const noteText = document.createElement('div');
+        noteText.style.fontFamily = 'Arial, sans-serif';
+        noteText.style.whiteSpace = 'pre-wrap';
+        noteText.style.flexGrow = '1';
+        noteText.style.marginRight = '10px';
+        noteText.style.fontSize = '13px';
+        noteText.style.lineHeight = '1.2';
+        
+        const timestamp = document.createElement('span');
+        timestamp.style.color = '#666';
+        timestamp.textContent = `[${note.date} ${note.time}] `;
+        
+        const author = document.createElement('span');
+        author.style.color = '#d73a49';
+        author.style.fontWeight = '500';
+        author.textContent = note.name;
+        
+        const separator = document.createElement('span');
+        separator.textContent = ' >> ';
+        
+        const content = document.createElement('span');
+        content.textContent = note.text;
+        
+        noteText.appendChild(timestamp);
+        noteText.appendChild(author);
+        noteText.appendChild(separator);
+        noteText.appendChild(content);
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'btn btn-danger btn-sm';
+        deleteBtn.style.padding = '0 4px';
+        deleteBtn.style.fontSize = '14px';
+        deleteBtn.style.lineHeight = '18px';
+        deleteBtn.style.minWidth = '20px';
+        deleteBtn.innerHTML = '&times;';
+        deleteBtn.onclick = () => deleteNote(note.id);
+        
+        noteElement.appendChild(noteText);
+        noteElement.appendChild(deleteBtn);
+        notesContent.appendChild(noteElement);
+      });
+    }
+    
+    // Supprimer une note spécifique
+    function deleteNote(noteId) {
+      if (confirm('Voulez-vous vraiment supprimer ce commentaire ?')) {
+        let notes = JSON.parse(localStorage.getItem('adminNotes') || '[]');
+        notes = notes.filter(note => note.id !== noteId);
+        localStorage.setItem('adminNotes', JSON.stringify(notes));
+        displayNotes();
+        showNotification('Commentaire supprimé');
+      }
+    }
+    
+
+
+    // Protection globale contre l'erreur toUpperCase sur les valeurs undefined
+    (function() {
+      // Sauvegarder la méthode originale
+      const originalToUpperCase = String.prototype.toUpperCase;
+      
+      // Redéfinir la méthode toUpperCase pour qu'elle ne génère jamais d'erreur
+      String.prototype.toUpperCase = function() {
+        // Si this est undefined ou null, retourner 'N/A'
+        if (this === undefined || this === null) {
+          console.warn('Tentative d\'appel de toUpperCase sur une valeur undefined ou null');
+          return 'N/A';
+        }
+        // Sinon, appeler la méthode originale
+        return originalToUpperCase.call(this);
+      };
+      
+      // Protection pour les propriétés undefined
+      Object.prototype.toUpperCase = function() {
+        console.warn('Tentative d\'appel de toUpperCase sur un objet non-string');
+        return 'N/A';
+      };
+    })();
+    
+
+
+    // Fonction pour afficher les fichiers dans le tableau
+    function displayFiles(files) {
+      const tbody = document.getElementById('fileTableBody');
+      tbody.innerHTML = '';
+      
+      files.forEach(file => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span class="id-box">${file.id}</span></td>
+          <td>${getTypeIcon(file.type)}</td>
+          <td>${file.titre}</td>
+          <td>${file.cours}</td>
+          <td>${file.nom}</td>
+          <td>${getFileSizeHtml(file)}</td>
+          <td>${getFileDate(file)}</td>
+          <td>
+            <button class="action-btn edit-btn" onclick="openEditModal(${JSON.stringify(file)})">Modifier</button>
+            <button class="action-btn delete-btn" onclick="deleteFile(${JSON.stringify(file.id)})">Supprimer</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Fonction pour obtenir l'icône en fonction du type de fichier
+    function getTypeIcon(type) {
+      switch(type) {
+        case 'pdf':
+          return '📄 PDF';
+        case 'zip':
+          return '📂 ZIP';
+        case 'video':
+          return '🎥 Vidéo';
+        default:
+          return '📄 Doc';
+      }
+    }
+
+    // Fonction pour formater la taille du fichier avec un lien
+    function getFileSizeHtml(file) {
+      if (file.type === 'video') {
+        return `<a href="${file.url}" target="_blank">Vidéo</a>`;
+      }
+      
+      const size = file.poidsFichier || file.taille || 0;
+      const sizeInMB = (size / 1048576).toFixed(2);
+      const fileUrl = file.path;
+      
+      if (fileUrl) {
+        return `<a href="${fileUrl}" target="_blank">${sizeInMB} MB</a>`;
+      }
+      
+      return `${sizeInMB} MB`;
+    }
+
+    // Fonction pour formater la date
+    function getFileDate(file) {
+      if (file.dateAjout) {
+        return file.dateAjout;
+      }
+      if (file.date) {
+        try {
+          const dateObj = new Date(file.date);
+          if (!isNaN(dateObj.getTime())) {
+            return dateObj.toLocaleDateString('fr-FR');
+          }
+        } catch (e) {
+          console.log("Erreur de format de date pour", file.titre, e);
+        }
+      }
+      return 'N/A';
+    }
+
+    // Fonction pour afficher les notifications
+    function showNotification(message, isSuccess = true) {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.textContent = message;
+      notification.style.backgroundColor = isSuccess ? '#4CAF50' : '#f44336';
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+          document.body.removeChild(notification);
+        }, 500);
+      }, 3000);
+    }
+
+    // Fonction utilitaire pour sécuriser l'accès aux propriétés
+    function safeGet(obj, path, defaultValue = '') {
+      if (!obj) return defaultValue;
+      
+      const keys = path.split('.');
+      let result = obj;
+      
+      for (const key of keys) {
+        if (result === undefined || result === null) {
+          return defaultValue;
+        }
+        result = result[key];
+      }
+      
+      return result !== undefined && result !== null ? result : defaultValue;
+    }
+    
+    // Fonction pour sécuriser l'appel à toUpperCase
+    function safeToUpperCase(str) {
+      return typeof str === 'string' ? str.toUpperCase() : 'N/A';
+    }
+    
+    // Vérifier si l'utilisateur est déjà connecté
+    document.addEventListener("DOMContentLoaded", () => {
+      const token = localStorage.getItem("adminToken");
+      if (token) {
+        // Afficher le panneau d'administration
+        document.getElementById("loginContainer").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+        // Stocker la préférence de tri par date dans localStorage
+        localStorage.setItem("sortPreference", "date");
+        loadFiles();
+      }
+    });
+    
+    // Fonction pour vérifier si la barre de défilement est nécessaire
+    function checkScrollbarVisibility() {
+      const tableContainer = document.getElementById('tableContainer');
+      // Ajouter une classe si le contenu dépasse la largeur visible
+      if (tableContainer.scrollWidth > tableContainer.clientWidth) {
+        tableContainer.classList.add('has-horizontal-scroll');
+      } else {
+        tableContainer.classList.remove('has-horizontal-scroll');
+      }
+    }
+    
+    // Vérifier la visibilité de la barre de défilement lors du chargement et du redimensionnement
+    window.addEventListener('resize', checkScrollbarVisibility);
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(checkScrollbarVisibility, 1000);
+    });
+    
+    // Fonction de connexion
+    function login() {
+      const password = document.getElementById("password").value;
+      
+      // Envoyer le mot de passe au serveur pour vérification
+      fetch(window.location.origin + "/admin/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ password })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Stocker le token dans le localStorage
+          localStorage.setItem("adminToken", data.token);
+          
+          // Afficher le panneau d'administration
+          document.getElementById("loginContainer").style.display = "none";
+          document.getElementById("adminPanel").style.display = "block";
+          
+          // Charger les fichiers
+          loadFiles();
+        } else {
+          // Afficher un message d'erreur
+          document.getElementById("loginError").style.display = "block";
+        }
+      })
+      .catch(error => {
+        console.error("Erreur de connexion:", error);
+        document.getElementById("loginError").style.display = "block";
+      });
+    }
+    
+    // Fonction de déconnexion
+    function logout() {
+      // Supprimer le token du localStorage
+      localStorage.removeItem("adminToken");
+      
+      // Rediriger vers la page de connexion
+      document.getElementById("adminPanel").style.display = "none";
+      document.getElementById("loginContainer").style.display = "block";
+    }
+    
+    async function loadFiles() {
+      console.log('Chargement des fichiers depuis:', window.location.origin + '/get-files');
+      try {
+        const response = await fetch(window.location.origin + '/get-files');
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        if (data.success) {
+          console.log('Fichiers reçus:', data.files);
+          
+          // Vider le tableau existant
+          allFiles.splice(0, allFiles.length);
+          
+          // Ajouter les nouveaux fichiers avec leurs types
+          data.files.forEach(file => {
+            if (!file.type) {
+              if (file.url) {
+                file.type = 'video';
+              } else if (file.path && file.path.endsWith('.zip')) {
+                file.type = 'zip';
+              } else {
+                file.type = 'pdf';
+              }
+              console.log('Type manquant détecté, assigné:', file.type, 'pour le fichier:', file.titre);
+            }
+            allFiles.push(file);
+          });
+          
+          // Mettre à jour les options de cours dans le filtre
+          populateCoursFilter(allFiles);
+          
+          // Appliquer le tri par défaut (date décroissante)
+          // Force le tri par date au chargement, indépendamment des autres tris qui pourraient être appliqués
+          console.log('Application du tri par date par défaut...');
+          
+          // Forcer le tri par date (du plus récent au plus ancien)
+          sortFiles('date', false);
+          
+          // Ajouter la classe 'active' au bouton de tri par date
+          const dateButton = document.querySelector('button[onclick="sortFiles(\'date\', false)"]');
+          if (dateButton) {
+            dateButton.classList.add('active');
+          }
+          
+          // Vérifier la visibilité de la barre de défilement
+          setTimeout(checkScrollbarVisibility, 500);
+          
+          console.log('Fichiers chargés avec succès et triés par date:', allFiles.length);
+        } else {
+          console.error('Erreur lors du chargement des fichiers:', data.message);
+          showNotification('Erreur: ' + data.message, false);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des fichiers:', error);
+        console.error('Stack trace:', error.stack);
+        showNotification('Erreur lors du chargement des fichiers: ' + error.message, false);
+      }
+    }
+    
+    // Remplir le filtre de cours avec les cours disponibles
+    function populateCoursFilter(files) {
+      const coursFilter = document.getElementById('coursFilter');
+      const cours = [...new Set(files.map(file => file.cours))].sort();
+      
+      coursFilter.innerHTML = '<option value="">Tous les cours</option>';
+      cours.forEach(c => {
+        coursFilter.innerHTML += `<option value="${c}">${c}</option>`;
+      });
+    }
+    
+    // Fonction d'affichage des fichiers
+    function displayFiles(files) {
+      const tbody = document.getElementById("fileTableBody");
+      tbody.innerHTML = "";
+      
+      if (files.length === 0) {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td colspan="7" style="text-align: center;">Aucun fichier trouvé</td>`;
+        tbody.appendChild(row);
+        return;
+      }
+      
+      // Fonction pour analyser les dates au format français (JJ/MM/AAAA)
+      const parseDate = (dateStr) => {
+        if (!dateStr) return new Date(0);
+        const parts = dateStr.split('/');
+        if (parts.length === 3) {
+          return new Date(parts[2], parts[1] - 1, parts[0]);
+        }
+        return new Date(dateStr);
+      };
+      
+      // Trier les fichiers par date (plus récent en haut) avant affichage
+      const sortedFiles = [...files].sort((a, b) => {
+        const dateA = parseDate(a.dateAjout || a.date);
+        const dateB = parseDate(b.dateAjout || b.date);
+        return dateB - dateA; // Ordre décroissant (plus récent en premier)
+      });
+      
+      // Afficher les fichiers triés
+      sortedFiles.forEach((file) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${file.id}</td>
+          <td>${getTypeIcon(file.type)}</td>
+          <td style="min-width:350px; width:350px;">${safeGet(file, 'titre', 'Sans titre')}</td>
+          <td>${safeGet(file, 'cours', 'N/A')}</td>
+          <td>${safeGet(file, 'nomDiscord', 'N/A')}</td>
+          <td>${getFileSizeHtml(file)}</td>
+          <td>${getFileDate(file) || 'N/A'}</td>
+          <td>
+            <button class="action-btn edit-btn" onclick="editFile(${file.id})">Modifier</button>
+            <button class="action-btn delete-btn" onclick="deleteFile(${file.id})">Supprimer</button>
+            ${(safeGet(file, 'type') === 'zip' || safeGet(file, 'type') === 'pdf') ? 
+              `<button class="action-btn convert-btn" onclick="convertToVideo(${file.id})">→ Vidéo</button>` : ''}
+          </td>
+        `;
+        
+        tbody.appendChild(row);
+      });
+      
+      // Mettre en évidence le bouton de tri par date
+      document.querySelectorAll('.sort-buttons button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      const dateButton = document.querySelector('button[onclick="sortFiles(\'date\', false)"]');
+      if (dateButton) {
+        dateButton.classList.add('active');
+      }
+    }
+    
+    // Ouvrir la modal d'édition
+    function editFile(id) {
+      const file = allFiles.find(f => f.id === id);
+      if (!file) return;
+      
+      // Préremplir les champs du formulaire d'édition
+      document.getElementById("editId").value = id;
+      document.getElementById("displayId").textContent = id;
+      document.getElementById("currentType").textContent = file.type;
+      document.getElementById("editType").value = "keep";
+      document.getElementById("editTitre").value = file.titre;
+      document.getElementById("editCours").value = file.cours;
+      document.getElementById("editNom").value = file.nomDiscord;
+      document.getElementById("editDescription").value = file.description || "";
+      
+      // Afficher/masquer le champ URL en fonction du type
+      const videoUrlGroup = document.getElementById("videoUrlGroup");
+      if (file.type === "video") {
+        videoUrlGroup.style.display = "block";
+        document.getElementById("editUrl").value = file.url || "";
+      } else {
+        videoUrlGroup.style.display = "none";
+        // Réinitialiser la valeur du champ URL pour éviter des problèmes
+        document.getElementById("editUrl").value = "";
+      }
+      
+      // Écouter les changements de type pour afficher/masquer le champ URL
+      const editTypeSelect = document.getElementById("editType");
+      
+      // Supprimer tous les anciens event listeners pour éviter les doublons
+      const newEditTypeSelect = editTypeSelect.cloneNode(true);
+      editTypeSelect.parentNode.replaceChild(newEditTypeSelect, editTypeSelect);
+      
+      // Ajouter le nouveau event listener
+      newEditTypeSelect.addEventListener("change", function() {
+        if (this.value === "video") {
+          videoUrlGroup.style.display = "block";
+        } else {
+          videoUrlGroup.style.display = "none";
+          // Réinitialiser la valeur du champ URL
+          document.getElementById("editUrl").value = "";
+        }
+      });
+      
+      document.getElementById("editModal").style.display = "block";
+    }
+    
+    // Fermer la modal d'édition
+    function closeModal() {
+      document.getElementById("editModal").style.display = "none";
+    }
+    
+    // Enregistrer les modifications
+    function saveChanges() {
+      const id = parseInt(document.getElementById("editId").value);
+      const file = allFiles.find(f => f.id === id);
+      if (!file) return;
+      const updates = {
+        type: document.getElementById("editType").value,
+        titre: document.getElementById("editTitre").value,
+        cours: document.getElementById("editCours").value,
+        nomDiscord: document.getElementById("editNom").value,
+        description: document.getElementById("editDescription").value,
+      };
+      
+      // Si on garde le type actuel, utiliser le type d'origine
+      if (updates.type === "keep") {
+        const file = allFiles.find(f => f.id === id);
+        updates.type = file.type;
+      }
+      // Si c'est une vidéo, ajouter l'URL
+      if (updates.type === "video") {
+        updates.url = document.getElementById("editUrl").value;
+      }
+      
+      // Afficher un message de chargement
+      const saveBtn = document.querySelector('.save-btn');
+      const originalText = saveBtn.textContent;
+      saveBtn.textContent = 'Enregistrement...';
+      saveBtn.disabled = true;
+      
+      // Créer une fonction pour afficher un message de notification
+      function showNotification(message, isSuccess = true) {
+        // Supprimer toute notification existante
+        const existingNotifications = document.querySelectorAll('.notification-message');
+        existingNotifications.forEach(notification => {
+          document.body.removeChild(notification);
+        });
+        
+        // Créer la notification
+        const notification = document.createElement('div');
+        notification.className = 'notification-message';
+        notification.textContent = message;
+        notification.style.position = 'fixed';
+        notification.style.top = '20px';
+        notification.style.left = '50%';
+        notification.style.transform = 'translateX(-50%)';
+        notification.style.backgroundColor = isSuccess ? '#4CAF50' : '#f44336';
+        notification.style.color = 'white';
+        notification.style.padding = '15px 25px';
+        notification.style.borderRadius = '4px';
+        notification.style.zIndex = '9999';
+        notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+        notification.style.fontSize = '16px';
+        document.body.appendChild(notification);
+        
+        // Faire disparaître le message après 3 secondes
+        setTimeout(() => {
+          notification.style.opacity = '0';
+          notification.style.transition = 'opacity 0.5s';
+          setTimeout(() => {
+            if (document.body.contains(notification)) {
+              document.body.removeChild(notification);
+            }
+          }, 500);
+        }, 3000);
+      }
+      
+      // Envoyer les mises à jour au serveur
+      fetch("/edit-file", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id, ...updates })
+      })
+      .then(response => {
+        // Vérifier si la réponse est OK avant de parser le JSON
+        if (!response.ok) {
+          return response.json().then(errorData => {
+            throw new Error(errorData.message || `Erreur HTTP: ${response.status}`);
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          // Mettre à jour la liste locale
+          const fileIndex = allFiles.findIndex(f => f.id === id);
+          if (fileIndex !== -1) {
+            allFiles[fileIndex] = { ...file, ...updates };
+          }
+          
+          // Rafraîchir l'affichage
+          displayFiles(allFiles);
+          
+          // Fermer la modal
+          closeModal();
+          
+          // Afficher un message de succès
+          showNotification('Modification réussie !', true);
+        } else {
+          // Réinitialiser le bouton
+          saveBtn.textContent = originalText;
+          saveBtn.disabled = false;
+          
+          // Afficher l'erreur
+          showNotification('Erreur: ' + data.message, false);
+        }
+      })
+      .catch(error => {
+        // Réinitialiser le bouton
+        saveBtn.textContent = originalText;
+        saveBtn.disabled = false;
+        
+        console.error("Erreur lors de la mise à jour:", error);
+        showNotification('Erreur: ' + error.message, false);
+      });
+    }
+    
+    // Fonction pour supprimer un fichier
+    async function deleteFile(id) {
+      if (!confirm('Voulez-vous vraiment supprimer ce fichier ?')) {
+        return;
+      }
+      
+      try {
+        console.log('Suppression du fichier:', id);
+        const response = await fetch(`/delete-file/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        const data = await response.json();
+        console.log('Réponse du serveur:', data);
+        
+        if (data.success) {
+          showNotification('Fichier supprimé avec succès');
+          await loadFiles(); // Recharger la liste
+        } else {
+          showNotification('Erreur : ' + data.message, false);
+        }
+      } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+        showNotification('Erreur lors de la suppression', false);
+      }
+    }
+    
+    // Convertir un fichier en vidéo
+    function convertToVideo(id) {
+      const file = allFiles.find(f => f.id === id);
+      
+      // Préremplir les champs du formulaire d'édition
+      document.getElementById("editId").value = id;
+      document.getElementById("editType").value = "video";
+      document.getElementById("editTitre").value = file.titre;
+      document.getElementById("editCours").value = file.cours;
+      document.getElementById("editNom").value = file.nomDiscord;
+      document.getElementById("editDescription").value = file.description || "";
+      
+      // Afficher le champ URL
+      const videoUrlGroup = document.getElementById("videoUrlGroup");
+      videoUrlGroup.style.display = "block";
+      document.getElementById("editUrl").value = "";
+      
+      // Ouvrir la modal
+      document.getElementById("editModal").style.display = "block";
+    }
+    
+    // Recherche et filtrage
+    document.getElementById("searchInput").addEventListener("input", filterFiles);
+    document.getElementById("typeFilter").addEventListener("change", filterFiles);
+    document.getElementById("coursFilter").addEventListener("change", filterFiles);
+    document.getElementById("dateFilter").addEventListener("input", filterFiles);
+    
+    // Fonction de tri
+    function sortFiles(field, ascending) {
+      // Enregistrer la préférence de tri
+      localStorage.setItem('sortField', field);
+      localStorage.setItem('sortAscending', ascending);
+      
+      console.log(`Tri des fichiers par ${field} en ordre ${ascending ? 'croissant' : 'décroissant'}`);
+      
+      // Mettre en évidence le bouton de tri actif
+      document.querySelectorAll('.sort-buttons button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // Trouver et activer le bouton correspondant au tri actuel
+      const buttonSelector = field === 'date' ? 
+        `button[onclick="sortFiles('date', ${ascending})"]` : 
+        `button[onclick="sortFiles('id', ${ascending})"]`;
+      
+      const activeButton = document.querySelector(buttonSelector);
+      if (activeButton) {
+        activeButton.classList.add('active');
+      }
+      
+      // Effectuer le tri
+      allFiles.sort((a, b) => {
+        const direction = ascending ? 1 : -1;
+        
+        switch(field) {
+          case 'id':
+            return direction * (parseInt(a.id) - parseInt(b.id));
+          case 'date':
+            // Fonction pour analyser les dates au format français (JJ/MM/AAAA)
+            const parseDate = (dateStr) => {
+              if (!dateStr) return new Date(0);
+              const parts = dateStr.split('/');
+              if (parts.length === 3) {
+                return new Date(parts[2], parts[1] - 1, parts[0]);
+              }
+              return new Date(dateStr);
+            };
+            
+            const dateA = parseDate(a.dateAjout || a.date);
+            const dateB = parseDate(b.dateAjout || b.date);
+            return direction * (dateB - dateA);
+          default:
+            return 0;
+        }
+      });
+      
+      filterFiles();
+    }
+
+    function filterFiles() {
+      const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+      const typeFilter = document.getElementById("typeFilter").value;
+      const coursFilter = document.getElementById("coursFilter").value;
+      const dateFilter = document.getElementById("dateFilter").value.toLowerCase();
+      
+      const filteredFiles = allFiles.filter(file => {
+        // Vérifier le terme de recherche
+        const matchesSearch = 
+          file.titre.toLowerCase().includes(searchTerm) ||
+          file.nomDiscord.toLowerCase().includes(searchTerm) ||
+          (file.description && file.description.toLowerCase().includes(searchTerm)) ||
+          file.cours.toLowerCase().includes(searchTerm);
+        
+        // Vérifier le filtre de type
+        const matchesType = typeFilter === "" || file.type === typeFilter;
+        
+        // Vérifier le filtre de cours
+        const matchesCours = coursFilter === "" || file.cours === coursFilter;
+        
+        // Vérifier le filtre de date
+        let matchesDate = true;
+        if (dateFilter) {
+          const fileDate = new Date(file.dateAjout);
+          const searchDate = dateFilter.split('/').reverse().join('-'); // Convertir JJ/MM/AAAA en AAAA-MM-JJ
+          matchesDate = file.dateAjout && file.dateAjout.includes(searchDate);
+        }
+        
+        return matchesSearch && matchesType && matchesCours && matchesDate;
+      });
+      
+      displayFiles(filteredFiles);
+    }
+    
+    // Écouter la touche Entrée pour la connexion
+    document.getElementById("password").addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        login();
+      }
+    });
+
+    // Fonction pour charger les fichiers
+    async function loadFiles() {
+      try {
+        const response = await fetch('/get-files');
+        const data = await response.json();
+        
+        if (data.success) {
+          // Vider le tableau existant
+          allFiles.length = 0;
+          
+          // Ajouter les nouveaux fichiers
+          data.files.forEach(file => {
+            allFiles.push(file);
+          });
+          
+          // Mettre à jour les options de cours
+          const coursFilter = document.getElementById("coursFilter");
+          const cours = [...new Set(allFiles.map(file => file.cours))].sort();
+          
+          // Sauvegarder l'option sélectionnée
+          const selectedCours = coursFilter.value;
+          
+          // Vider et recréer les options
+          coursFilter.innerHTML = '<option value="">Tous les cours</option>';
+          cours.forEach(cours => {
+            const option = document.createElement('option');
+            option.value = cours;
+            option.textContent = cours;
+            if (cours === selectedCours) option.selected = true;
+            coursFilter.appendChild(option);
+          });
+          
+          // Afficher les fichiers filtrés
+          filterFiles();
+        } else {
+          showNotification('Erreur : ' + data.message, false);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des fichiers:', error);
+        showNotification('Erreur lors du chargement des fichiers', false);
+      }
+    }
+
+    // Fonction pour charger les fichiers
+    async function loadFiles() {
+      console.log('Début du chargement des fichiers...');
+      try {
+        const response = await fetch('/get-files');
+        console.log('Réponse reçue:', response);
+        const files = await response.json();
+        console.log('Données reçues:', files);
+        
+        if (Array.isArray(files)) {
+          // Vider le tableau existant
+          allFiles.length = 0;
+          
+          // Ajouter les nouveaux fichiers
+          files.forEach(file => {
+            allFiles.push(file);
+          });
+          console.log('Fichiers chargés:', allFiles);
+          
+          // Mettre à jour les options de cours
+          const coursFilter = document.getElementById("coursFilter");
+          const cours = [...new Set(allFiles.map(file => file.cours))].sort();
+          
+          // Sauvegarder l'option sélectionnée
+          const selectedCours = coursFilter.value;
+          
+          // Vider et recréer les options
+          coursFilter.innerHTML = '<option value="">Tous les cours</option>';
+          cours.forEach(cours => {
+            const option = document.createElement('option');
+            option.value = cours;
+            option.textContent = cours;
+            if (cours === selectedCours) option.selected = true;
+            coursFilter.appendChild(option);
+          });
+          
+          // Afficher les fichiers filtrés
+          filterFiles();
+        } else {
+          console.error('Format de données invalide:', files);
+          showNotification('Format de données invalide', false);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des fichiers:', error);
+        showNotification('Erreur lors du chargement des fichiers', false);
+      }
+    }
+
+    // Charger les fichiers au démarrage
+    document.addEventListener('DOMContentLoaded', () => {
+      // Les fichiers seront chargés après la connexion réussie
+    });
+  </script>
+</body>
+</html>

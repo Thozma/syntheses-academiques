@@ -1,0 +1,66 @@
+# Fichiers de configuration sensibles
+ftp-credentials.js
+config.js
+
+# Dossier des modules Node.js
+node_modules/
+
+# Fichiers uploadés et temporaires
+Les synthèses des invités/
+temp/
+
+# Fichiers de données
+fichiers.json
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers de logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Fichiers temporaires
+*.tmp
+*.bak
+*.swp
+
+# Autres fichiers Node.js standard à ignorer
+pids
+*.pid
+*.seed
+*.pid.lock
+lib-cov
+coverage
+*.lcov
+.nyc_output
+.lock-wscript
+build/Release
+jspm_packages/
+web_modules/
+*.tsbuildinfo
+.npm
+.eslintcache
+.stylelintcache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.node_repl_history
+*.tgz
+.yarn-integrity
+.env*
+.cache
+.parcel-cache
+.next
+out
+.nuxt
+dist
+.vscode-test
+.yarn/
+.pnp.*
+siteWeb.zip

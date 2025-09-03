@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<!--
+  Page d'accueil du site de partage de synthèses académiques
+
+  Cette page présente la bannière, le formulaire de contact et les liens vers les synthèses
+  des différentes années du cursus informatique à la Haute Ecole Léonard de Vinci.
+
+  @author: Thomas Bauwens
+  @date: Septembre 2025
+-->
+<html lang="fr">
+  <head>
+    <!-- Script validation AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3549294158319032"
+     crossorigin="anonymous"></script>
+    <!-- Métadonnées de base -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil - Synthèses BIN</title>
+    <!-- Feuilles de style CSS -->
+    <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="style/mobile.css">
+    <link rel="stylesheet" href="style/custom.css">
+  </head>
+  <body>
+    <!-- Présentation de l'application -->
+    <div class="presentation">
+      <div class="header-main">
+        <div class="header-left">
+          <!-- Image de présentation -->
+          <img
+            src="image/image.png"
+            alt="Photo de présentation de Bauwens Thomas"
+            class="image"
+            loading="lazy">
+          <div class="texte">
+            <!-- Titre principal -->
+            <h1>Les synthèses des BIN</h1>
+            <!-- Slogan -->
+            <h3><span class="java-keyword">for</span> les élèves, <span class="java-keyword">by</span> les élèves !</h3>
+            <!-- Créateur -->
+            <h3><span class="java-keyword">public static</span> Créateur <span class="java-keyword">new</span> Bauwens Thomas</h3>
+            <!-- Établissement -->
+            <h3 class="school-info">Haute Ecole Léonard de Vinci</h3>
+            <!-- Année et section -->
+            <h3 class="school-info while-line"><span class="java-keyword">while</span> Informatique - développement d'applications</h3>
+          </div>
+        </div>
+        <div class="contact-info">
+          <!-- Formulaire de contact -->
+          <h4>Nous joindre</h4>
+          <form id="questionForm" method="POST" onsubmit="return handleQuestionSubmit(event);">
+            <div class="form-row">
+              <input type="text" id="nomDiscordQuestion" name="nomDiscord" placeholder="Nom / Discord" required size="20">
+              <input type="email" id="email" name="email" placeholder="Email">
+            </div>
+            <div class="form-row">
+              <textarea id="message" name="message" placeholder="Votre message" required></textarea>
+              <button type="submit"><span class="java-keyword">send</span> ()</button>
+            </div>
+          </form>
+          <div id="questionConfirmationMessage" class="confirmation-message">Message envoyé !</div>
+        </div>
+      </div>
+    </div>
+    <!-- Liens vers les synthèses des différentes années -->
+    <div class="links-container">
+      <a href="premiere.html" class="btn">
+        Synthèses 1ère année
+      </a>
+      <a href="deuxieme.html" class="btn">
+        Synthèses 2ème année
+      </a>
+      <a href="troisieme.html" class="btn">
+        Synthèses 3ème année
+      </a>
+    </div>
+    <!-- Pied de page avec copyright -->
+    <footer class="site-footer">
+      <p>&copy; 2025 Bauwens Thomas - Tous droits réservés</p>
+    </footer>
+    <script>
+      /**
+       * ========== GESTION DU FORMULAIRE DE CONTACT ==========
+       * Fonction asynchrone qui gère la soumission du formulaire de contact
+       * Récupère les données du formulaire, les envoie au serveur via une requête AJAX,
+       * affiche un message de confirmation et redirige l'utilisateur vers la page principale
+       *
+       * @param {Event} event - L'événement de soumission du formulaire
+       * @returns {boolean} - Retourne false pour empêcher la soumission normale du formulaire
+       */
+      async function handleQuestionSubmit(event) {
+        event.preventDefault();
+        const form = document.getElementById('questionForm');
+        const confirmationMessage = document.getElementById('questionConfirmationMessage');
+        try {
+          const nomDiscord = document.getElementById('nomDiscordQuestion').value;
+          const email = document.getElementById('email').value;
+          const message = document.getElementById('message').value;
+          const formData = { nomDiscord, email, message };
+          const response = await fetch('/ask-question', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          });
+          const result = await response.json();
+          if (result.error) throw new Error(result.error);
+          confirmationMessage.textContent = 'Message envoyé !';
+          confirmationMessage.style.display = 'block';
+          confirmationMessage.style.color = '#155724';
+          form.reset();
+        } catch (error) {
+          confirmationMessage.textContent = error.message || 'Erreur lors de l\'envoi';
+          confirmationMessage.style.display = 'block';
+          confirmationMessage.style.color = '#721c24';
+        }
+        return false;
+      }
+    </script>
+  </body>
+</html>

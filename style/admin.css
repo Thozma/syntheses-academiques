@@ -1,0 +1,517 @@
+/* ======================================================
+   CONTENEUR PRINCIPAL
+   ====================================================== */
+
+/**
+ * Feuille de style de l'interface d'administration
+ * Contient tous les styles pour la page d'administration du site
+ * 
+ * Cette feuille de style définit l'apparence de l'interface d'administration
+ * pour la gestion des synthèses académiques. Elle inclut les styles pour
+ * le tableau de fichiers, les formulaires d'édition, et les fenêtres modales.
+ * 
+ * Fonctionnalités spéciales :
+ * - Tableau de gestion des fichiers avec colonnes redimensionnables
+ * - Formulaires d'édition dans des fenêtres modales
+ * - Boutons d'action pour convertir, éditer et supprimer les fichiers
+ * - Filtres de recherche et de tri des fichiers
+ * 
+ * @author Thomas Bauwens
+ * @version 1.0
+ * @date Mai 2025
+ * @lastModified 8 mai 2025
+ */
+
+/* ======================================================
+   CONTENEUR PRINCIPAL
+   ====================================================== */
+
+/**
+ * Conteneur principal de la page d'administration
+ * Définit la largeur maximale et l'apparence générale de la page
+ * avec un fond blanc et une ombre légère
+ */
+.admin-container {
+  max-width: 1400px;
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 95%;
+}
+
+/* ======================================================
+   FORMULAIRE DE CONNEXION
+   ====================================================== */
+
+/**
+ * Formulaire de connexion administrateur
+ * Centré sur la page avec une largeur maximale de 400px
+ */
+.login-form {
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* ======================================================
+   EN-TÊTE ADMINISTRATEUR
+   ====================================================== */
+
+/**
+ * En-tête de la page d'administration
+ * Contient le titre et les actions principales
+ * avec une bordure de séparation en bas
+ */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.admin-title {
+  color: #d73a49;
+  font-family: Arial, sans-serif;
+  font-size: 1.5em;
+  margin: 0;
+}
+
+/* ======================================================
+   TABLEAU DES FICHIERS
+   ====================================================== */
+
+/**
+ * Conteneur du tableau des fichiers
+ * Permet le défilement horizontal si nécessaire
+ * et ajoute une bordure autour du tableau
+ */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.file-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1200px;
+}
+
+.file-table th,
+.file-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-table th:last-child,
+.file-table td:last-child {
+  border-right: none;
+}
+
+.file-table th {
+  background: #f6f8fa;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/**
+ * Définition des largeurs des colonnes du tableau
+ * Chaque colonne a une largeur fixe pour maintenir
+ * une mise en page cohérente
+ */
+.file-table th:nth-child(1),
+.file-table td:nth-child(1) { width: 60px; }  /* ID */
+.file-table th:nth-child(2),
+.file-table td:nth-child(2) { width: 80px; }  /* Type */
+.file-table th:nth-child(3),
+.file-table td:nth-child(3) { width: 250px; } /* Titre */
+.file-table th:nth-child(4),
+.file-table td:nth-child(4) { width: 200px; } /* Cours */
+.file-table th:nth-child(5),
+.file-table td:nth-child(5) { width: 120px; } /* Nom/Discord */
+.file-table th:nth-child(6),
+.file-table td:nth-child(6) { width: 80px; }  /* Taille */
+.file-table th:nth-child(7),
+.file-table td:nth-child(7) { width: 100px; } /* Date */
+.file-table th:nth-child(8),
+.file-table td:nth-child(8) { width: 120px; } /* Actions */
+
+/* ======================================================
+   BOUTONS D'ACTION
+   ====================================================== */
+
+/**
+ * Styles communs pour tous les boutons d'action
+ * dans le tableau (convertir, éditer, supprimer)
+ */
+.action-btn {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 4px;
+  color: white;
+}
+
+.convert-btn {
+  background: #2196F3;
+}
+
+.edit-btn {
+  background: #28a745;
+}
+
+.delete-btn {
+  background: #dc3545;
+}
+
+.logout-btn {
+  background: #dc3545;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* ======================================================
+   FENÊTRES MODALES
+   ====================================================== */
+
+/**
+ * Fenêtre modale pour l'édition et la confirmation
+ * Affichée en superposition sur le contenu principal
+ * avec un fond semi-transparent
+ */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+}
+
+.modal-content {
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+  margin: 5% auto;
+  padding: 30px;
+  width: 90%;
+  max-width: 600px;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border: 1px solid #e9ecef;
+}
+
+.close {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  line-height: 1;
+  padding: 5px;
+}
+
+.close:hover {
+  color: #333;
+}
+
+.modal h3 {
+  margin: 0 0 20px 0;
+  color: #1a237e;
+  font-size: 1.5em;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e8eaf6;
+}
+
+/* ======================================================
+   FORMULAIRES
+   ====================================================== */
+
+/**
+ * Styles des groupes de formulaires
+ * Chaque groupe contient un label et un champ de saisie
+ */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+/* Styles communs pour les affichages d'informations */
+.id-display,
+.type-display {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  margin-left: 8px;
+}
+
+/* Style spécifique pour l'ID */
+.id-display {
+  background: #e3f2fd;
+  border: 1px solid #2196f3;
+  color: #1565c0;
+}
+
+/* Style spécifique pour le type */
+.type-display {
+  background: #fff3e0;
+  border: 1px solid #ff9800;
+  color: #e65100;
+  text-transform: uppercase;
+}
+
+/* Style pour tous les champs de formulaire */
+.form-control,
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.form-control:focus,
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #2196f3;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+/* Alignement des labels */
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #1a237e;
+  font-size: 0.95em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #3f51b5;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.15);
+  background-color: #fafafa;
+}
+
+.form-actions {
+  margin-top: 30px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.form-actions button {
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  border: none;
+}
+
+.save-btn {
+  background: #28a745;
+  color: white;
+}
+
+.cancel-btn {
+  background: #dc3545;
+  color: white;
+}
+
+/* ======================================================
+   RECHERCHE ET FILTRES
+   ====================================================== */
+
+/**
+ * Barre de recherche et options de filtrage
+ * Permet de filtrer et rechercher dans la liste des fichiers
+ */
+.search-bar {
+  margin: 30px 0 15px 0;
+}
+
+.search-bar input {
+  width: 100%;
+  max-width: 500px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.filter-options {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.filter-options select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-width: 150px;
+}
+
+/* Boutons de tri */
+.sort-buttons {
+  display: flex;
+  gap: 8px;
+  margin-left: 10px;
+}
+
+.sort-buttons .btn-sm {
+  padding: 4px 8px;
+  font-size: 13px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.sort-buttons .btn-sm:hover {
+  background-color: #e9ecef;
+}
+
+/* Notes et modifications */
+.section-header {
+  margin-bottom: 8px;
+}
+
+.section-header h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+/* Style du formulaire de notes */
+.notes-form {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+/* Styles communs pour les éléments du formulaire */
+#adminName,
+#newNote,
+.section-header .btn-primary {
+  box-sizing: border-box;
+  height: 24px;
+  padding: 2px 8px;
+  font-size: 13px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+#adminName {
+  width: 150px;
+}
+
+#newNote {
+  flex: 1;
+  resize: none;
+}
+
+.section-header .btn-primary {
+  margin-left: auto;
+  background-color: #f8f9fa;
+  color: #333;
+  cursor: pointer;
+}
+
+.section-header .btn-primary:hover {
+  background-color: #e9ecef;
+}
+
+#notesList {
+  max-height: 250px;
+  overflow-y: auto;
+  font-size: 13px;
+}
+
+.notes-header {
+  display: flex;
+  padding: 6px;
+  background-color: transparent;
+  position: sticky;
+  top: 0;
+}
+
+.notes-header-date {
+  flex: 0 0 140px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.notes-header-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.sort-indicator {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+#notesContent {
+  padding: 6px;
+}

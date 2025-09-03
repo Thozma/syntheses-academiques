@@ -1,0 +1,68 @@
+/**
+ * Styles personnalisés pour uniformiser l'affichage des textes
+ * Ces styles prennent la priorité sur les autres styles
+ * 
+ * @author Thomas Bauwens
+ * @version 1.0
+ * @date Mai 2025
+ */
+
+/* Uniformisation des styles pour les textes h3 */
+h3 {
+    font-size: 16px !important;
+    line-height: 1.3 !important;
+    margin: 5px 0 !important;
+    font-weight: normal !important;
+    color: #444 !important;
+}
+
+/* Style pour les informations de l'école */
+.school-info {
+    font-size: 16px !important;
+    color: #444 !important;
+    font-weight: normal !important;
+    white-space: normal !important;
+    line-height: 1.3 !important;
+    margin: 5px 0 !important;
+}
+
+/* Style des mots-clés Java */
+.java-keyword {
+    color: #d73a49 !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 1em !important; /* Même taille que le texte parent */
+    font-weight: normal !important;
+    display: inline-block !important;
+}
+
+/* Style des mots-clés Java dans les boutons */
+button .java-keyword,
+.upload-type-btn .java-keyword {
+    color: white !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+}
+
+/* Style spécifique pour la ligne while */
+.school-info.while-line {
+    font-size: 16px !important;
+    line-height: 1.3 !important;
+    word-break: normal !important;
+    white-space: normal !important;
+}
+
+/* Styles pour les petits écrans (smartphones) */
+@media screen and (max-width: 768px) {
+    h3 {
+        font-size: 12px !important;
+    }
+    
+    .school-info {
+        font-size: 12px !important;
+    }
+    
+    .school-info.while-line {
+        font-size: 12px !important;
+    }
+}
