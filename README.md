@@ -15,20 +15,25 @@ Elle propose une interface moderne et intuitive, avec un design inspiré du lang
 
 ## Fonctionnalités
 Types de fichiers supportés :
+
 - Upload de fichiers PDF (jusqu'à 20 Mo)
 - Upload de fichiers ZIP
 - Upload multiple de fichiers avec création automatique d'archive ZIP
 - Ajout de liens vidéo (YouTube, Vimeo, etc.)
+
 - Validation complète des fichiers (type MIME, taille, caractères spéciaux)
 
 ## Interface utilisateur
+
 - Sélection du type de contenu via boutons thématiques (pdf, zip, multi, video)
 - Organisation par cours avec icônes thématiques
 - Icônes distinctes pour les PDF (📄), les ZIP (💼) et les vidéos (🎬)
 - Formulaire de contact intégré
+
 - Interface responsive adaptée aux différents appareils
 - Sections pliables/dépliables pour une meilleure organisation
 - Style inspiré de Java avec mots-clés colorés
+
 - Animations subtiles pour améliorer l'expérience utilisateur
 - Liens qui conservent leur couleur d'origine après avoir été visités
 - Bordure arc-en-ciel animée autour de la photo de profil
@@ -45,6 +50,7 @@ Types de fichiers supportés :
 - Renforcement de la sécurité et protection contre les attaques courantes (XSS, CSRF, injection)
 - Système de nettoyage automatique des fichiers temporaires
 - Logging détaillé des opérations pour le débogage
+
 
 ## Installation locale
 
@@ -214,6 +220,7 @@ Le site utilise un thème inspiré du langage de programmation Java pour créer 
 Chaque cours est représenté par une icône Unicode thématique :
 
 *** Premiere année
+
 - Structure de Données : 📊 (graphique)
 - Mathématique 1 : 🫀 (symbole mathématique)
 - Mathématique 2 : 📝 (bloc-notes)
@@ -271,6 +278,12 @@ Chaque cours est représenté par une icône Unicode thématique :
 - Animation de flèche pour indiquer l'état
 - Organisation hiérarchique claire
 - Navigation fluide entre les sections
+
+
+#### Administration
+- Tri des synthèses par date ou ID pour une meilleure organisation
+- Système de commentaires pour les administrateurs permettant de suivre les modifications
+- Interface intuitive pour la gestion des fichiers et des métadonnées
 
 #### Animations et Effets
 - Transitions douces pour les interactions
