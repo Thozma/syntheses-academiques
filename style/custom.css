@@ -3,8 +3,8 @@
  * Ces styles prennent la priorité sur les autres styles
  * 
  * @author Thomas Bauwens
- * @version 1.0
- * @date Mai 2025
+ * @version 1.1
+ * @date Septembre 2025
  */
 
 /* Uniformisation des styles pour les textes h3 */
@@ -52,7 +52,58 @@ button .java-keyword,
     white-space: normal !important;
 }
 
-/* Styles pour les petits écrans (smartphones) */
+/* ===========================
+   Styles pour la présentation du site
+   =========================== */
+.site-presentation {
+    background-color: #f9f9f9; /* fond léger pour démarquer la section */
+    padding: 30px 20px;
+    margin: 20px auto;
+    border-radius: 12px;
+    max-width: 1000px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+.site-presentation h2 {
+    text-align: center;
+    color: #1a73e8; /* couleur principale */
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.site-presentation p {
+    font-size: 1.1em;
+    text-align: justify;
+}
+
+/* Pied de page RGPD */
+.site-footer {
+    text-align: center;
+    padding: 15px 10px;
+    background-color: #f1f1f1;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.site-footer a.rgpd-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    color: #1a73e8;
+}
+
+.site-footer a.rgpd-link img.rgpd-icon {
+    width: 18px;
+    height: 18px;
+}
+
+/* ===========================
+   Styles pour les petits écrans (smartphones)
+   =========================== */
 @media screen and (max-width: 768px) {
     h3 {
         font-size: 12px !important;
@@ -64,5 +115,14 @@ button .java-keyword,
     
     .school-info.while-line {
         font-size: 12px !important;
+    }
+
+    .site-presentation {
+        padding: 20px 15px;
+        font-size: 0.95em;
+    }
+
+    .site-presentation h2 {
+        font-size: 1.5em;
     }
 }

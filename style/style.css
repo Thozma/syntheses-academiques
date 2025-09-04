@@ -717,7 +717,11 @@ h3 {
 }
 
 .site-footer p {
-    margin: 0;                               /* Pas de marge */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* centre horizontalement */
+  gap: 10px; /* espace entre le texte et l’icône */
+  margin: 0; /* évite un éventuel décalage */
 }
 
 /* Message d'alerte */
@@ -1753,4 +1757,23 @@ a:visited {
   background: #e9ffe9;
   color: #155724;
   border-color: #218838;
+}
+
+
+.rgpd-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px; /* espace entre l'icône et le texte */
+  text-decoration: none;
+}
+
+.rgpd-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  transition: transform 0.2s ease-in-out;
+}
+
+.rgpd-icon:hover {
+  transform: scale(1.2);
 }

@@ -353,3 +353,8 @@ Tous droits réservés © 2025
 - Modification de la page index en page d'accueil et ajout de liens vers les années scolaires
 - Ajout et intégration des cours de deuxième et troisième année avec icônes thématiques
 - Remise en forme et correction des commentaires dans le code et le README
+- Ajout d'une page RGPD et un lien dans le footer
+- Ajout d'une présentation sur la page d'acceuil
+- Ajout des boutons liens coté gauche sur chaque page
+- Ajout d’un module cookies.js pour gérer le consentement aux cookies côté serveur et intégration des routes dans cookiesRoutes.js (/cookies-consent POST et GET), avec enregistrement complet des informations techniques dans cookies.json.
+

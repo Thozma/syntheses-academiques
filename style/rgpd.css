@@ -1,0 +1,101 @@
+:root {
+  --bg: #f4f4f4;        /* slate-900 */
+  --panel: #f4f4f4;     /* gray-900 */
+  --text: #060708;      /* gray-200 */
+  --muted: #005eff;     /* gray-400 */
+  --accent: #fa7260;    /* blue-400 */
+  --border: #f4f4f4;    /* gray-800 */
+  --card: #f4f4f4;      /* deep */
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: linear-gradient(180deg, var(--bg), #f4f4f4 50%, #f4f4f4 100%);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+header {
+  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(6px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.25rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+.brand .logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: radial-gradient(circle at 30% 30%, #7dd3fc, #60a5fa 40%, #3b82f6 70%, #1d4ed8);
+  box-shadow: 0 4px 16px rgba(59,130,246,.35), inset 0 0 24px rgba(255,255,255,.08);
+}
+
+h1 {
+  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+  margin: 1.2rem 0 .5rem;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: .95rem;
+}
+
+main { padding-bottom: 4rem; }
+
+section.card {
+  background: linear-gradient(180deg, #f4f4f4 0%, #f4f4f4 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin: 1rem 0;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+section.card h2 {
+  font-size: 1.2rem;
+  margin: .2rem 0 .6rem;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+ul { padding-left: 1.1rem; }
+
+code.placeholder {
+  background: #0f172a;
+  padding: .15rem .35rem;
+  border-radius: 6px;
+  border: 1px dashed #22304a;
+  color: #93c5fd;
+  font-size: .92em;
+}
+
+footer {
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  padding: 1.25rem 0 2rem;
+}

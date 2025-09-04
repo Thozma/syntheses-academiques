@@ -19,8 +19,27 @@
     <link rel="stylesheet" href="style/style.css">
     <link rel="stylesheet" href="style/mobile.css">
     <link rel="stylesheet" href="style/custom.css">
+    <link rel="stylesheet" href="style/home.css"> <!-- CSS spécifique accueil -->
   </head>
   <body>
+
+      <!-- Bannière verticale fixe -->
+  <div class="side-banner">
+      <a href="index.html" class="side-btn">Acceuil</a>    
+      <a href="premiere.html" class="side-btn">Synthèses 1ère année</a>
+      <a href="deuxieme.html" class="side-btn">Synthèses 2ème année</a>
+      <a href="troisieme.html" class="side-btn">Synthèses 3ème année</a>
+      <a href="rgpd.html" class="side-btn">RGPD Mentions Légales</a>
+  </div>
+
+    <!-- Popup de consentement aux cookies -->
+  <div id="cookiePopup" style="display: none; position: fixed; bottom: 20px; right: 20px; background: #fff; padding: 20px; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000;">
+      <h2>Consentement aux cookies</h2>
+      <p>Nous utilisons des cookies pour améliorer votre expérience. Acceptez-vous leur utilisation ?</p>
+      <button id="acceptCookies">J'accepte</button>
+      <button id="refuseCookies">Je refuse</button>
+  </div>
+
     <!-- Section de présentation du site -->
     <div class="presentation">
       <div class="header-main">
@@ -694,9 +713,18 @@
       }
     </script>
 
-    <!-- Pied de page avec copyright -->
-    <footer class="site-footer">
-      <p>&copy; 2025 Bauwens Thomas - Tous droits réservés</p>
-    </footer>
+<!-- Pied de page avec copyright -->
+<footer class="site-footer">
+  <p>
+    &copy; 2025 Bauwens Thomas - Tous droits réservés
+    <!-- Lien RGPD -->
+    <a href="rgpd.html" class="rgpd-link" title="Politique de confidentialité" aria-label="Politique de confidentialité RGPD">
+      <img src="image/rgpd.png" alt="Icône RGPD" class="rgpd-icon">
+      RGPD
+    </a>
+  </p>
+</footer>
+  <!-- Script cookiesConsent -->
+  <script src="cookiesConsent.js"></script>
   </body>
 </html>

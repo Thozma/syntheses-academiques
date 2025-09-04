@@ -7,7 +7,9 @@
  * - L'arrêt gracieux de l'application lors de la réception de signaux système
  * 
  * Cette architecture séparée (app.js et server.js) permet une meilleure gestion des erreurs
- * et facilite les tests unitaires. Elle résout également les problèmes de verrouillage
+ *
+
+System: et facilite les tests unitaires. Elle résout également les problèmes de verrouillage
  * lors du redémarrage de l'application dans les environnements d'hébergement comme cPanel.
  * 
  * Note importante : Ce fichier ne contient pas la logique métier, qui est définie dans server.js.
@@ -24,7 +26,7 @@ const app = require('./server');
 const config = require('./config');
 
 // Démarrer le serveur
-const port = config.server.port || 3001;
+const port = process.env.PORT || config.server.port || 3001;
 const server = app.listen(port, () => {
   console.log(`Serveur démarré sur le port ${port}`);
 });

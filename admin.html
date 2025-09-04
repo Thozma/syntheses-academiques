@@ -44,6 +44,13 @@
     </div>
   </div>
 
+    <div id="cookiePopup" style="display: none; position: fixed; bottom: 20px; right: 20px; background: #fff; padding: 20px; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000;">
+    <h2>Consentement aux cookies</h2>
+    <p>Nous utilisons des cookies pour améliorer votre expérience. Acceptez-vous leur utilisation ?</p>
+    <button id="acceptCookies">J'accepte</button>
+    <button id="refuseCookies">Je refuse</button>
+</div>
+
   <!-- Panneau Admin -->
   <div class="admin-container" id="adminPanel" style="display:none;">
     <div class="admin-header">
@@ -498,5 +505,8 @@ async function loadLogs() {
     document.getElementById("typeFilter").addEventListener("change", filterFiles);
     document.getElementById("searchInput").addEventListener("input", filterFiles);
   </script>
+
+    <!-- Script cookiesConsent -->
+  <script src="cookiesConsent.js"></script>
 </body>
 </html>

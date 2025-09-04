@@ -1,31 +1,10 @@
 /**
- * Serveur Node.js pour la gestion d'un site de partage de synthèses académiques
- * 
- * Ce serveur est le cœur de l'application de partage de synthèses académiques pour
- * les étudiants de première année en informatique de la Haute Ecole Léonard de Vinci.
- * 
- * Fonctionnalités principales :
- * - Gestion des uploads de fichiers (PDF, ZIP)
- * - Conversion entre types de fichiers (PDF/ZIP vers liens vidéo)
- * - Stockage et récupération des métadonnées des fichiers
- * - Envoi d'emails via le formulaire de contact
- * - Authentification pour le panneau d'administration
- * - Gestion des messages manuels (chat.json)
- * - Gestion des logs de modifications/suppressions (logs.json)
- * - Serveur de fichiers statiques (HTML, CSS, JS, fichiers téléchargeables)
- * 
- * Architecture :
- * - Express.js pour le routage et le middleware
- * - Multer pour la gestion des uploads de fichiers
- * - Nodemailer pour l'envoi d'emails
- * - Stockage des métadonnées dans fichiers.json, chat.json, logs.json
- * - Stockage des fichiers physiques dans le système de fichiers
- * 
- * @author Thomas Bauwens
- * @version 1.1.0
- * @date Mai 2025
- * @lastModified 3 septembre 2025
- */
+  Site web de partage de synthèses académiques - SERVER.JS
+  Gestion des uploads, vidéos, messages et fichiers JSON associés
+  @author: Thomas Bauwens
+  @date : mai 2025
+  @modifiéDate : septembre 2025
+*/
 
 // ========== IMPORTS DES MODULES ==========
 const express = require('express');
@@ -35,6 +14,8 @@ const fs = require('fs');
 const nodemailer = require('nodemailer');
 const archiver = require('archiver');
 const config = require('./config');
+const cookieParser = require('cookie-parser');
+const cookieRoutes = require('./cookiesRoutes');
 
 // ========== CONFIGURATION DE BASE ==========
 const app = express();
@@ -42,6 +23,8 @@ app.use(express.static(__dirname));
 app.use('/Les synthèses des invités', express.static(path.join(__dirname, 'Les synthèses des invités')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use('/', cookieRoutes);
 
 // Route racine
 app.get('/', (req, res) => {
@@ -656,7 +639,7 @@ app.delete('/delete-file/:id', async (req, res) => {
   }
 });
 
-// Route pour le formulaire de contact
+// Route pour le Hawkins
 app.post('/ask-question', async (req, res) => {
   try {
     console.log('Contenu de req.body:', req.body);
@@ -683,16 +666,11 @@ app.post('/ask-question', async (req, res) => {
       subject: 'Nouveau message de contact',
       text: `Message de contact :\n\nNom Discord : ${nomDiscord}\nEmail : ${email}\nMessage :\n${message}`
     });
-    res.json({ success: true, message: 'Message envoyé avec succès' });
+    res.json({ success: true, message: 'Message envoyéWITH SUCCESS' });
   } catch (error) {
     console.error('Erreur lors de l\'envoi du message:', error);
     res.status(500).json({ error: 'Erreur lors de l\'envoi du message' });
   }
-});
-
-const PORT = process.env.PORT || 3000; // Utilise la variable d'environnement PORT ou 3000 par défaut
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} at ${new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })}`);
 });
 
 module.exports = app;

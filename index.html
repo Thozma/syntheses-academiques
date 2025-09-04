@@ -1,123 +1,126 @@
 <!--
-  Page d'accueil du site de partage de synthèses académiques
-
-  Cette page présente la bannière, le formulaire de contact et les liens vers les synthèses
-  des différentes années du cursus informatique à la Haute Ecole Léonard de Vinci.
-
+  Site web de partage de synthèses académiques - Accueil
   @author: Thomas Bauwens
   @date: Septembre 2025
 -->
-  <!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <!-- Icone Barre -->
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <!-- Script validation AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3549294158319032"
-     crossorigin="anonymous"></script>
-    <!-- Métadonnées de base -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accueil - Synthèses BIN</title>
-    <!-- Feuilles de style CSS -->
-    <link rel="stylesheet" href="style/style.css">
-    <link rel="stylesheet" href="style/mobile.css">
-    <link rel="stylesheet" href="style/custom.css">
-  </head>
-  <body>
-    <!-- Présentation de l'application -->
-    <div class="presentation">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accueil - Synthèses BIN</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="style/style.css">
+  <link rel="stylesheet" href="style/mobile.css">
+  <link rel="stylesheet" href="style/custom.css">
+  <link rel="stylesheet" href="style/home.css">
+</head>
+<body>
+
+  <!-- Bannière verticale fixe -->
+  <div class="side-banner">
+      <a href="index.html" class="side-btn">Accueil</a>    
+      <a href="premiere.html" class="side-btn">Synthèses 1ère année</a>
+      <a href="deuxieme.html" class="side-btn">Synthèses 2ème année</a>
+      <a href="troisieme.html" class="side-btn">Synthèses 3ème année</a>
+      <a href="rgpd.html" class="side-btn">RGPD Mentions Légales</a>
+  </div>
+
+  <!-- Popup de consentement aux cookies -->
+  <div id="cookiePopup" style="display: none; position: fixed; bottom: 20px; right: 20px; background: #fff; padding: 20px; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000;">
+      <h2>Consentement aux cookies</h2>
+      <p>Nous utilisons des cookies pour améliorer votre expérience. Acceptez-vous leur utilisation ?</p>
+      <button id="acceptCookies">J'accepte</button>
+      <button id="refuseCookies">Je refuse</button>
+  </div>
+
+  <!-- Présentation principale -->
+  <div class="presentation">
       <div class="header-main">
-        <div class="header-left">
-          <!-- Image de présentation -->
-          <img
-            src="image/image.png"
-            alt="Photo de présentation de Bauwens Thomas"
-            class="image"
-            loading="lazy">
-          <div class="texte">
-            <!-- Titre principal -->
-            <h1>Les synthèses des BIN</h1>
-            <!-- Slogan -->
-            <h3><span class="java-keyword">for</span> les élèves, <span class="java-keyword">by</span> les élèves !</h3>
-            <!-- Créateur -->
-            <h3><span class="java-keyword">public static</span> Créateur <span class="java-keyword">new</span> Bauwens Thomas</h3>
-            <!-- Établissement -->
-            <h3 class="school-info">Haute Ecole Léonard de Vinci</h3>
-            <!-- Année et section -->
-            <h3 class="school-info while-line"><span class="java-keyword">while</span> Informatique - développement d'applications</h3>
+          <div class="header-left">
+              <img src="image/image.png" alt="Photo de présentation de Bauwens Thomas" class="image" loading="lazy">
+              <div class="texte">
+                  <h1>Les synthèses des BIN</h1>
+                  <h3><span class="java-keyword">for</span> les élèves, <span class="java-keyword">by</span> les élèves !</h3>
+                  <h3><span class="java-keyword">public static</span> Créateur <span class="java-keyword">new</span> Bauwens Thomas</h3>
+                  <h3 class="school-info">Haute Ecole Léonard de Vinci</h3>
+                  <h3 class="school-info while-line"><span class="java-keyword">while</span> Informatique - développement d'applications</h3>
+              </div>
           </div>
-        </div>
-        <div class="contact-info">
-          <!-- Formulaire de contact -->
-          <h4>Nous joindre</h4>
-          <form id="questionForm" method="POST" onsubmit="return handleQuestionSubmit(event);">
-            <div class="form-row">
-              <input type="text" id="nomDiscordQuestion" name="nomDiscord" placeholder="Nom / Discord" required size="20">
-              <input type="email" id="email" name="email" placeholder="Email">
-            </div>
-            <div class="form-row">
-              <textarea id="message" name="message" placeholder="Votre message" required></textarea>
-              <button type="submit"><span class="java-keyword">send</span> ()</button>
-            </div>
-          </form>
-          <div id="questionConfirmationMessage" class="confirmation-message">Message envoyé !</div>
-        </div>
+
+          <div class="contact-info">
+              <h4>Nous joindre</h4>
+              <form id="questionForm" method="POST" onsubmit="return handleQuestionSubmit(event);">
+                  <div class="form-row">
+                      <input type="text" id="nomDiscordQuestion" name="nomDiscord" placeholder="Nom / Discord" required size="20">
+                      <input type="email" id="email" name="email" placeholder="Email">
+                  </div>
+                  <div class="form-row">
+                      <textarea id="message" name="message" placeholder="Votre message" required></textarea>
+                      <button type="submit"><span class="java-keyword">send</span> ()</button>
+                  </div>
+              </form>
+              <div id="questionConfirmationMessage" class="confirmation-message">Message envoyé !</div>
+          </div>
       </div>
-    </div>
-    <!-- Liens vers les synthèses des différentes années -->
-    <div class="links-container">
-      <a href="premiere.html" class="btn">
-        Synthèses 1ère année
-      </a>
-      <a href="deuxieme.html" class="btn">
-        Synthèses 2ème année
-      </a>
-      <a href="troisieme.html" class="btn">
-        Synthèses 3ème année
-      </a>
-    </div>
-    <!-- Pied de page avec copyright -->
-    <footer class="site-footer">
-      <p>&copy; 2025 Bauwens Thomas - Tous droits réservés</p>
-    </footer>
-    <script>
-      /**
-       * ========== GESTION DU FORMULAIRE DE CONTACT ==========
-       * Fonction asynchrone qui gère la soumission du formulaire de contact
-       * Récupère les données du formulaire, les envoie au serveur via une requête AJAX,
-       * affiche un message de confirmation et redirige l'utilisateur vers la page principale
-       *
-       * @param {Event} event - L'événement de soumission du formulaire
-       * @returns {boolean} - Retourne false pour empêcher la soumission normale du formulaire
-       */
+  </div>
+
+  <!-- Présentation générale du site -->
+  <div class="site-presentation">
+      <p>
+        Bienvenue sur <strong>BelgACAI</strong>, votre ressource en ligne dédiée aux étudiants en informatique et aux passionnés de nouvelles technologies !<br><br>
+        Ici, vous trouverez des <strong>synthèses de cours</strong>, des <strong>exercices pratiques</strong> et des <strong>ressources pédagogiques</strong> pour progresser dans vos études. 
+        Les fichiers présents sur le site sont <strong>partagés par d’autres élèves de l’école</strong>, y compris moi-même, étudiant à la Haute École Léonard de Vinci, afin de favoriser l’entraide et le partage de connaissances.<br><br>
+        <strong>Vous pouvez également contribuer :</strong> n’hésitez pas à ajouter vos propres synthèses pour aider vos camarades et enrichir cette ressource collaborative !<br><br>
+        N’hésitez pas à explorer les différentes sections, à télécharger les documents et à revenir régulièrement pour découvrir de nouvelles ressources !<br><br>
+        BelgACAI – Apprendre l’informatique devient simple et collaboratif !
+      </p>
+  </div>
+
+  <!-- Pied de page -->
+  <footer class="site-footer">
+      <p>
+          &copy; 2025 Bauwens Thomas - Tous droits réservés
+          <a href="rgpd.html" class="rgpd-link" title="Politique de confidentialité" aria-label="Politique de confidentialité RGPD">
+              <img src="image/rgpd.png" alt="Icône RGPD" class="rgpd-icon"> RGPD
+          </a>
+      </p>
+  </footer>
+
+  <!-- Script de formulaire -->
+  <script>
       async function handleQuestionSubmit(event) {
-        event.preventDefault();
-        const form = document.getElementById('questionForm');
-        const confirmationMessage = document.getElementById('questionConfirmationMessage');
-        try {
-          const nomDiscord = document.getElementById('nomDiscordQuestion').value;
-          const email = document.getElementById('email').value;
-          const message = document.getElementById('message').value;
-          const formData = { nomDiscord, email, message };
-          const response = await fetch('/ask-question', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-          });
-          const result = await response.json();
-          if (result.error) throw new Error(result.error);
-          confirmationMessage.textContent = 'Message envoyé !';
-          confirmationMessage.style.display = 'block';
-          confirmationMessage.style.color = '#155724';
-          form.reset();
-        } catch (error) {
-          confirmationMessage.textContent = error.message || 'Erreur lors de l\'envoi';
-          confirmationMessage.style.display = 'block';
-          confirmationMessage.style.color = '#721c24';
-        }
-        return false;
+          event.preventDefault();
+          const form = document.getElementById('questionForm');
+          const confirmationMessage = document.getElementById('questionConfirmationMessage');
+          try {
+              const nomDiscord = document.getElementById('nomDiscordQuestion').value;
+              const email = document.getElementById('email').value;
+              const message = document.getElementById('message').value;
+              const formData = { nomDiscord, email, message };
+              const response = await fetch('/ask-question', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(formData)
+              });
+              const result = await response.json();
+              if(result.error) throw new Error(result.error);
+              confirmationMessage.textContent = 'Message envoyé !';
+              confirmationMessage.style.display = 'block';
+              confirmationMessage.style.color = '#155724';
+              form.reset();
+          } catch(error) {
+              confirmationMessage.textContent = error.message || 'Erreur lors de l\'envoi';
+              confirmationMessage.style.display = 'block';
+              confirmationMessage.style.color = '#721c24';
+          }
+          return false;
       }
-    </script>
-  </body>
+  </script>
+
+  <!-- Script cookiesConsent -->
+  <script src="cookiesConsent.js"></script>
+
+</body>
 </html>
