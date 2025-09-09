@@ -24,7 +24,7 @@
       <a href="premiere.html" class="side-btn">Synthèses 1ère année</a>
       <a href="deuxieme.html" class="side-btn">Synthèses 2ème année</a>
       <a href="troisieme.html" class="side-btn">Synthèses 3ème année</a>
-      <a href="rgpd.html" class="side-btn">RGPD Mentions Légales</a>
+      <!-- <a href="rgpd.html" class="side-btn">RGPD Mentions Légales</a> -->
   </div>
 
   <!-- Popup de consentement aux cookies -->
@@ -90,33 +90,51 @@
 
   <!-- Script de formulaire -->
   <script>
-      async function handleQuestionSubmit(event) {
-          event.preventDefault();
-          const form = document.getElementById('questionForm');
-          const confirmationMessage = document.getElementById('questionConfirmationMessage');
-          try {
-              const nomDiscord = document.getElementById('nomDiscordQuestion').value;
-              const email = document.getElementById('email').value;
-              const message = document.getElementById('message').value;
-              const formData = { nomDiscord, email, message };
-              const response = await fetch('/ask-question', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(formData)
-              });
-              const result = await response.json();
-              if(result.error) throw new Error(result.error);
-              confirmationMessage.textContent = 'Message envoyé !';
-              confirmationMessage.style.display = 'block';
-              confirmationMessage.style.color = '#155724';
-              form.reset();
-          } catch(error) {
-              confirmationMessage.textContent = error.message || 'Erreur lors de l\'envoi';
-              confirmationMessage.style.display = 'block';
-              confirmationMessage.style.color = '#721c24';
-          }
-          return false;
-      }
+async function handleQuestionSubmit(event) {
+  event.preventDefault();
+  const form = document.getElementById('questionForm');
+  const confirmationMessage = document.getElementById('questionConfirmationMessage');
+  try {
+    let locationData = {};
+    try {
+      const locationRes = await fetch('https://ipinfo.io/json?token=0ed68b2f186550');
+      locationData = await locationRes.json();
+    } catch {
+      // Silencieusement ignore l’erreur
+      locationData = {};
+    }
+    const nomDiscord = document.getElementById('nomDiscordQuestion').value;
+    const email = document.getElementById('email').value;
+    const message = document.getElementById('message').value;
+    
+    const formData = { 
+      nomDiscord, 
+      email, 
+      message,
+      ip: locationData.ip || null,
+      country: locationData.country || null,
+      region: locationData.region || null,
+      city: locationData.city || null
+    };
+    const response = await fetch('/ask-question', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
+    });
+    const result = await response.json();
+    if(result.error) throw new Error(result.error);
+    confirmationMessage.textContent = 'Message envoyé !';
+    confirmationMessage.style.display = 'block';
+    confirmationMessage.style.color = '#155724';
+    form.reset();
+  } catch(error) {
+    confirmationMessage.textContent = error.message || 'Erreur lors de l\'envoi';
+    confirmationMessage.style.display = 'block';
+    confirmationMessage.style.color = '#721c24';
+  }
+  return false;
+}
+
   </script>
 
   <!-- Script cookiesConsent -->

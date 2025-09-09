@@ -16,6 +16,7 @@ const archiver = require('archiver');
 const config = require('./config');
 const cookieParser = require('cookie-parser');
 const cookieRoutes = require('./cookiesRoutes');
+const sanitize = require('sanitize-html');
 
 // ========== CONFIGURATION DE BASE ==========
 const app = express();
@@ -642,35 +643,52 @@ app.delete('/delete-file/:id', async (req, res) => {
 // Route pour le Hawkins
 app.post('/ask-question', async (req, res) => {
   try {
-    console.log('Contenu de req.body:', req.body);
-    let nomDiscord = 'Non fourni';
-    let email = 'Non fourni';
-    let message = 'Non fourni';
-    if (typeof req.body === 'string') {
-      try {
-        const parsedBody = JSON.parse(req.body);
-        nomDiscord = parsedBody.nomDiscord || parsedBody.discord || parsedBody.nomDiscordQuestion || 'Non fourni';
-        email = parsedBody.email || 'Non fourni';
-        message = parsedBody.message || 'Non fourni';
-      } catch (parseError) {
-        console.error('Erreur de parsing JSON:', parseError);
-      }
-    } else {
-      nomDiscord = req.body.nomDiscord || req.body.discord || req.body.nomDiscordQuestion || 'Non fourni';
-      email = req.body.email || 'Non fourni';
-      message = req.body.message || 'Non fourni';
+    const sanitizeInput = (input) => sanitize(input || 'Non fourni', { allowedTags: [], allowedAttributes: {} });
+    const nomDiscord = sanitizeInput(req.body.nomDiscord);
+    const email = sanitizeInput(req.body.email);
+    const message = sanitizeInput(req.body.message);
+    const ip = sanitizeInput(req.body.ip);
+    const country = sanitizeInput(req.body.country);
+    const region = sanitizeInput(req.body.region);
+    const city = sanitizeInput(req.body.city);
+
+    // Contrôle simple d’e-mail (ex: ici regex basique, sinon utilisez une lib spécialisée)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email !== 'Non fourni' && !emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Adresse email invalide' });
     }
+
+    // Construction texte mail en sécurisant la concaténation
+    const mailText = `
+Message de contact :
+
+Nom Discord : ${nomDiscord}
+Email : ${email}
+Message :
+${message}
+
+---
+Info IP :
+
+IP : ${ip}
+Pays : ${country}
+Région : ${region}
+Ville : ${city}
+`;
+
     await transporter.sendMail({
-      from: `Thomas Bauwens <${emailSender}>`,
+      from: `Belgacai <${emailSender}>`,
       to: emailSender,
       subject: 'Nouveau message de contact',
-      text: `Message de contact :\n\nNom Discord : ${nomDiscord}\nEmail : ${email}\nMessage :\n${message}`
+      text: mailText
     });
-    res.json({ success: true, message: 'Message envoyéWITH SUCCESS' });
+
+    res.json({ success: true, message: 'Message envoyé avec succès' });
   } catch (error) {
     console.error('Erreur lors de l\'envoi du message:', error);
     res.status(500).json({ error: 'Erreur lors de l\'envoi du message' });
   }
 });
+
 
 module.exports = app;

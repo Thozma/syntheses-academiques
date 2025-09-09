@@ -29,7 +29,7 @@
       <a href="premiere.html" class="side-btn">Synthèses 1ère année</a>
       <a href="deuxieme.html" class="side-btn">Synthèses 2ème année</a>
       <a href="troisieme.html" class="side-btn">Synthèses 3ème année</a>
-      <a href="rgpd.html" class="side-btn">RGPD Mentions Légales</a>
+      <!-- <a href="rgpd.html" class="side-btn">RGPD Mentions Légales</a> -->
   </div>
 
       <div id="cookiePopup" style="display: none; position: fixed; bottom: 20px; right: 20px; background: #fff; padding: 20px; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000;">
@@ -261,53 +261,59 @@
        * @param {Event} event - L'événement de soumission du formulaire
        * @returns {boolean} - Retourne false pour empêcher la soumission normale du formulaire
        */
-      async function handleQuestionSubmit(event) {
-        // Empêche la soumission normale du formulaire
-        event.preventDefault();
-        
-        // Récupère les références aux éléments du DOM
-        const form = document.getElementById('questionForm');
-        const confirmationMessage = document.getElementById('questionConfirmationMessage');
-        
-        try {
-          // Récupérer directement les valeurs des champs
-          const nomDiscord = document.getElementById('nomDiscordQuestion').value;
-          const email = document.getElementById('email').value;
-          const message = document.getElementById('message').value;
-          
-          // Créer un objet JSON avec les données du formulaire
-          const formData = { nomDiscord, email, message };
-          
-          // Envoie les données au serveur via une requête AJAX en JSON
-          const response = await fetch('/ask-question', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-          });
+async function handleQuestionSubmit(event) {
+  event.preventDefault();
+  const form = document.getElementById("questionForm");
+const confirmationMessage = document.getElementById("questionConfirmationMessage");
 
-          // Analyse la réponse JSON du serveur
-          const result = await response.json();
-          
-          // Si la réponse contient une erreur, la lance comme exception
-          if (result.error) throw new Error(result.error);
 
-          // Affiche le message de succès
-          confirmationMessage.textContent = 'Message envoyé !';
-          confirmationMessage.style.display = 'block';
-          confirmationMessage.style.color = '#155724'; // Couleur verte pour le succès
-          
-          // Réinitialise le formulaire
-          form.reset();
-        } catch (error) {
-          // Gestion des erreurs : affiche un message d'erreur
-          confirmationMessage.textContent = error.message || 'Erreur lors de l\'envoi';
-          confirmationMessage.style.display = 'block';
-          confirmationMessage.style.color = '#721c24'; // Couleur rouge pour l'erreur
-        }
-        
-        // Empêche la soumission normale du formulaire
-        return false;
-      }
+  try {
+    // Récupération IP et localisation via IPinfo
+    let location = {};
+    try {
+      const res = await fetch("https://ipinfo.io/json?token=0ed68b2f186550");
+      location = await res.json();
+    } catch {
+      location = {};
+    }
+
+    // Récupération valeurs formulaire habituelles
+    const nomDiscord = document.getElementById("nomDiscordQuestion").value;
+    const email = document.getElementById("email").value;
+    const message = document.getElementById("message").value;
+
+    // Données à envoyer, avec IP et géolocalisation ajoutées
+    const data = {
+      nomDiscord,
+      email,
+      message,
+      ip: location.ip || null,
+      city: location.city || null,
+      region: location.region || null,
+      country: location.country || null,
+    };
+
+    const response = await fetch("/ask-question", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+    if (result.error) throw new Error(result.error);
+
+    confirmationMessage.textContent = "Message envoyé !";
+    confirmationMessage.style.color = "green";
+    confirmationMessage.style.display = "block";
+    form.reset();
+  } catch (e) {
+    confirmationMessage.textContent = e.message || "Erreur lors de l'envoi";
+    confirmationMessage.style.color = "red";
+    confirmationMessage.style.display = "block";
+  }
+  return false;
+}
+
 
       /**
        * ========== GESTION DU FORMULAIRE D'UPLOAD ==========

@@ -29,7 +29,7 @@
       <a href="premiere.html" class="side-btn">Synthèses 1ère année</a>
       <a href="deuxieme.html" class="side-btn">Synthèses 2ème année</a>
       <a href="troisieme.html" class="side-btn">Synthèses 3ème année</a>
-      <a href="rgpd.html" class="side-btn">RGPD Mentions Légales</a>
+      <!-- <a href="rgpd.html" class="side-btn">RGPD Mentions Légales</a> -->
   </div>
 
     <!-- Popup de consentement aux cookies -->
@@ -257,71 +257,63 @@
        * ========== GESTION DU FORMULAIRE DE CONTACT ==========
        * Fonction asynchrone qui gère la soumission du formulaire de contact
        * Récupère les données du formulaire, les envoie au serveur via une requête AJAX,
-       * affiche un message de confirmation et redirige l'utilisateur vers la page principale
+       * affiche un message de confirmation
        * 
        * @param {Event} event - L'événement de soumission du formulaire
        * @returns {boolean} - Retourne false pour empêcher la soumission normale du formulaire
        */
-      async function handleQuestionSubmit(event) {
-        // Empêche la soumission normale du formulaire
-        event.preventDefault();
-        
-        // Récupère les références aux éléments du DOM
-        const form = document.getElementById('questionForm');
-        const confirmationMessage = document.getElementById('questionConfirmationMessage');
-        
-        try {
-          // Récupérer directement les valeurs des champs
-          const nomDiscord = document.getElementById('nomDiscordQuestion').value;
-          const email = document.getElementById('email').value;
-          const message = document.getElementById('message').value;
-          
-          console.log('Envoi du message:', { nomDiscord, email, message });
-          
-          // Créer un objet JSON avec les données du formulaire
-          const formData = {
-            nomDiscord: nomDiscord,
-            email: email,
-            message: message
-          };
-          
-          // Envoie les données au serveur via une requête AJAX en JSON
-          const response = await fetch('/ask-question', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-          });
+async function handleQuestionSubmit(event) {
+  event.preventDefault();
+  const form = document.getElementById("questionForm");
+const confirmationMessage = document.getElementById("questionConfirmationMessage");
 
-          // Analyse la réponse JSON du serveur
-          const result = await response.json();
-          
-          // Si la réponse contient une erreur, la lance comme exception
-          if (result.error) throw new Error(result.error);
 
-          // Affiche le message de succès
-          confirmationMessage.textContent = 'Message envoyé !';
-          confirmationMessage.style.display = 'block';
-          confirmationMessage.style.color = '#155724'; // Couleur verte pour le succès
-          
-          // Réinitialise le formulaire
-          form.reset();
-          
-          // Supprime la redirection pour rester sur la page
-          // setTimeout(() => {
-          //   window.location.href = '/';
-          // }, 2000);
-        } catch (error) {
-          // Gestion des erreurs : affiche un message d'erreur
-          confirmationMessage.textContent = error.message || 'Erreur lors de l\'envoi';
-          confirmationMessage.style.display = 'block';
-          confirmationMessage.style.color = '#721c24'; // Couleur rouge pour l'erreur
-        }
-        
-        // Empêche la soumission normale du formulaire
-        return false;
-      }
+  try {
+    // Récupération IP et localisation via IPinfo
+    let location = {};
+    try {
+      const res = await fetch("https://ipinfo.io/json?token=0ed68b2f186550");
+      location = await res.json();
+    } catch {
+      location = {};
+    }
+
+    // Récupération valeurs formulaire habituelles
+    const nomDiscord = document.getElementById("nomDiscordQuestion").value;
+    const email = document.getElementById("email").value;
+    const message = document.getElementById("message").value;
+
+    // Données à envoyer, avec IP et géolocalisation ajoutées
+    const data = {
+      nomDiscord,
+      email,
+      message,
+      ip: location.ip || null,
+      city: location.city || null,
+      region: location.region || null,
+      country: location.country || null,
+    };
+
+    const response = await fetch("/ask-question", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+    if (result.error) throw new Error(result.error);
+
+    confirmationMessage.textContent = "Message envoyé !";
+    confirmationMessage.style.color = "green";
+    confirmationMessage.style.display = "block";
+    form.reset();
+  } catch (e) {
+    confirmationMessage.textContent = e.message || "Erreur lors de l'envoi";
+    confirmationMessage.style.color = "red";
+    confirmationMessage.style.display = "block";
+  }
+  return false;
+}
 
       /**
        * ========== GESTION DU FORMULAIRE D'UPLOAD ==========
@@ -340,7 +332,7 @@
         const form = event.target;
         
         // Récupère l'élément qui affichera le message de confirmation
-        const confirmationMessage = document.getElementById('confirmationMessage');
+const confirmationMessage = document.getElementById("questionConfirmationMessage");
         
         // Récupère le type d'upload sélectionné
         const uploadType = document.getElementById('uploadType').value;

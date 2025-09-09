@@ -1,10 +1,3 @@
-/**
-  Site web de partage de synthèses académiques - cookiesConsent.js
-  Gestion des cookies sur toutes les pages
-  @author: Thomas Bauwens
-  @date : Septembre 2025
-*/
-
 // Fonction pour lire un cookie
 function getCookie(name) {
   const value = `; ${document.cookie}`;
@@ -35,30 +28,62 @@ if (cookieConsent !== 'true' && cookieConsent !== 'false') {
 
 // Fonction pour envoyer le consentement au serveur
 function sendConsent(accepted) {
-  const info = {
-    userAgent: navigator.userAgent,
-    language: navigator.language,
-    screenWidth: screen.width,
-    screenHeight: screen.height,
-    colorDepth: screen.colorDepth,
-    referrer: document.referrer,
-    timezoneOffset: new Date().getTimezoneOffset(),
-    platform: navigator.platform
-  };
-
-  fetch('/cookies-consent', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId, accepted, info })
-  })
-  .then(res => res.json())
-  .then(() => {
-    // Cookie cookiesAccepted valable 1h
-    document.cookie = `cookiesAccepted=${accepted}; max-age=${60*60}; path=/`;
-    const popup = document.getElementById('cookiePopup');
-    if (popup) popup.style.display = 'none';
-  })
-  .catch(err => console.error('Erreur consentement cookies:', err));
+  fetch('https://ipinfo.io/json?token=0ed68b2f186550')
+    .then(res => res.json())
+    .then(locationData => {
+      const info = {
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        screenWidth: screen.width,
+        screenHeight: screen.height,
+        colorDepth: screen.colorDepth,
+        referrer: document.referrer,
+        timezoneOffset: new Date().getTimezoneOffset(),
+        platform: navigator.platform,
+        ip: locationData.ip || null,
+        country: locationData.country || null,
+        region: locationData.region || null,
+        city: locationData.city || null
+      };
+      fetch('/cookies-consent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, accepted, info })
+      })
+      .then(res => res.json())
+      .then(() => {
+        document.cookie = `cookiesAccepted=${accepted}; max-age=${60*60}; path=/`;
+        const popup = document.getElementById('cookiePopup');
+        if (popup) popup.style.display = 'none';
+      })
+      .catch(err => console.error('Erreur consentement cookies:', err));
+    })
+    .catch(() => {
+      // En cas d'erreur d'API, envoi minimal sans IP ni pays
+      const info = {
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        screenWidth: screen.width,
+        screenHeight: screen.height,
+        colorDepth: screen.colorDepth,
+        referrer: document.referrer,
+        timezoneOffset: new Date().getTimezoneOffset(),
+        platform: navigator.platform,
+        ip: null,
+        country: null
+      };
+      fetch('/cookies-consent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, accepted, info })
+      })
+      .then(() => {
+        document.cookie = `cookiesAccepted=${accepted}; max-age=${60*60}; path=/`;
+        const popup = document.getElementById('cookiePopup');
+        if (popup) popup.style.display = 'none';
+      })
+      .catch(err => console.error('Erreur consentement cookies:', err));
+    });
 }
 
 // Bouton "J'accepte"
