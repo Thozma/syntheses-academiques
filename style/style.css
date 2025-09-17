@@ -565,6 +565,7 @@ h3 {
     background-color: white;
 }
 
+
 /* Style pour les boutons de sélection du type d'upload */
 /* Centrage horizontal des boutons avec espacement uniforme */
 .upload-type-selector {
@@ -1321,12 +1322,21 @@ h3 {
 .file-description {
     color: #666;                              /* Couleur grise moyenne */
     font-style: italic;                       /* Texte en italique */
-    margin-top: 3px;                          /* Marge supérieure */
+    margin-top: 0;                          /* Marge supérieure */
     padding-left: 10px;                       /* Retrait à gauche */
     border-left: 2px solid #eee;              /* Bordure verticale à gauche */
     font-size: 0.9em;                         /* Taille de police réduite */
     line-height: 1.4;                         /* Hauteur de ligne augmentée */
 }
+.file-school-year {
+  font-style: italic;
+  font-size: 0.85em;
+  margin-top: 3px;
+  color: #666;
+   text-align: right; /* aligne le texte à droite */
+}
+
+
 
 /**
  * Effet de survol sur un fichier
@@ -1776,4 +1786,17 @@ a:visited {
 
 .rgpd-icon:hover {
   transform: scale(1.2);
+}
+
+
+.files-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+#anneeScolaireFilter {
+  margin-left: auto; /* pousse le select complètement à droite */
+  padding: 5px;
 }

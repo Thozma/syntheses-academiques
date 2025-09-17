@@ -1,722 +1,671 @@
-<!--
-  Site web de partage de synthèses académiques - 1ère année
-  @author: Thomas Bauwens
-  @date: Septembre 2025
+
+<!-- Site web de partage de synthèses académiques - 1ère année
+@author: Thomas Bauwens
+@date : mai 2025
+@modifiéDate : 17 septembre 2025 
 -->
+
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <!-- Intégration des publicités Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3549294158319032"
-     crossorigin="anonymous"></script>
-    <!-- Définition de l'encodage des caractères -->
-    <meta charset="UTF-8">
-    <!-- Configuration du viewport pour le responsive design -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Titre de la page -->
-    <title>les synthèses des BIN - 1ère année</title>
-    <!-- Liens vers les feuilles de style -->
-    <link rel="stylesheet" href="style/style.css">
-    <link rel="stylesheet" href="style/mobile.css">
-    <link rel="stylesheet" href="style/custom.css">
-    <link rel="stylesheet" href="style/home.css"> <!-- CSS spécifique accueil -->
-  </head>
-  <body>
 
-      <!-- Bannière verticale fixe -->
+<head>
+  <!-- Intégration des publicités Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3549294158319032"
+    crossorigin="anonymous"></script>
+  <!-- Définition de l'encodage des caractères -->
+  <meta charset="UTF-8">
+  <!-- Configuration du viewport pour le responsive design -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Titre de la page -->
+  <title>les synthèses des BIN - 1ère année</title>
+  <!-- Liens vers les feuilles de style -->
+  <link rel="stylesheet" href="style/style.css">
+  <link rel="stylesheet" href="style/mobile.css">
+  <link rel="stylesheet" href="style/custom.css">
+  <link rel="stylesheet" href="style/home.css"> <!-- CSS spécifique accueil -->
+</head>
+
+<body>
+
+  <!-- Bannière verticale fixe -->
   <div class="side-banner">
-      <a href="index.html" class="side-btn">Acceuil</a>    
-      <a href="premiere.html" class="side-btn">Synthèses 1ère année</a>
-      <a href="deuxieme.html" class="side-btn">Synthèses 2ème année</a>
-      <a href="troisieme.html" class="side-btn">Synthèses 3ème année</a>
-      <!-- <a href="rgpd.html" class="side-btn">RGPD Mentions Légales</a> -->
+    <a href="index.html" class="side-btn">Acceuil</a>
+    <a href="premiere.html" class="side-btn">Synthèses 1ère année</a>
+    <a href="deuxieme.html" class="side-btn">Synthèses 2ème année</a>
+    <a href="troisieme.html" class="side-btn">Synthèses 3ème année</a>
+    <!-- <a href="rgpd.html" class="side-btn">RGPD Mentions Légales</a> -->
   </div>
 
-    <!-- Popup de consentement aux cookies -->
-  <div id="cookiePopup" style="display: none; position: fixed; bottom: 20px; right: 20px; background: #fff; padding: 20px; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000;">
-      <h2>Consentement aux cookies</h2>
-      <p>Nous utilisons des cookies pour améliorer votre expérience. Acceptez-vous leur utilisation ?</p>
-      <button id="acceptCookies">J'accepte</button>
-      <button id="refuseCookies">Je refuse</button>
+  <!-- Popup de consentement aux cookies -->
+  <div id="cookiePopup"
+    style="display: none; position: fixed; bottom: 20px; right: 20px; background: #fff; padding: 20px; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000;">
+    <h2>Consentement aux cookies</h2>
+    <p>Nous utilisons des cookies pour améliorer votre expérience. Acceptez-vous leur utilisation ?</p>
+    <button id="acceptCookies">J'accepte</button>
+    <button id="refuseCookies">Je refuse</button>
   </div>
 
-    <!-- Section de présentation du site -->
-    <div class="presentation">
-      <div class="header-main">
-        <div class="header-left">
-          <!-- Photo de présentation -->
-          <img
-            src="image/image.png"
-            alt="Photo de présentation de Bauwens Thomas"
-            class="image"
-            loading="lazy"> <!-- Chargement lazy pour optimiser les performances -->
-          <div class="texte">
-            <h1>Les synthèses des BIN 1ère année</h1>
-            <!-- Slogan avec style inspiré du code Java -->
-            <h3><span class="java-keyword">for</span> les élèves, <span class="java-keyword">by</span> les élèves !</h3>
-            <h3><span class="java-keyword">public static</span> Créateur <span class="java-keyword">new</span> Bauwens Thomas</h3>
-            <!-- Informations sur l'école -->
-            <h3 class="school-info">Haute Ecole Léonard de Vinci</h3>
-            <h3 class="school-info while-line"><span class="java-keyword">while</span> Informatique - développement d'applications</h3>
+  <!-- Section de présentation du site -->
+  <div class="presentation">
+    <div class="header-main">
+      <div class="header-left">
+        <!-- Photo de présentation -->
+        <img src="image/image.png" alt="Photo de présentation de Bauwens Thomas" class="image" loading="lazy">
+        <!-- Chargement lazy pour optimiser les performances -->
+        <div class="texte">
+          <h1>Les synthèses des BIN 1ère année</h1>
+
+          <!-- Slogan avec style inspiré du code Java -->
+          <h3><span class="java-keyword">for</span> les élèves, <span class="java-keyword">by</span> les élèves !</h3>
+          <h3><span class="java-keyword">public static</span> Créateur <span class="java-keyword">new</span> Bauwens
+            Thomas</h3>
+
+          <!-- Informations sur l'école -->
+          <h3 class="school-info">Haute Ecole Léonard de Vinci</h3>
+          <h3 class="school-info while-line"><span class="java-keyword">while</span> Informatique - développement
+            d'applications</h3>
+        </div>
+      </div>
+
+      <!-- Section de contact -->
+      <div class="contact-info">
+        <h4>Nous joindre</h4>
+
+        <!-- Formulaire de contact avec gestionnaire d'événement à la soumission -->
+        <form id="questionForm" method="POST" onsubmit="return handleQuestionSubmit(event);">
+          <div class="form-row">
+            <!-- Champ pour le nom ou identifiant Discord -->
+            <input type="text" id="nomDiscordQuestion" name="nomDiscord" placeholder="Nom / Discord" required size="20">
+            <!-- Champ pour l'email (facultatif) -->
+            <input type="email" id="email" name="email" placeholder="Email">
+          </div>
+          <div class="form-row">
+            <!-- Zone de texte pour le message -->
+            <textarea id="message" name="message" placeholder="Votre message" required></textarea>
+            <!-- Bouton d'envoi avec style inspiré du code Java -->
+            <button type="submit"><span class="java-keyword">send</span> ()</button>
+          </div>
+        </form>
+        <!-- Message de confirmation qui sera affiché après l'envoi -->
+        <div id="questionConfirmationMessage" class="confirmation-message">Message envoyé !</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section listant les fichiers disponibles -->
+  <div class="files-container">
+    <div class="files-header">
+  <h2><span class="java-keyword">import</span> Synthèses disponibles</h2>
+  <select id="anneeScolaireFilter">
+    <option value="">Toutes les années</option>
+    <option value="2021-2022">2021-2022</option>
+    <option value="2022-2023">2022-2023</option>
+    <option value="2023-2024">2023-2024</option>
+    <option value="2024-2025">2024-2025</option>
+    <option value="2025-2026">2025-2026</option>
+  </select>
+</div>
+    <!-- Conteneur où la liste des fichiers sera chargée dynamiquement -->
+    <div id="filesList" class="files-list">
+      <p>Chargement des synthèses...</p>
+      <!-- Message par défaut avant que les fichiers ne soient chargés -->
+    </div>
+  </div>
+
+  <!-- Section permettant l'upload de nouveaux fichiers -->
+  <div class="upload-section">
+    <div class="header-with-buttons">
+      <div class="title-container">
+        <h2><span class="java-keyword">void</span> Ajouter (Synthèse)</h2>
+      </div>
+      <!-- Sélecteur du type d'upload (PDF, ZIP, multiple ou vidéo) -->
+      <div class="upload-type-selector">
+        <button type="button" id="pdfButton" class="upload-type-btn active" onclick="selectUploadType('pdf')"><span
+            class="java-keyword">pdf</span> ()</button>
+        <button type="button" id="zipButton" class="upload-type-btn" onclick="selectUploadType('zip')"><span
+            class="java-keyword">zip</span> ()</button>
+        <button type="button" id="multiButton" class="upload-type-btn" onclick="selectUploadType('multi')"><span
+            class="java-keyword">multi</span> ()</button>
+        <button type="button" id="videoButton" class="upload-type-btn" onclick="selectUploadType('video')"><span
+            class="java-keyword">video</span> ()</button>
+      </div>
+      <div class="spacer"></div>
+    </div>
+    <!-- Formulaire d'upload avec gestionnaire d'événement à la soumission -->
+    <form id="syntheseForm" enctype="multipart/form-data" method="POST" onsubmit="return handleUpload(event);">
+      <!-- Champ caché pour spécifier l'année académique -->
+      <input type="hidden" id="annee" name="annee" value="1">
+      <!-- Champ caché pour spécifier le type d'upload -->
+      <input type="hidden" id="uploadType" name="uploadType" value="pdf">
+      <div class="form-grid">
+        <div class="form-group">
+          <!-- Ligne de champs pour les informations de base -->
+          <div class="input-row">
+            <input type="text" id="nomDiscord" name="nomDiscord" placeholder="Nom / Discord" required>
+            <!-- Liste déroulante pour sélectionner le cours -->
+            <select id="cours" name="cours" required>
+              <option value="" disabled selected>Sélectionnez un cours</option>
+              <option value="STRUCTURE DE DONNEES">Structure de Données</option>
+              <option value="MATHEMATIQUE 1">Mathématique 1</option>
+              <option value="MATHEMATIQUE 2">Mathématique 2</option>
+              <option value="BASE DE DONNEES">Base de Données</option>
+              <option value="SYSTEMES D'EXPLOITATION / LINUX">Systèmes d'Exploitation / Linux</option>
+              <option value="JAVASCRIPT">JavaScript</option>
+              <option value="ANGLAIS">Anglais</option>
+              <option value="ALGO">Algorithmique</option>
+              <option value="APOO">Analyse et Programmation Orientée Objet</option>
+              <option value="FONCTIONNEMENT DES ORDINATEURS">Fonctionnement des Ordinateurs</option>
+              <option value="GESTION COMPTABILITE ECONOMIE">Gestion, Comptabilité et Économie</option>
+              <option value="COMPETENCES NUMERIQUES">Compétences Numériques</option>
+              <option value="DIVERS">Divers</option>
+            </select>
+          </div>
+          <!-- Ligne de champs pour le titre et le fichier/URL -->
+          <div class="input-row">
+            <input type="text" id="titre" name="titre" placeholder="Titre de la synthèse" required>
+
+
+
+
+            <!-- Liste déroulante pour sélectionner l'année scolaire -->
+            <select id="anneeScolaire" name="anneeScolaire" required>
+              <option value="" disabled selected>Année scolaire</option>
+              <option value="2021-2022">2021-2022</option>
+              <option value="2022-2023">2022-2023</option>
+              <option value="2023-2024">2023-2024</option>
+              <option value="2024-2025">2024-2025</option>
+              <option value="2025-2026">2025-2026</option>
+            </select>
+
+
+            <!-- Conteneur pour l'upload PDF (affiché par défaut) -->
+            <div id="pdfUploadRow" class="file-input">
+              <input type="file" id="fichier" name="fichier" accept=".pdf">
+              <small class="file-format">Format PDF uniquement (max 20 Mo)</small>
+            </div>
+            <!-- Conteneur pour l'upload ZIP (caché par défaut) -->
+            <div id="zipUploadRow" class="file-input" style="display: none;">
+              <input type="file" id="fichierZip" name="fichier" accept=".zip">
+              <small class="file-format">Format ZIP uniquement (max 20 Mo)</small>
+            </div>
+            <!-- Conteneur pour l'upload multiple (caché par défaut) -->
+            <div id="multiUploadRow" class="file-input" style="display: none;">
+              <input type="file" id="fichierMulti" name="fichiers" multiple>
+              <small class="file-format">Glissez plusieurs fichiers ou un dossier (max 20 Mo au total)</small>
+            </div>
+            <!-- Conteneur pour les liens vidéo (caché par défaut) -->
+            <div id="videoUploadRow" class="video-input" style="display: none;">
+              <input type="url" id="videoUrl" name="videoUrl" placeholder="Lien de la vidéo (YouTube, Vimeo, etc.)">
+              <small class="file-format">Lien vidéo (YouTube, Vimeo, etc.)</small>
+            </div>
           </div>
         </div>
-        <!-- Section de contact -->
-        <div class="contact-info">
-          <h4>Nous joindre</h4>
-          <!-- Formulaire de contact avec gestionnaire d'événement à la soumission -->
-          <form id="questionForm" method="POST" onsubmit="return handleQuestionSubmit(event);">
-            <div class="form-row">
-              <!-- Champ pour le nom ou identifiant Discord -->
-              <input type="text" id="nomDiscordQuestion" name="nomDiscord" placeholder="Nom / Discord" required size="20">
-              <!-- Champ pour l'email (facultatif) -->
-              <input type="email" id="email" name="email" placeholder="Email">
-            </div>
-            <div class="form-row">
-              <!-- Zone de texte pour le message -->
-              <textarea id="message" name="message" placeholder="Votre message" required></textarea>
-              <!-- Bouton d'envoi avec style inspiré du code Java -->
-              <button type="submit"><span class="java-keyword">send</span> ()</button>
-            </div>
-          </form>
-          <!-- Message de confirmation qui sera affiché après l'envoi -->
-          <div id="questionConfirmationMessage" class="confirmation-message">Message envoyé !</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Section listant les fichiers disponibles -->
-    <div class="files-container">
-      <h2><span class="java-keyword">import</span> Synthèses disponibles</h2>
-      <!-- Conteneur où la liste des fichiers sera chargée dynamiquement -->
-      <div id="filesList" class="files-list">
-        <p>Chargement des synthèses...</p>
-        <!-- Message par défaut avant que les fichiers ne soient chargés -->
-      </div>
-    </div>
-
-    <!-- Section permettant l'upload de nouveaux fichiers -->
-    <div class="upload-section">
-      <div class="header-with-buttons">
-        <div class="title-container">
-          <h2><span class="java-keyword">void</span> Ajouter (Synthèse)</h2>
-        </div>
-        <!-- Sélecteur du type d'upload (PDF, ZIP, multiple ou vidéo) -->
-        <div class="upload-type-selector">
-          <button type="button" id="pdfButton" class="upload-type-btn active" onclick="selectUploadType('pdf')"><span class="java-keyword">pdf</span> ()</button>
-          <button type="button" id="zipButton" class="upload-type-btn" onclick="selectUploadType('zip')"><span class="java-keyword">zip</span> ()</button>
-          <button type="button" id="multiButton" class="upload-type-btn" onclick="selectUploadType('multi')"><span class="java-keyword">multi</span> ()</button>
-          <button type="button" id="videoButton" class="upload-type-btn" onclick="selectUploadType('video')"><span class="java-keyword">video</span> ()</button>
-        </div>
-        <div class="spacer"></div>
-      </div>
-      <!-- Formulaire d'upload avec gestionnaire d'événement à la soumission -->
-      <form
-        id="syntheseForm"
-        enctype="multipart/form-data"
-        method="POST"
-        onsubmit="return handleUpload(event);"
-      >
-        <!-- Champ caché pour spécifier l'année académique -->
-        <input type="hidden" id="annee" name="annee" value="1">
-        <!-- Champ caché pour spécifier le type d'upload -->
-        <input type="hidden" id="uploadType" name="uploadType" value="pdf">
-        <div class="form-grid">
+        <div class="form-group">
+          <!-- Zone de texte pour la description (facultative) -->
           <div class="form-group">
-            <!-- Ligne de champs pour les informations de base -->
-            <div class="input-row">
-              <input type="text" id="nomDiscord" name="nomDiscord" placeholder="Nom / Discord" required>
-              <!-- Liste déroulante pour sélectionner le cours -->
-              <select id="cours" name="cours" required>
-                <option value="" disabled selected>Sélectionnez un cours</option>
-                <option value="STRUCTURE DE DONNEES">Structure de Données</option>
-                <option value="MATHEMATIQUE 1">Mathématique 1</option>
-                <option value="MATHEMATIQUE 2">Mathématique 2</option>
-                <option value="BASE DE DONNEES">Base de Données</option>
-                <option value="SYSTEMES D'EXPLOITATION / LINUX">Systèmes d'Exploitation / Linux</option>
-                <option value="JAVASCRIPT">JavaScript</option>
-                <option value="ANGLAIS">Anglais</option>
-                <option value="ALGO">Algorithmique</option>
-                <option value="APOO">Analyse et Programmation Orientée Objet</option>
-                <option value="FONCTIONNEMENT DES ORDINATEURS">Fonctionnement des Ordinateurs</option>
-                <option value="GESTION COMPTABILITE ECONOMIE">Gestion, Comptabilité et Économie</option>
-                <option value="COMPETENCES NUMERIQUES">Compétences Numériques</option>
-                <option value="DIVERS">Divers</option>
-              </select>
-            </div>
-            <!-- Ligne de champs pour le titre et le fichier/URL -->
-            <div class="input-row">
-              <input type="text" id="titre" name="titre" placeholder="Titre de la synthèse" required>
-              <!-- Conteneur pour l'upload PDF (affiché par défaut) -->
-              <div id="pdfUploadRow" class="file-input">
-                <input type="file" id="fichier" name="fichier" accept=".pdf">
-                <small class="file-format">Format PDF uniquement (max 20 Mo)</small>
-              </div>
-              <!-- Conteneur pour l'upload ZIP (caché par défaut) -->
-              <div id="zipUploadRow" class="file-input" style="display: none;">
-                <input type="file" id="fichierZip" name="fichier" accept=".zip">
-                <small class="file-format">Format ZIP uniquement (max 20 Mo)</small>
-              </div>
-              <!-- Conteneur pour l'upload multiple (caché par défaut) -->
-              <div id="multiUploadRow" class="file-input" style="display: none;">
-                <input type="file" id="fichierMulti" name="fichiers" multiple>
-                <small class="file-format">Glissez plusieurs fichiers ou un dossier (max 20 Mo au total)</small>
-              </div>
-              <!-- Conteneur pour les liens vidéo (caché par défaut) -->
-              <div id="videoUploadRow" class="video-input" style="display: none;">
-                <input type="url" id="videoUrl" name="videoUrl" placeholder="Lien de la vidéo (YouTube, Vimeo, etc.)">
-                <small class="file-format">Lien vidéo (YouTube, Vimeo, etc.)</small>
-              </div>
-            </div>
+            <textarea id="description" name="description"
+              placeholder="Description de votre synthèse (facultatif)"></textarea>
           </div>
-          <div class="form-group">
-            <!-- Zone de texte pour la description (facultative) -->
-            <textarea
-              id="description"
-              name="description"
-              placeholder="Description de votre synthèse (facultatif)"
-            ></textarea>
-            <div class="form-actions">
-              <!-- Message informatif sur la durée du chargement -->
-              <small class="upload-notice">Le chargement peut prendre quelques instants<span class="dots">...</span></small>
-              <!-- Bouton de soumission avec style inspiré du code Java -->
-              <button type="submit"><span class="java-keyword">submit</span> ()</button>
-            </div>
+
+          <div class="form-actions">
+            <!-- Message informatif sur la durée du chargement -->
+            <small class="upload-notice">Le chargement peut prendre quelques instants<span
+                class="dots">...</span></small>
+            <!-- Bouton de soumission avec style inspiré du code Java -->
+            <button type="submit"><span class="java-keyword">submit</span> ()</button>
           </div>
         </div>
-      </form>
-      <!-- Message de confirmation qui sera affiché après l'upload -->
-      <div id="confirmationMessage" class="upload-confirmation">En chargement ...</div>
-    </div>
+      </div>
+    </form>
+    <!-- Message de confirmation qui sera affiché après l'upload -->
+    <div id="confirmationMessage" class="upload-confirmation">En chargement ...</div>
+  </div>
 
-    <script>
-      /**
-       * Fonction pour sélectionner le type d'upload (PDF, ZIP, multiple ou vidéo)
-       * Affiche les champs appropriés et cache les autres
-       * 
-       * @param {string} type - Le type d'upload ('pdf', 'zip', 'multi' ou 'video')
-       */
-      function selectUploadType(type) {
-        // Récupère les éléments du DOM pour les boutons
-        const pdfButton = document.getElementById('pdfButton');
-        const zipButton = document.getElementById('zipButton');
-        const multiButton = document.getElementById('multiButton');
-        const videoButton = document.getElementById('videoButton');
-        
-        // Récupère les éléments du DOM pour les conteneurs de champs
-        const pdfRow = document.getElementById('pdfUploadRow');
-        const zipRow = document.getElementById('zipUploadRow');
-        const multiRow = document.getElementById('multiUploadRow');
-        const videoRow = document.getElementById('videoUploadRow');
-        
-        // Récupère les éléments du DOM pour les champs de saisie
-        const fichierInput = document.getElementById('fichier');
-        const fichierZipInput = document.getElementById('fichierZip');
-        const fichierMultiInput = document.getElementById('fichierMulti');
-        const videoUrlInput = document.getElementById('videoUrl');
-        
-        // Désactiver tous les boutons et cacher tous les champs
-        pdfButton.classList.remove('active');
-        zipButton.classList.remove('active');
-        multiButton.classList.remove('active');
-        videoButton.classList.remove('active');
-        pdfRow.style.display = 'none';
-        zipRow.style.display = 'none';
-        multiRow.style.display = 'none';
-        videoRow.style.display = 'none';
-        
-        // Supprimer l'attribut required de tous les champs
-        fichierInput.removeAttribute('required');
-        fichierZipInput.removeAttribute('required');
-        fichierMultiInput.removeAttribute('required');
-        videoUrlInput.removeAttribute('required');
-        
-        // Activer le type sélectionné et afficher les champs appropriés
-        if (type === 'pdf') {
-          pdfButton.classList.add('active');
-          pdfRow.style.display = 'block';
-          fichierInput.setAttribute('required', '');
-        } else if (type === 'zip') {
-          zipButton.classList.add('active');
-          zipRow.style.display = 'block';
-          fichierZipInput.setAttribute('required', '');
-        } else if (type === 'multi') {
-          multiButton.classList.add('active');
-          multiRow.style.display = 'block';
-          fichierMultiInput.setAttribute('required', '');
-        } else if (type === 'video') {
-          videoButton.classList.add('active');
-          videoRow.style.display = 'block';
-          videoUrlInput.setAttribute('required', '');
-        }
-        
-        // Stocke le type d'upload sélectionné dans un champ caché
-        document.getElementById('uploadType').value = type;
+  <script>
+    /**
+     * Fonction pour sélectionner le type d'upload (PDF, ZIP, multiple ou vidéo)
+     * Affiche les champs appropriés et cache les autres
+     * 
+     * @param {string} type - Le type d'upload ('pdf', 'zip', 'multi' ou 'video')
+     */
+    function selectUploadType(type) {
+      // Récupère les éléments du DOM pour les boutons
+      const pdfButton = document.getElementById('pdfButton');
+      const zipButton = document.getElementById('zipButton');
+      const multiButton = document.getElementById('multiButton');
+      const videoButton = document.getElementById('videoButton');
+
+      // Récupère les éléments du DOM pour les conteneurs de champs
+      const pdfRow = document.getElementById('pdfUploadRow');
+      const zipRow = document.getElementById('zipUploadRow');
+      const multiRow = document.getElementById('multiUploadRow');
+      const videoRow = document.getElementById('videoUploadRow');
+
+      // Récupère les éléments du DOM pour les champs de saisie
+      const fichierInput = document.getElementById('fichier');
+      const fichierZipInput = document.getElementById('fichierZip');
+      const fichierMultiInput = document.getElementById('fichierMulti');
+      const videoUrlInput = document.getElementById('videoUrl');
+
+      // Désactiver tous les boutons et cacher tous les champs
+      pdfButton.classList.remove('active');
+      zipButton.classList.remove('active');
+      multiButton.classList.remove('active');
+      videoButton.classList.remove('active');
+      pdfRow.style.display = 'none';
+      zipRow.style.display = 'none';
+      multiRow.style.display = 'none';
+      videoRow.style.display = 'none';
+
+      // Supprimer l'attribut required de tous les champs
+      fichierInput.removeAttribute('required');
+      fichierZipInput.removeAttribute('required');
+      fichierMultiInput.removeAttribute('required');
+      videoUrlInput.removeAttribute('required');
+
+      // Activer le type sélectionné et afficher les champs appropriés
+      if (type === 'pdf') {
+        pdfButton.classList.add('active');
+        pdfRow.style.display = 'block';
+        fichierInput.setAttribute('required', '');
+      } else if (type === 'zip') {
+        zipButton.classList.add('active');
+        zipRow.style.display = 'block';
+        fichierZipInput.setAttribute('required', '');
+      } else if (type === 'multi') {
+        multiButton.classList.add('active');
+        multiRow.style.display = 'block';
+        fichierMultiInput.setAttribute('required', '');
+      } else if (type === 'video') {
+        videoButton.classList.add('active');
+        videoRow.style.display = 'block';
+        videoUrlInput.setAttribute('required', '');
       }
-      
-      /**
-       * ========== GESTION DU FORMULAIRE DE CONTACT ==========
-       * Fonction asynchrone qui gère la soumission du formulaire de contact
-       * Récupère les données du formulaire, les envoie au serveur via une requête AJAX,
-       * affiche un message de confirmation
-       * 
-       * @param {Event} event - L'événement de soumission du formulaire
-       * @returns {boolean} - Retourne false pour empêcher la soumission normale du formulaire
-       */
-async function handleQuestionSubmit(event) {
-  event.preventDefault();
-  const form = document.getElementById("questionForm");
-const confirmationMessage = document.getElementById("questionConfirmationMessage");
 
-
-  try {
-    // Récupération IP et localisation via IPinfo
-    let location = {};
-    try {
-      const res = await fetch("https://ipinfo.io/json?token=0ed68b2f186550");
-      location = await res.json();
-    } catch {
-      location = {};
+      // Stocke le type d'upload sélectionné dans un champ caché
+      document.getElementById('uploadType').value = type;
     }
 
-    // Récupération valeurs formulaire habituelles
-    const nomDiscord = document.getElementById("nomDiscordQuestion").value;
-    const email = document.getElementById("email").value;
-    const message = document.getElementById("message").value;
+    /**
+     * ========== GESTION DU FORMULAIRE DE CONTACT ==========
+     * Fonction asynchrone qui gère la soumission du formulaire de contact
+     * Récupère les données du formulaire, les envoie au serveur via une requête AJAX,
+     * affiche un message de confirmation
+     * 
+     * @param {Event} event - L'événement de soumission du formulaire
+     * @returns {boolean} - Retourne false pour empêcher la soumission normale du formulaire
+     */
+    async function handleQuestionSubmit(event) {
+      event.preventDefault();
+      const form = document.getElementById("questionForm");
+      const confirmationMessage = document.getElementById("questionConfirmationMessage");
 
-    // Données à envoyer, avec IP et géolocalisation ajoutées
-    const data = {
-      nomDiscord,
-      email,
-      message,
-      ip: location.ip || null,
-      city: location.city || null,
-      region: location.region || null,
-      country: location.country || null,
-    };
 
-    const response = await fetch("/ask-question", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-
-    const result = await response.json();
-    if (result.error) throw new Error(result.error);
-
-    confirmationMessage.textContent = "Message envoyé !";
-    confirmationMessage.style.color = "green";
-    confirmationMessage.style.display = "block";
-    form.reset();
-  } catch (e) {
-    confirmationMessage.textContent = e.message || "Erreur lors de l'envoi";
-    confirmationMessage.style.color = "red";
-    confirmationMessage.style.display = "block";
-  }
-  return false;
-}
-
-      /**
-       * ========== GESTION DU FORMULAIRE D'UPLOAD ==========
-       * Fonction asynchrone qui gère la soumission du formulaire d'upload de fichiers
-       * Récupère les données du formulaire et le fichier, les envoie au serveur,
-       * affiche un message de confirmation et rafraîchit la liste des fichiers
-       * 
-       * @param {Event} event - L'événement de soumission du formulaire
-       * @returns {boolean} - Retourne false pour empêcher la soumission normale du formulaire
-       */
-      async function handleUpload(event) {
-        // Empêche la soumission normale du formulaire
-        event.preventDefault();
-        
-        // Récupère le formulaire
-        const form = event.target;
-        
-        // Récupère l'élément qui affichera le message de confirmation
-const confirmationMessage = document.getElementById("questionConfirmationMessage");
-        
-        // Récupère le type d'upload sélectionné
-        const uploadType = document.getElementById('uploadType').value;
-
+      try {
+        // Récupération IP et localisation via IPinfo
+        let location = {};
         try {
-          // Affiche un message d'attente pendant l'upload
-          confirmationMessage.style.display = 'block';
-          confirmationMessage.textContent = 'Upload en cours...';
-
-          let response, result;
-          
-          // Approche différente selon le type d'upload
-          if (uploadType === 'pdf') {
-            // Vérifie si un fichier PDF a été sélectionné
-            if (!document.getElementById('fichier').files[0]) {
-              throw new Error('Veuillez sélectionner un fichier PDF');
-            }
-            
-            // Pour les PDFs, utilise FormData pour l'upload de fichier
-            const formData = new FormData(form);
-            formData.append('uploadType', 'pdf');
-            
-            // Envoie les données au serveur via une requête AJAX
-            response = await fetch('/upload', {
-              method: 'POST',
-              body: formData // FormData gère automatiquement l'envoi de fichiers
-            });
-            
-          } else if (uploadType === 'zip') {
-            // Vérifie si un fichier ZIP a été sélectionné
-            if (!document.getElementById('fichierZip').files[0]) {
-              throw new Error('Veuillez sélectionner un fichier ZIP');
-            }
-            
-            // Pour les ZIPs, utilise FormData pour l'upload de fichier
-            const formData = new FormData(form);
-            formData.append('uploadType', 'zip');
-            // Ne pas ajouter le fichier manuellement, il est déjà inclus dans le formulaire
-            
-            // Envoie les données au serveur via une requête AJAX
-            response = await fetch('/upload', {
-              method: 'POST',
-              body: formData // FormData gère automatiquement l'envoi de fichiers
-            });
-            
-          } else if (uploadType === 'multi') {
-            // Vérifie si des fichiers ont été sélectionnés
-            const files = document.getElementById('fichierMulti').files;
-            if (files.length === 0) {
-              throw new Error('Veuillez sélectionner au moins un fichier');
-            }
-            
-            // Pour les fichiers multiples, utilise FormData pour l'upload de fichiers
-            const formData = new FormData();
-            
-            // Ajoute les métadonnées du formulaire
-            formData.append('uploadType', 'multi');
-            formData.append('nomDiscord', document.getElementById('nomDiscord').value);
-            formData.append('cours', document.getElementById('cours').value);
-            formData.append('titre', document.getElementById('titre').value);
-            formData.append('description', document.getElementById('description').value);
-            formData.append('annee', document.getElementById('annee').value);
-            
-            // Ajoute tous les fichiers sélectionnés
-            for (let i = 0; i < files.length; i++) {
-              formData.append('fichiers', files[i]);
-            }
-            
-            // Envoie les données au serveur via une requête AJAX
-            response = await fetch('/upload-multi', {
-              method: 'POST',
-              body: formData // FormData gère automatiquement l'envoi de fichiers
-            });
-            
-          } else if (uploadType === 'video') {
-            // Vérifie si un lien vidéo a été entré
-            const videoUrl = document.getElementById('videoUrl').value;
-            if (!videoUrl) {
-              throw new Error('Veuillez entrer un lien vidéo');
-            }
-            
-            // Pour les vidéos, utilise JSON pour l'envoi des données
-            const videoData = {
-              uploadType: 'video',
-              annee: document.getElementById('annee').value, // <-- AJOUTE CETTE LIGNE
-              videoUrl: videoUrl,
-              nomDiscord: document.getElementById('nomDiscord').value,
-              cours: document.getElementById('cours').value,
-              titre: document.getElementById('titre').value,
-              description: document.getElementById('description').value
-            };
-            
-            console.log('Envoi des données vidéo:', videoData);
-            
-            // Envoie les données au serveur via une requête AJAX
-            response = await fetch('/upload', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(videoData)
-            });
-          }
-          
-          // Analyse la réponse JSON du serveur
-          result = await response.json();
-          
-          // Vérifie si la réponse contient une erreur
-          if (result.error) {
-            // Si l'erreur est un objet, on extrait un message lisible
-            const errorMessage = typeof result.error === 'object' 
-              ? JSON.stringify(result.error) 
-              : result.error;
-            throw new Error(errorMessage);
-          }
-          
-          // Affiche le message de succès retourné par le serveur
-          confirmationMessage.textContent = result.message;
-          confirmationMessage.style.color = '#155724'; // Couleur verte pour le succès
-          
-          // Réinitialise le formulaire
-          form.reset();
-          
-          // Réinitialise l'interface d'upload
-          selectUploadType('pdf');
-          
-          // Rafraîchit la liste des fichiers pour afficher le nouveau fichier
-          loadFiles();
-
-        } catch (error) {
-          // Gestion des erreurs : affiche un message d'erreur
-          console.error('Erreur:', error);
-          confirmationMessage.textContent = error.message || 'Erreur lors de l\'upload';
-          confirmationMessage.style.color = '#721c24'; // Couleur rouge pour l'erreur
+          const res = await fetch("https://ipinfo.io/json?token=0ed68b2f186550");
+          location = await res.json();
+        } catch {
+          location = {};
         }
 
-        // Empêche la soumission normale du formulaire
-        return false;
+        // Récupération valeurs formulaire habituelles
+        const nomDiscord = document.getElementById("nomDiscordQuestion").value;
+        const email = document.getElementById("email").value;
+        const message = document.getElementById("message").value;
+
+        // Données à envoyer, avec IP et géolocalisation ajoutées
+        const data = {
+          nomDiscord,
+          email,
+          message,
+          ip: location.ip || null,
+          city: location.city || null,
+          region: location.region || null,
+          country: location.country || null,
+        };
+
+        const response = await fetch("/ask-question", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+        if (result.error) throw new Error(result.error);
+
+        confirmationMessage.textContent = "Message envoyé !";
+        confirmationMessage.style.color = "green";
+        confirmationMessage.style.display = "block";
+        form.reset();
+      } catch (e) {
+        confirmationMessage.textContent = e.message || "Erreur lors de l'envoi";
+        confirmationMessage.style.color = "red";
+        confirmationMessage.style.display = "block";
+      }
+      return false;
+    }
+
+
+  /**
+   * ========== GESTION DU FORMULAIRE D'UPLOAD ==========
+   * Fonction asynchrone qui gère la soumission du formulaire d'upload de fichiers
+   * Récupère les données du formulaire et le fichier, les envoie au serveur,
+   * affiche un message de confirmation et rafraîchit la liste des fichiers
+   * 
+   * @param {Event} event - L'événement de soumission du formulaire
+   * @returns {boolean} - Retourne false pour empêcher la soumission normale du formulaire
+   */
+  async function handleUpload(event) {
+    console.log('submit')
+    event.preventDefault();
+    const form = event.target;
+    const confirmationMessage = document.getElementById('confirmationMessage');
+    const uploadType = document.getElementById('uploadType').value;
+
+    try {
+      confirmationMessage.style.display = 'block';
+      confirmationMessage.textContent = 'Upload en cours...';
+
+      let response, result;
+
+      // Crée un FormData commun pour tous les uploads de fichiers
+      const formData = new FormData();
+      formData.append('uploadType', uploadType);
+      formData.append('nomDiscord', document.getElementById('nomDiscord').value);
+      formData.append('cours', document.getElementById('cours').value);
+      formData.append('titre', document.getElementById('titre').value);
+      formData.append('description', document.getElementById('description').value);
+      formData.append('annee', document.getElementById('annee').value);
+      formData.append('anneeScolaire', document.getElementById('anneeScolaire').value);
+
+      if (uploadType === 'pdf') {
+        const file = document.getElementById('fichier').files[0];
+        if (!file) throw new Error('Veuillez sélectionner un fichier PDF');
+        formData.append('fichier', file);
+
+        response = await fetch('/upload', { method: 'POST', body: formData });
+
+      } else if (uploadType === 'zip') {
+        const file = document.getElementById('fichierZip').files[0];
+        if (!file) throw new Error('Veuillez sélectionner un fichier ZIP');
+        formData.append('fichier', file);
+
+        response = await fetch('/upload', { method: 'POST', body: formData });
+
+      } else if (uploadType === 'multi') {
+        const files = document.getElementById('fichierMulti').files;
+        if (files.length === 0) throw new Error('Veuillez sélectionner au moins un fichier');
+        for (let i = 0; i < files.length; i++) {
+          formData.append('fichiers', files[i]);
+        }
+        response = await fetch('/upload-multi', { method: 'POST', body: formData });
+
+      } else if (uploadType === 'video') {
+        const videoUrl = document.getElementById('videoUrl').value;
+        if (!videoUrl) throw new Error('Veuillez entrer un lien vidéo');
+
+        const videoData = {
+          uploadType: 'video',
+          annee: document.getElementById('annee').value,
+          anneeScolaire: document.getElementById('anneeScolaire').value,
+          videoUrl,
+          nomDiscord: document.getElementById('nomDiscord').value,
+          cours: document.getElementById('cours').value,
+          titre: document.getElementById('titre').value,
+          description: document.getElementById('description').value
+        };
+
+        console.log('Envoi des données vidéo:', videoData);
+        response = await fetch('/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(videoData)
+        });
       }
 
-      /**
-       * ========== CHARGEMENT ET AFFICHAGE DES FICHIERS ==========
-       * Fonction qui récupère la liste des fichiers depuis le serveur,
-       * les organise par cours, génère le HTML pour les afficher
-       * et implémente la fonctionnalité de sections pliables/dépliables
-       */
-      function loadFiles() {
-        // Construction de l'URL pour récupérer les fichiers
-        const baseUrl = window.location.origin;
-        const fetchUrl = `${baseUrl}/get-files?annee=1`; // Filtre 1ère année
-        
-        // Envoi de la requête au serveur
-        fetch(fetchUrl)
-          .then((response) => {
-            // Vérifie si la réponse est valide
-            if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
-            return response.json();
-          })
-          .then((files) => {
-            console.log('Fichiers récupérés:', files.length);
-            
-            // Formater toutes les dates dans le format JJ/MM/AAAA
-            files.forEach(file => {
-              // Convertir la date d'ajout si elle existe
-              if (file.dateAjout) {
-                file.dateAjout = formatDate(file.dateAjout);
-              }
-              // Convertir la date si elle existe (autre format possible)
-              if (file.date) {
-                file.date = formatDate(file.date);
-              }
-            });
-            
-            // Récupère l'élément DOM qui contiendra la liste des fichiers
-            const filesListDiv = document.getElementById("filesList");
+      result = await response.json();
 
-            // Affiche un message si aucun fichier n'est disponible
-            if (files.length === 0) {
-              filesListDiv.innerHTML =
-                "<p>Aucune synthèse n'est disponible pour le moment.</p>";
-              return;
-            }
+      if (result.error) {
+        const errorMessage = typeof result.error === 'object' ? JSON.stringify(result.error) : result.error;
+        throw new Error(errorMessage);
+      }
 
-            /**
-             * Organise les fichiers par cours
-             * Crée un objet où chaque clé est un nom de cours et chaque valeur est un tableau de fichiers
-             */
-            const filesByCourse = {};
-            files.forEach((file) => {
-              // Crée un tableau vide pour ce cours s'il n'existe pas encore
-              if (!filesByCourse[file.cours]) {
-                filesByCourse[file.cours] = [];
-              }
-              // Ajoute le fichier au tableau correspondant à son cours
-              filesByCourse[file.cours].push(file);
-            });
+      confirmationMessage.textContent = result.message;
+      confirmationMessage.style.color = '#155724';
+      form.reset();
+      selectUploadType('pdf');
+      loadFiles();
 
-            /**
-             * Génère le HTML pour chaque section de cours
-             * Chaque section contient un titre de cours et la liste des fichiers associés
-             */
-            let html = '';
-            
-            // Parcourt les cours dans l'ordre alphabétique
-            Object.keys(filesByCourse).sort().forEach(cours => {
-              const courseFiles = filesByCourse[cours];
-              
-              // Obtenir l'icône appropriée pour ce cours
-              const courseIcon = getCourseIcon(cours);
-              
-              // Crée la structure de la section de cours avec un titre, une icône et une flèche pour plier/déplier
-              html += `
-              <div class="course-section">
-                <h3>
-                  <span class="course-icon">${courseIcon}</span> ${cours}
-                  <span class="course-toggle"></span>
-                </h3>
-                <div class="course-files">
-              `;
+    } catch (error) {
+      console.error('Erreur:', error);
+      confirmationMessage.textContent = error.message || 'Erreur lors de l\'upload';
+      confirmationMessage.style.color = '#721c24';
+    }
 
-              // Trie les fichiers par date (plus récent en premier) et génère le HTML pour chaque fichier
-              courseFiles.sort((a, b) => new Date(b.dateAjout) - new Date(a.dateAjout)).forEach(file => {
-                html += `
-                <div class="file-item">
-                  ${generateFileLink(file)}
-                  <div class="file-meta">
-                    <span class="file-info"><span class="label">Nom :</span> ${file.nomDiscord}</span>
-                    <span class="file-size">${file.type === 'video' ? 'Lien externe' : `${(file.poidsFichier / 1048576).toFixed(2)} Mo`}</span>
-                    <span class="file-date">${formatDate(file.dateAjout)}</span>
-                  </div>
-                  ${file.description ? `<div class="file-description"><span class="label">Description :</span> ${file.description}</div>` : ''}
-                </div>
-                `;
-              });
+    return false;
+  }
 
-              // Ferme la structure HTML de la section de cours
-              html += `
-                </div>
+    /**
+ * ========== CHARGEMENT ET AFFICHAGE DES FICHIERS ==========
+ * Fonction qui récupère la liste des fichiers depuis le serveur,
+ * les organise par cours, génère le HTML pour les afficher
+ * et implémente la fonctionnalité de sections pliables/dépliables
+ * @param {string} anneeFilter - année scolaire à filtrer (ex: "2023-2024"), "" = toutes
+ */
+function loadFiles(anneeFilter = "") {
+  const baseUrl = window.location.origin;
+  const fetchUrl = `${baseUrl}/get-files?annee=1`; // Filtre 1ère année
+
+  fetch(fetchUrl)
+    .then((response) => {
+      if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+      return response.json();
+    })
+    .then((files) => {
+      console.log('Fichiers récupérés:', files.length);
+
+      // Formater toutes les dates dans le format JJ/MM/AAAA
+      files.forEach(file => {
+        if (file.dateAjout) file.dateAjout = formatDate(file.dateAjout);
+        if (file.date) file.date = formatDate(file.date);
+      });
+
+      // Appliquer le filtre par année scolaire si sélectionné
+      if (anneeFilter) {
+        files = files.filter(file => file.anneeScolaire === anneeFilter);
+      }
+
+      const filesListDiv = document.getElementById("filesList");
+
+      if (files.length === 0) {
+        filesListDiv.innerHTML = "<p>Aucune synthèse n'est disponible pour cette année.</p>";
+        return;
+      }
+
+      const filesByCourse = {};
+      files.forEach(file => {
+        if (!filesByCourse[file.cours]) filesByCourse[file.cours] = [];
+        filesByCourse[file.cours].push(file);
+      });
+
+      let html = '';
+      Object.keys(filesByCourse).sort().forEach(cours => {
+        const courseFiles = filesByCourse[cours];
+        const courseIcon = getCourseIcon(cours);
+
+        html += `
+          <div class="course-section">
+            <h3>
+              <span class="course-icon">${courseIcon}</span> ${cours}
+              <span class="course-toggle"></span>
+            </h3>
+            <div class="course-files">
+        `;
+
+        courseFiles.sort((a, b) => new Date(b.dateAjout) - new Date(a.dateAjout)).forEach(file => {
+          html += `
+            <div class="file-item">
+              ${generateFileLink(file)}
+              <div class="file-meta">
+                <span class="file-info"><span class="label">Nom :</span> ${file.nomDiscord}</span>
+                <span class="file-size">${file.type === 'video' ? 'Lien externe' : `${(file.poidsFichier / 1048576).toFixed(2)} Mo`}</span>
+                <span class="file-date">${formatDate(file.dateAjout)}</span>
               </div>
-              `;
-            });
-            
-            // Insère le HTML généré dans la page
-            filesListDiv.innerHTML = html;
-            
-            /**
-             * Implémente la fonctionnalité de sections pliables/dépliables
-             * Permet à l'utilisateur de cliquer sur un titre de cours pour afficher/masquer les fichiers
-             */
-            const courseSections = document.querySelectorAll('.course-section');
-            
-            // Toutes les sections sont fermées par défaut
-            courseSections.forEach(section => {
-              // Retire la classe 'open' pour s'assurer que toutes les sections sont fermées par défaut
-              section.classList.remove('open');
-            });
-            
-            // Ajoute un écouteur d'événements à chaque titre de section
-            document.querySelectorAll('.course-section h3').forEach(header => {
-              header.addEventListener('click', () => {
-                const section = header.parentElement;
-                section.classList.toggle('open'); // Ajoute ou supprime la classe 'open'
-              });
-            });
-          })
-          .catch((error) => {
-            // Gestion des erreurs lors du chargement des fichiers
-            console.error("Erreur lors du chargement des fichiers:", error);
-            document.getElementById("filesList").innerHTML =
-              `<p>Une erreur s'est produite lors du chargement des synthèses.</p>
-              <p style="font-size: 0.8em; color: #666;">Détail de l'erreur: ${error.message}</p>`;
-          });
-      }
+              ${file.anneeScolaire ? `<div class="file-school-year"><span class="label">Année scolaire :</span> ${file.anneeScolaire}</div>` : ''}
+              ${file.description ? `<div class="file-description"><span class="label">Description :</span> ${file.description}</div>` : ''}
+            </div>
+          `;
+        });
 
-      /**
-       * Génère le lien HTML pour un fichier
-       * 
-       * @param {Object} file - Objet contenant les métadonnées du fichier
-       * @returns {string} - HTML pour le lien du fichier
-       */
-      function generateFileLink(file) {
-        // Génère un lien différent selon le type de fichier (PDF, ZIP ou vidéo)
-        if (file.type === 'video') {
-          // Pour les vidéos, crée un lien externe vers la vidéo
-          return `<a href="${file.url}" target="_blank" class="file-link" style="text-decoration: none;">
+        html += `</div></div>`;
+      });
+
+      filesListDiv.innerHTML = html;
+
+      // Sections pliables/dépliables
+      document.querySelectorAll('.course-section').forEach(section => section.classList.remove('open'));
+      document.querySelectorAll('.course-section h3').forEach(header => {
+        header.addEventListener('click', () => {
+          header.parentElement.classList.toggle('open');
+        });
+      });
+    })
+    .catch(error => {
+      console.error("Erreur lors du chargement des fichiers:", error);
+      document.getElementById("filesList").innerHTML =
+        `<p>Une erreur s'est produite lors du chargement des synthèses.</p>
+         <p style="font-size: 0.8em; color: #666;">Détail de l'erreur: ${error.message}</p>`;
+    });
+}
+
+
+    /**
+     * Génère le lien HTML pour un fichier
+     * 
+     * @param {Object} file - Objet contenant les métadonnées du fichier
+     * @returns {string} - HTML pour le lien du fichier
+     */
+    function generateFileLink(file) {
+      // Génère un lien différent selon le type de fichier (PDF, ZIP ou vidéo)
+      if (file.type === 'video') {
+        // Pour les vidéos, crée un lien externe vers la vidéo
+        return `<a href="${file.url}" target="_blank" class="file-link" style="text-decoration: none;">
                     <span class="file-type-badge">🎥</span>
                     <span class="file-title" style="color: #0066cc;">${file.titre}</span>
                   </a>`;
-        } else if (file.type === 'zip') {
-          // Pour les ZIPs, crée un lien vers le fichier local
-          return `<a href="${file.path}" target="_blank" class="file-link" style="text-decoration: none;">
+      } else if (file.type === 'zip') {
+        // Pour les ZIPs, crée un lien vers le fichier local
+        return `<a href="${file.path}" target="_blank" class="file-link" style="text-decoration: none;">
                     <span class="file-type-badge">💼</span>
                     <span class="file-title" style="color: #0066cc;">${file.titre}</span>
                   </a>`;
-        } else {
-          // Pour les PDFs, crée un lien vers le fichier local
-          // Vérifie si la propriété path est définie, sinon utilise nomFichier
-          const filePath = file.path || `/Les synthèses des invités/${file.cours}/${file.nomFichier}`;
-          return `<a href="${filePath}" target="_blank" class="file-link" style="text-decoration: none;">
+      } else {
+        // Pour les PDFs, crée un lien vers le fichier local
+        // Vérifie si la propriété path est définie, sinon utilise nomFichier
+        const filePath = file.path || `/Les synthèses des invités/${file.cours}/${file.nomFichier}`;
+        return `<a href="${filePath}" target="_blank" class="file-link" style="text-decoration: none;">
                     <span class="file-type-badge">📄</span>
                     <span class="file-title" style="color: #0066cc;">${file.titre}</span>
                   </a>`;
-        }
       }
-      
-      /**
-       * Fonction qui formate une date au format jour/mois/année
-       * 
-       * @param {string} dateString - Date au format ISO ou autre
-       * @returns {string} - Date formatée au format DD/MM/YYYY
-       */
-      function formatDate(dateString) {
-        if (!dateString) return 'N/A';
-        
-        try {
-          const date = new Date(dateString);
-          
-          // Vérifie si la date est valide
-          if (isNaN(date.getTime())) {
-            return dateString; // Retourne la chaîne originale si la date est invalide
-          }
-          
-          // Formate la date au format JJ/MM/AAAA
-          const day = date.getDate().toString().padStart(2, '0');
-          const month = (date.getMonth() + 1).toString().padStart(2, '0');
-          const year = date.getFullYear();
-          
-          return `${day}/${month}/${year}`;
-        } catch (e) {
-          console.error('Erreur lors du formatage de la date:', e);
-          return dateString; // En cas d'erreur, retourne la chaîne originale
-        }
-      }
-      
-      /**
-       * Fonction qui retourne une icône appropriée pour chaque cours
-       * 
-       * @param {string} courseName - Nom du cours
-       * @returns {string} - Icône Unicode correspondant au cours
-       */
-      function getCourseIcon(courseName) {
-        // Tableau de correspondance entre les cours et leurs icônes
-        const courseIcons = {
-          "STRUCTURE DE DONNEES": "📊", // 📊 = 📊 (graphique)
-          "MATHEMATIQUE 1": "🫀",     // 🫀 = 🫀 (symbole mathématique)
-          "MATHEMATIQUE 2": "📝",     // 📝 = 📝 (bloc-notes)
-          "BASE DE DONNEES": "📂",    // 📂 = 📂 (dossier)
-          "SYSTEMES D'EXPLOITATION / LINUX": "🐧", // 🐧 = 🐧 (pingouin pour Linux)
-          "JAVASCRIPT": "🐱",         // 🐱 = 🐱 (chat pour JavaScript)
-          "ANGLAIS": "🇬🇧",           // 🇬🇧 = 🇬🇧 (drapeau UK)
-          "ALGO": "🧩",              // 🧩 = 🧩 (pièce de puzzle)
-          "APOO": "🔍",              // 🔍 = 🔍 (loupe)
-          "FONCTIONNEMENT DES ORDINATEURS": "💻", // 💻 = 💻 (ordinateur)
-          "GESTION COMPTABILITE ECONOMIE": "💰", // 💰 = 💰 (sac d'argent)
-          "COMPETENCES NUMERIQUES": "📱", // 📱 = 📱 (smartphone)
-          "DIVERS": "📓"              // 📓 = 📓 (bloc-notes)
-        };
-        
-        // Retourne l'icône correspondante ou une icône par défaut si le cours n'est pas dans la liste
-        return courseIcons[courseName] || "📖"; // 📖 = 📖 (livre par défaut)
-      }
-      
-      // Charge les fichiers lorsque la page est prête
-      document.addEventListener("DOMContentLoaded", loadFiles);
+    }
 
-      // Fonction pour afficher un message de confirmation après soumission
-      function handleSubmit() {
-        document.getElementById("confirmationMessage").style.display = "block";
-        return true;
-      }
-    </script>
+    /**
+     * Fonction qui formate une date au format jour/mois/année
+     * 
+     * @param {string} dateString - Date au format ISO ou autre
+     * @returns {string} - Date formatée au format DD/MM/YYYY
+     */
+    function formatDate(dateString) {
+      if (!dateString) return 'N/A';
 
-<!-- Pied de page avec copyright -->
-<footer class="site-footer">
-  <p>
-    &copy; 2025 Bauwens Thomas - Tous droits réservés
-    <!-- Lien RGPD -->
-    <a href="rgpd.html" class="rgpd-link" title="Politique de confidentialité" aria-label="Politique de confidentialité RGPD">
-      <img src="image/rgpd.png" alt="Icône RGPD" class="rgpd-icon">
-      RGPD
-    </a>
-  </p>
-</footer>
+      try {
+        const date = new Date(dateString);
+
+        // Vérifie si la date est valide
+        if (isNaN(date.getTime())) {
+          return dateString; // Retourne la chaîne originale si la date est invalide
+        }
+
+        // Formate la date au format JJ/MM/AAAA
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+
+        return `${day}/${month}/${year}`;
+      } catch (e) {
+        console.error('Erreur lors du formatage de la date:', e);
+        return dateString; // En cas d'erreur, retourne la chaîne originale
+      }
+    }
+
+    /**
+     * Fonction qui retourne une icône appropriée pour chaque cours
+     * 
+     * @param {string} courseName - Nom du cours
+     * @returns {string} - Icône Unicode correspondant au cours
+     */
+    function getCourseIcon(courseName) {
+      // Tableau de correspondance entre les cours et leurs icônes
+      const courseIcons = {
+        "STRUCTURE DE DONNEES": "📊", // 📊 = 📊 (graphique)
+        "MATHEMATIQUE 1": "🫀",     // 🫀 = 🫀 (symbole mathématique)
+        "MATHEMATIQUE 2": "📝",     // 📝 = 📝 (bloc-notes)
+        "BASE DE DONNEES": "📂",    // 📂 = 📂 (dossier)
+        "SYSTEMES D'EXPLOITATION / LINUX": "🐧", // 🐧 = 🐧 (pingouin pour Linux)
+        "JAVASCRIPT": "🐱",         // 🐱 = 🐱 (chat pour JavaScript)
+        "ANGLAIS": "🇬🇧",           // 🇬🇧 = 🇬🇧 (drapeau UK)
+        "ALGO": "🧩",              // 🧩 = 🧩 (pièce de puzzle)
+        "APOO": "🔍",              // 🔍 = 🔍 (loupe)
+        "FONCTIONNEMENT DES ORDINATEURS": "💻", // 💻 = 💻 (ordinateur)
+        "GESTION COMPTABILITE ECONOMIE": "💰", // 💰 = 💰 (sac d'argent)
+        "COMPETENCES NUMERIQUES": "📱", // 📱 = 📱 (smartphone)
+        "DIVERS": "📓"              // 📓 = 📓 (bloc-notes)
+      };
+
+      // Retourne l'icône correspondante ou une icône par défaut si le cours n'est pas dans la liste
+      return courseIcons[courseName] || "📖"; // 📖 = 📖 (livre par défaut)
+    }
+
+    // Charge les fichiers lorsque la page est prête
+document.addEventListener("DOMContentLoaded", () => {
+  const anneeFilter = document.getElementById("anneeScolaireFilter");
+
+  // Charger tous les fichiers au départ
+  loadFiles();
+
+  // Filtrer quand l'utilisateur change l'année scolaire
+  anneeFilter.addEventListener("change", () => {
+    loadFiles(anneeFilter.value);
+  });
+});
+
+
+
+    // Fonction pour afficher un message de confirmation après soumission
+    function handleSubmit() {
+      document.getElementById("confirmationMessage").style.display = "block";
+      return true;
+    }
+  </script>
+
+  <!-- Pied de page avec copyright -->
+  <footer class="site-footer">
+    <p>
+      &copy; 2025 Bauwens Thomas - Tous droits réservés
+      <!-- Lien RGPD -->
+      <a href="rgpd.html" class="rgpd-link" title="Politique de confidentialité"
+        aria-label="Politique de confidentialité RGPD">
+        <img src="image/rgpd.png" alt="Icône RGPD" class="rgpd-icon">
+        RGPD
+      </a>
+    </p>
+  </footer>
   <!-- Script cookiesConsent -->
   <script src="cookiesConsent.js"></script>
-  </body>
+</body>
+
 </html>

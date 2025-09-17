@@ -17,7 +17,7 @@
  * @author Thomas Bauwens
  * @version 1.0
  * @date Mai 2025
- * @lastModified: 3 septembre 2025
+ * @lastModified: 17 septembre 2025
  */
 
 /* ======================================================
@@ -125,25 +125,36 @@
    TABLEAU DES MESSAGES
    ====================================================== */
 .messages-list {
-  margin: 15px 0;
-  padding: 10px;
+  margin: 20px 0;
+  padding: 15px;
   background: #f8f9fa;
-  border-radius: 4px;
+  border-radius: 8px;
   border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .messages-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .messages-table th,
 .messages-table td {
-  padding: 4px;
+  padding: 8px 10px;
   text-align: left;
   border-bottom: 1px solid #ddd;
-  border-right: 1px solid #ddd;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.messages-table th {
+  background: #f6f8fa;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .messages-table th:last-child,
@@ -151,20 +162,35 @@
   border-right: none;
 }
 
-.messages-table th {
-  background: #f6f8fa;
-  font-weight: bold;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+.messages-table th:nth-child(1),
+.messages-table td:nth-child(1) { width: 150px; }
+.messages-table th:nth-child(2),
+.messages-table td:nth-child(2) { width: 150px; }
+.messages-table th:nth-child(3),
+.messages-table td:nth-child(3) { width: auto; min-width: 200px; }
+
+/* Boutons */
+.edit-btn {
+  background: #3498db;
+  color: #fff;
+  border: none;
+  padding: 5px 8px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-.messages-table th:nth-child(1),
-.messages-table td:nth-child(1) { width: 150px; min-width: 150px; } /* Date & Heure */
-.messages-table th:nth-child(2),
-.messages-table td:nth-child(2) { width: 150px; min-width: 150px; } /* Nom */
-.messages-table th:nth-child(3),
-.messages-table td:nth-child(3) { width: auto; min-width: 200px; } /* Message */
+.delete-btn {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 5px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-btn:hover { background: #2980b9; }
+.delete-btn:hover { background: #c0392b; }
+
 
 /* ======================================================
    TABLEAU DES LOGS

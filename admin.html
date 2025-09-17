@@ -18,21 +18,32 @@
   
   @author: Thomas Bauwens
   @date: Mai 2025
-  @lastModified: 3 septembre 2025
+  @lastModified: 17 septembre 2025
 -->
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
+
+
   <meta charset="UTF-8">
   <title>Administration - Synthèses Académiques</title>
   <link rel="stylesheet" href="style/style.css">
   <link rel="stylesheet" href="style/admin.css?v=7">
   <style>
-    .delete-btn { background:#e74c3c; color:white; }
-    .edit-btn { background:#3498db; color:white; }
+    .delete-btn {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .edit-btn {
+      background: #3498db;
+      color: white;
+    }
   </style>
 </head>
+
 <body>
   <!-- Connexion -->
   <div class="admin-container" id="loginContainer">
@@ -44,12 +55,13 @@
     </div>
   </div>
 
-    <div id="cookiePopup" style="display: none; position: fixed; bottom: 20px; right: 20px; background: #fff; padding: 20px; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000;">
+  <div id="cookiePopup"
+    style="display: none; position: fixed; bottom: 20px; right: 20px; background: #fff; padding: 20px; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000;">
     <h2>Consentement aux cookies</h2>
     <p>Nous utilisons des cookies pour améliorer votre expérience. Acceptez-vous leur utilisation ?</p>
     <button id="acceptCookies">J'accepte</button>
     <button id="refuseCookies">Je refuse</button>
-</div>
+  </div>
 
   <!-- Panneau Admin -->
   <div class="admin-container" id="adminPanel" style="display:none;">
@@ -58,23 +70,23 @@
       <button onclick="logout()">Déconnexion</button>
     </div>
 
-<!-- Cadre pour ajouter un message manuel -->
-<div class="message-form">
-  <h3>Ajouter un message</h3>
-  <form id="messageForm">
-    <div class="form-group">
-      <label for="messageNom">Nom</label>
-      <input type="text" id="messageNom" class="form-control" placeholder="Votre nom ou Discord">
+    <!-- Cadre pour ajouter un message manuel -->
+    <div class="message-form">
+      <h3>Ajouter un message</h3>
+      <form id="messageForm">
+        <div class="form-group">
+          <label for="messageNom">Nom</label>
+          <input type="text" id="messageNom" class="form-control" placeholder="Votre nom ou Discord">
+        </div>
+        <div class="form-group">
+          <label for="messageText">Message</label>
+          <textarea id="messageText" class="form-control" placeholder="Écrivez votre message ici" rows="1"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="save-btn" onclick="sendMessage()">Envoyer</button>
+        </div>
+      </form>
     </div>
-    <div class="form-group">
-      <label for="messageText">Message</label>
-      <textarea id="messageText" class="form-control" placeholder="Écrivez votre message ici" rows="1"></textarea>
-    </div>
-    <div class="form-actions">
-      <button type="button" class="save-btn" onclick="sendMessage()">Envoyer</button>
-    </div>
-  </form>
-</div>
 
     <!-- Cadre pour afficher les messages -->
     <div class="messages-list">
@@ -122,6 +134,15 @@
         <option value="zip">ZIP</option>
         <option value="video">Vidéo</option>
       </select>
+      <select id="anneeScolaireFilter">
+        <option value="">Années scolaires</option>
+        <option value="2021-2022">2021-2022</option>
+        <option value="2022-2023">2022-2023</option>
+        <option value="2023-2024">2023-2024</option>
+        <option value="2024-2025">2024-2025</option>
+        <option value="2025-2026">2025-2026</option>
+      </select>
+
     </div>
 
     <!-- 📑 Tableau des fichiers -->
@@ -131,8 +152,9 @@
           <tr>
             <th>ID</th>
             <th>Année</th>
-            <th>Type</th>
+            <th>Année Scolaire</th>
             <th>Titre</th>
+            <th>Type</th>
             <th>Cours</th>
             <th>Nom/Discord</th>
             <th>Taille</th>
@@ -145,6 +167,7 @@
     </div>
   </div>
 
+
   <!-- 📝 Modal Edition -->
   <div id="editModal" class="modal" style="display:none;">
     <div class="modal-content">
@@ -153,6 +176,7 @@
       <form id="editForm">
         <input type="hidden" id="editId">
         <p><b>ID :</b> <span id="displayId"></span></p>
+
         <div class="form-group">
           <label for="editAnnee">Année</label>
           <select id="editAnnee">
@@ -161,22 +185,38 @@
             <option value="3">3ème année</option>
           </select>
         </div>
+
+        <div class="form-group">
+          <label for="editAnneeScolaire">Année scolaire</label>
+          <select id="editAnneeScolaire">
+            <option value="2021-2022">2021-2022</option>
+            <option value="2022-2023">2022-2023</option>
+            <option value="2023-2024">2023-2024</option>
+            <option value="2024-2025">2024-2025</option>
+            <option value="2025-2026">2025-2026</option>
+          </select>
+        </div>
+
         <div class="form-group">
           <label for="editCours">Cours</label>
           <select id="editCours"></select>
         </div>
+
         <div class="form-group">
           <label for="editTitre">Titre</label>
           <input type="text" id="editTitre">
         </div>
+
         <div class="form-group">
           <label for="editNom">Nom/Discord</label>
           <input type="text" id="editNom">
         </div>
+
         <div class="form-group">
           <label for="editDescription">Description</label>
           <textarea id="editDescription"></textarea>
         </div>
+
         <div class="form-actions">
           <button type="button" onclick="closeModal()">Annuler</button>
           <button type="button" onclick="saveChanges()">Enregistrer</button>
@@ -185,24 +225,51 @@
     </div>
   </div>
 
+
   <script>
+    // Permet à l'utilisateur d'appuyer sur Entrée dans le champ mot de passe pour se connecter
+    document.getElementById('password').addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+        event.preventDefault(); // Empêche la soumission par défaut
+        login(); // Appelle la fonction login définie dans le script
+      }
+    });
+
+    async function checkSession() {
+      const res = await fetch('/api/check-session'); // à créer côté serveur
+      const data = await res.json();
+      if (data.authenticated) {
+        // Affiche le panel, cache login
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        // Charge les données
+        loadFiles();
+        loadMessages();
+        loadLogs();
+      }
+    }
+
+    window.onload = () => {
+      checkSession();
+    };
+
     const allFiles = [];
 
     // 📚 Liste des cours par année
     const coursParAnnee = {
-      1: ["STRUCTURE DE DONNEES","MATHEMATIQUE 1","MATHEMATIQUE 2","BASE DE DONNEES",
-          "SYSTEMES D'EXPLOITATION / LINUX","JAVASCRIPT","ANGLAIS","ALGO","APOO",
-          "FONCTIONNEMENT DES ORDINATEURS","GESTION COMPTABILITE ECONOMIE",
-          "COMPETENCES NUMERIQUES","DIVERS"],
-      2: ["LANGAGE C : BASE","ANALYSE ET MODELISATION","GESTION DE DONNEES","PROGRAMMATION JAVA",
-          "DEVELOPPEMENT WEB","DEVOPS","INTRODUCTION AUX RESEAUX","STRUCTURES DE DONNEES",
-          "ORGANISATION DES ENTREPRISES","CONCEPTION D'APPLICATIONS D'ENTREPRISE",
-          "LINUX : PROGRAMMATION DISTRIBUEE","INFORMATIQUE MOBILE","ANGLAIS 2","DIVERS"],
-      3: ["ADMINISTRATION INFRASTRUCTURE","ORGANISATION DES ENTREPRISES","ANGLAIS 3",
-          "PROGRAMMATION : QUESTIONS SPECIALES","DEVELOPPEMENT WEB",
-          "PROJET DE FIN D'ETUDE : ASTUCES","INTEGRATION EN MILIEU PROFESSIONNEL",
-          "DEVELOPPEMENT A L'AIDE D'UN MOTEUR DE JEUX (UNITY)","INTELLIGENCE ARTIFICIELLE",
-          "CYBERSECURITE ET MALWARES","DIVERS"]
+      1: ["STRUCTURE DE DONNEES", "MATHEMATIQUE 1", "MATHEMATIQUE 2", "BASE DE DONNEES",
+        "SYSTEMES D'EXPLOITATION / LINUX", "JAVASCRIPT", "ANGLAIS", "ALGO", "APOO",
+        "FONCTIONNEMENT DES ORDINATEURS", "GESTION COMPTABILITE ECONOMIE",
+        "COMPETENCES NUMERIQUES", "DIVERS"],
+      2: ["LANGAGE C : BASE", "ANALYSE ET MODELISATION", "GESTION DE DONNEES", "PROGRAMMATION JAVA",
+        "DEVELOPPEMENT WEB", "DEVOPS", "INTRODUCTION AUX RESEAUX", "STRUCTURES DE DONNEES",
+        "ORGANISATION DES ENTREPRISES", "CONCEPTION D'APPLICATIONS D'ENTREPRISE",
+        "LINUX : PROGRAMMATION DISTRIBUEE", "INFORMATIQUE MOBILE", "ANGLAIS 2", "DIVERS"],
+      3: ["ADMINISTRATION INFRASTRUCTURE", "ORGANISATION DES ENTREPRISES", "ANGLAIS 3",
+        "PROGRAMMATION : QUESTIONS SPECIALES", "DEVELOPPEMENT WEB",
+        "PROJET DE FIN D'ETUDE : ASTUCES", "INTEGRATION EN MILIEU PROFESSIONNEL",
+        "DEVELOPPEMENT A L'AIDE D'UN MOTEUR DE JEUX (UNITY)", "INTELLIGENCE ARTIFICIELLE",
+        "CYBERSECURITE ET MALWARES", "DIVERS"]
     };
 
     // ✅ Login
@@ -244,88 +311,97 @@
     }
 
     // Charger messages
-async function loadMessages() {
-  try {
-    const res = await fetch('/get-messages');
-    const messages = await res.json();
-    const tbody = document.getElementById("messagesTableBody");
-    tbody.innerHTML = "";
-    if (!messages.length) {
-      tbody.innerHTML = `<tr><td colspan="3" style="text-align:center">Aucun message trouvé</td></tr>`;
-      return;
-    }
-    // Trier par date décroissante (dernier en haut)
-    const sortedMessages = [...messages].sort((a, b) => new Date(b.date) - new Date(a.date));
-    if (sortedMessages.length > 3) {
-      // Créer une liste déroulante pour plus de 3 messages
-      const select = document.createElement("select");
-      select.className = "message-dropdown";
-      select.size = Math.min(sortedMessages.length, 10); // Limite à 10 visibles max
-      sortedMessages.forEach(m => {
-        const option = document.createElement("option");
-        option.value = `${m.date} - ${m.nom} - ${m.message}`;
-        option.textContent = `${m.date} - ${m.nom} - ${m.message}`;
-        select.appendChild(option);
-      });
-      tbody.appendChild(select);
-    } else {
-      // Afficher sous forme de table pour 3 ou moins
-      sortedMessages.forEach(m => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
+    async function loadMessages() {
+      try {
+        const res = await fetch('/get-messages');
+        const messages = await res.json();
+        const tbody = document.getElementById("messagesTableBody");
+        tbody.innerHTML = "";
+        if (!messages.length) {
+          tbody.innerHTML = `<tr><td colspan="3" style="text-align:center">Aucun message trouvé</td></tr>`;
+          return;
+        }
+        // Trier par date décroissante (dernier en haut)
+        const sortedMessages = [...messages].sort((a, b) => new Date(b.date) - new Date(a.date));
+        if (sortedMessages.length > 3) {
+          // Créer une liste déroulante pour plus de 3 messages
+          const div = document.createElement("div");
+          div.style.maxHeight = "100px";       // hauteur max
+          div.style.width = "1350px";            // prend toute la largeur possible
+          div.style.overflowY = "auto";        // scroll vertical si nécessaire
+          div.style.padding = "10px";          // espace interne
+          div.style.border = "1px solid #ccc"; // contour
+          div.style.borderRadius = "5px";
+          div.style.background = "#f9f9f9";    // fond clair
+
+          sortedMessages.forEach(m => {
+            const p = document.createElement("p");
+            p.style.margin = "5px 0";          // espace entre messages
+            p.textContent = `${m.date} - ${m.nom} - ${m.message}`;
+            div.appendChild(p);
+          });
+
+          tbody.appendChild(div);
+
+
+        } else {
+          // Afficher sous forme de table pour 3 ou moins
+          sortedMessages.forEach(m => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
           <td>${m.date}</td>
           <td>${m.nom}</td>
           <td>${m.message}</td>
         `;
-        tbody.appendChild(tr);
-      });
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des messages:', error);
+        alert('Erreur lors du chargement des messages');
+      }
     }
-  } catch (error) {
-    console.error('Erreur lors du chargement des messages:', error);
-    alert('Erreur lors du chargement des messages');
-  }
-}
 
-// Charger logs
-async function loadLogs() {
-  try {
-    const res = await fetch('/get-logs');
-    const logs = await res.json();
-    const tbody = document.getElementById("logsTableBody");
-    tbody.innerHTML = "";
-    if (!logs.length) {
-      tbody.innerHTML = `<tr><td style="text-align:center">Aucun log trouvé</td></tr>`;
-      return;
-    }
-    // Trier par date décroissante (dernier en haut)
-    const sortedLogs = [...logs].sort((a, b) => new Date(b.date) - new Date(a.date));
-    if (sortedLogs.length > 3) {
-      // Créer une liste déroulante pour plus de 3 logs
-      const select = document.createElement("select");
-      select.className = "log-dropdown";
-      select.size = Math.min(sortedLogs.length, 10); // Limite à 10 visibles max
-      sortedLogs.forEach(log => {
-        const option = document.createElement("option");
-        option.value = `${log.date} - ${log.action}`;
-        option.textContent = `${log.date} - ${log.action}`;
-        select.appendChild(option);
-      });
-      tbody.appendChild(select);
-    } else {
-      // Afficher sous forme de table pour 3 ou moins
-      sortedLogs.forEach(log => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
+    // Charger logs
+    async function loadLogs() {
+      try {
+        const res = await fetch('/get-logs');
+        const logs = await res.json();
+        const tbody = document.getElementById("logsTableBody");
+        tbody.innerHTML = "";
+        if (!logs.length) {
+          tbody.innerHTML = `<tr><td style="text-align:center">Aucun log trouvé</td></tr>`;
+          return;
+        }
+        // Trier par date décroissante (dernier en haut)
+        const sortedLogs = [...logs].sort((a, b) => new Date(b.date) - new Date(a.date));
+        if (sortedLogs.length > 3) {
+          // Créer une liste déroulante pour plus de 3 logs
+          const select = document.createElement("select");
+          select.className = "log-dropdown";
+          select.size = Math.min(sortedLogs.length, 10); // Limite à 10 visibles max
+          sortedLogs.forEach(log => {
+            const option = document.createElement("option");
+            option.value = `${log.date} - ${log.action}`;
+            option.textContent = `${log.date} - ${log.action}`;
+            select.appendChild(option);
+          });
+          tbody.appendChild(select);
+        } else {
+          // Afficher sous forme de table pour 3 ou moins
+          sortedLogs.forEach(log => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
           <td>${log.date} - ${log.action}</td>
         `;
-        tbody.appendChild(tr);
-      });
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des logs:', error);
+        alert('Erreur lors du chargement des logs');
+      }
     }
-  } catch (error) {
-    console.error('Erreur lors du chargement des logs:', error);
-    alert('Erreur lors du chargement des logs');
-  }
-}
 
     // Génère les options du filtre cours
     function populateCoursFilter(files) {
@@ -336,34 +412,41 @@ async function loadLogs() {
     }
 
     // Tri et affichage
-    function displayFiles(files) {
-      const tbody = document.getElementById("fileTableBody");
-      tbody.innerHTML = "";
-      if (!files.length) {
-        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center">Aucun fichier trouvé</td></tr>`;
-        return;
-      }
-      const sorted = [...files].sort((a, b) => b.id - a.id);
-      sorted.forEach(f => {
-        const sizeMB = f.poidsFichier ? (f.poidsFichier / 1048576).toFixed(2) + " MB" : "N/A";
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${f.id}</td>
-          <td>${f.annee}</td>
-          <td>${f.type.toUpperCase()}</td>
-          <td>${f.titre}</td>
-          <td>${f.cours}</td>
-          <td>${f.nomDiscord}</td>
-          <td>${sizeMB}</td>
-          <td>${f.dateAjout}</td>
-          <td>
-            <button class="edit-btn" onclick="editFile(${f.id})">Modifier</button>
-            <button class="delete-btn" onclick="deleteFile(${f.id})">Supprimer</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
+function displayFiles(files) {
+  const tbody = document.getElementById("fileTableBody");
+  tbody.innerHTML = "";
+
+  if (!files.length) {
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center">Aucun fichier trouvé</td></tr>`;
+    return;
+  }
+
+  // Trier par ID décroissant (plus grand en premier)
+  const sorted = [...files].sort((a, b) => b.id - a.id);
+
+  sorted.forEach(f => {
+    const sizeMB = f.poidsFichier ? (f.poidsFichier / 1048576).toFixed(2) + " MB" : "N/A";
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${f.id}</td>
+      <td>${f.annee || "N/A"}</td>
+      <td>${f.anneeScolaire || "N/A"}</td>
+      <td>${f.titre || "N/A"}</td>
+      <td>${f.type ? f.type.toUpperCase() : "N/A"}</td>
+      <td>${f.cours || "N/A"}</td>
+      <td>${f.nomDiscord || "N/A"}</td>
+      <td>${sizeMB}</td>
+      <td>${f.dateAjout || "N/A"}</td>
+      <td>
+        <button class="edit-btn" onclick="editFile(${f.id})">Modifier</button>
+        <button class="delete-btn" onclick="deleteFile(${f.id})">Supprimer</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+
 
     // Filtres
     function filterFiles() {
@@ -371,12 +454,15 @@ async function loadLogs() {
       const anneeFilter = document.getElementById("anneeFilter").value;
       const coursFilter = document.getElementById("coursFilter").value;
       const typeFilter = document.getElementById("typeFilter").value;
+      const anneeScolaireFilter = document.getElementById("anneeScolaireFilter").value;
+
       const filtered = allFiles.filter(f => {
         const matchesS = f.titre.toLowerCase().includes(search) || f.cours.toLowerCase().includes(search) || (f.nomDiscord || "").toLowerCase().includes(search);
         const matchesA = !anneeFilter || String(f.annee) === anneeFilter;
+        const matchesAS = !anneeScolaireFilter || f.anneeScolaire === anneeScolaireFilter;
         const matchesC = !coursFilter || f.cours === coursFilter;
         const matchesT = !typeFilter || f.type === typeFilter;
-        return matchesS && matchesA && matchesC && matchesT;
+        return matchesS && matchesA && matchesAS && matchesC && matchesT;
       });
       displayFiles(filtered);
     }
@@ -385,20 +471,26 @@ async function loadLogs() {
     function editFile(id) {
       const f = allFiles.find(f => f.id === id);
       if (!f) return;
+
       document.getElementById("editId").value = f.id;
       document.getElementById("displayId").textContent = f.id;
       document.getElementById("editTitre").value = f.titre;
       document.getElementById("editNom").value = f.nomDiscord;
       document.getElementById("editDescription").value = f.description || "";
       document.getElementById("editAnnee").value = f.annee;
+      document.getElementById("editAnneeScolaire").value = f.anneeScolaire || "2024-2025"; // valeur par défaut
+
       fillCoursSelect(f.annee, f.cours);
+
       document.getElementById("editModal").style.display = "block";
-      document.getElementById("editAnnee").addEventListener("change", function() {
+
+
+      document.getElementById("editAnnee").onchange = function () {
         fillCoursSelect(this.value);
-      });
+      };
     }
 
-    function fillCoursSelect(annee, current="") {
+    function fillCoursSelect(annee, current = "") {
       const select = document.getElementById("editCours");
       select.innerHTML = "";
       (coursParAnnee[annee] || []).forEach(c => {
@@ -416,14 +508,18 @@ async function loadLogs() {
       const id = parseInt(document.getElementById("editId").value);
       const updates = {
         annee: parseInt(document.getElementById("editAnnee").value),
-        cours: document.getElementById("editCours").value,
-        titre: document.getElementById("editTitre").value,
-        nomDiscord: document.getElementById("editNom").value,
-        description: document.getElementById("editDescription").value
+        anneeScolaire: document.getElementById("editAnneeScolaire").value.trim(),
+        cours: document.getElementById("editCours").value.trim(),
+        titre: document.getElementById("editTitre").value.trim(),
+        nomDiscord: document.getElementById("editNom").value.trim(),
+        description: document.getElementById("editDescription").value.trim()
       };
+
+
       try {
         const res = await fetch("/edit-file", {
-          method: "POST", headers: {"Content-Type": "application/json"},
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id, ...updates })
         });
         const data = await res.json();
@@ -440,6 +536,7 @@ async function loadLogs() {
         console.error('Erreur:', error);
       }
     }
+
 
     // Suppression
     async function deleteFile(id) {
@@ -503,10 +600,21 @@ async function loadLogs() {
     });
     document.getElementById("coursFilter").addEventListener("change", filterFiles);
     document.getElementById("typeFilter").addEventListener("change", filterFiles);
-    document.getElementById("searchInput").addEventListener("input", filterFiles);
+    document.getElementById("anneeScolaireFilter").addEventListener("change", filterFiles);s
+    let filterTimeout;
+    document.getElementById("searchInput").addEventListener("input", () => {
+      clearTimeout(filterTimeout);
+      filterTimeout = setTimeout(filterFiles, 200); // attend 200ms
+    });
+
   </script>
 
-    <!-- Script cookiesConsent -->
+  <!-- Script cookiesConsent -->
   <script src="cookiesConsent.js"></script>
+
+
+
+
 </body>
+
 </html>
