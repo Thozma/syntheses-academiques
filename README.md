@@ -358,3 +358,9 @@ Tous droits réservés © 2025
 - Ajout des boutons liens coté gauche sur chaque page
 - Ajout d’un module cookies.js pour gérer le consentement aux cookies côté serveur et intégration des routes dans cookiesRoutes.js (/cookies-consent POST et GET), avec enregistrement complet des informations techniques dans cookies.json.
 
+### 17/09/2025
+- Ajout de la sélection de l'année d'étude lors de l'upload d'un fichier.
+- Ajout d’un filtre dynamique par année scolaire sur chaque page pour faciliter la recherche des fichiers.
+- Organisation et mise en forme des filtres sur la page administrateur pour un affichage plus clair et intuitif.
+- Tri automatique des fichiers par ID décroissant dans le tableau administrateur.
+- Gestion améliorée des événements de filtrage (recherche, cours, type, année scolaire) pour un rafraîchissement instantané du tableau.
