@@ -2,7 +2,7 @@
   Site web de partage de synthèses académiques - 3ème année
   @author: Thomas Bauwens
   @date: Septembre 2025
-  @modifiéDate : 17 septembre 2025
+  @modifiéDate : 18 septembre 2025
 -->
 
 <!DOCTYPE html>
@@ -486,20 +486,35 @@ function loadFiles(anneeFilter = "") {
             <div class="course-files">
         `;
 
-        courseFiles.sort((a, b) => new Date(b.dateAjout) - new Date(a.dateAjout)).forEach(file => {
-          html += `
-            <div class="file-item">
-              ${generateFileLink(file)}
-              <div class="file-meta">
-                <span class="file-info"><span class="label">Nom :</span> ${file.nomDiscord}</span>
-                <span class="file-size">${file.type === 'video' ? 'Lien externe' : `${(file.poidsFichier / 1048576).toFixed(2)} Mo`}</span>
-                <span class="file-date">${formatDate(file.dateAjout)}</span>
-              </div>
-              ${file.anneeScolaire ? `<div class="file-school-year"><span class="label">Année scolaire :</span> ${file.anneeScolaire}</div>` : ''}
-              ${file.description ? `<div class="file-description"><span class="label">Description :</span> ${file.description}</div>` : ''}
-            </div>
-          `;
-        });
+           courseFiles.sort((a, b) => new Date(b.dateAjout) - new Date(a.dateAjout)).forEach(file => {
+              html += `
+    <div class="file-item">
+      <!-- Conteneur flex uniquement pour le lien et les votes -->
+      <div class="file-title-container">
+        ${generateFileLink(file)}
+        <div class="file-votes">
+        <button class="vote-btn upvote" onclick="handleVote(${file.id}, 'like')">
+       👍 <span id="up_${file.id}" class="vote-count">${file.likes > 0 ? file.likes : ''}</span>
+        </button>
+
+        <button class="vote-btn downvote" onclick="handleVote(${file.id}, 'dislike')">
+        👎 <span id="down_${file.id}" class="vote-count">${file.dislikes > 0 ? file.dislikes : ''}</span>
+        </button>
+        </div>
+      </div>
+
+      <!-- Métadonnées en dessous -->
+      <div class="file-meta">
+        <span class="file-info"><span class="label">Nom :</span> ${file.nomDiscord}</span>
+        <span class="file-size">${file.type === 'video' ? 'Lien externe' : `${(file.poidsFichier / 1048576).toFixed(2)} Mo`}</span>
+        <span class="file-date">${formatDate(file.dateAjout)}</span>
+      </div>
+
+      ${file.anneeScolaire ? `<div class="file-school-year"><span class="label">Année scolaire :</span> ${file.anneeScolaire}</div>` : ''}
+      ${file.description ? `<div class="file-description"><span class="label">Description :</span> ${file.description}</div>` : ''}
+    </div>
+  `;
+            });
 
         html += `</div></div>`;
       });
@@ -527,36 +542,37 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-      /**
-       * Génère le lien HTML pour un fichier
-       * 
-       * @param {Object} file - Objet contenant les métadonnées du fichier
-       * @returns {string} - HTML pour le lien du fichier
-       */
-      function generateFileLink(file) {
-        // Génère un lien différent selon le type de fichier (PDF, ZIP ou vidéo)
-        if (file.type === 'video') {
-          // Pour les vidéos, crée un lien externe vers la vidéo
-          return `<a href="${file.url}" target="_blank" class="file-link" style="text-decoration: none;">
-                    <span class="file-type-badge">🎥</span>
-                    <span class="file-title" style="color: #0066cc;">${file.titre}</span>
-                  </a>`;
-        } else if (file.type === 'zip') {
-          // Pour les ZIPs, crée un lien vers le fichier local
-          return `<a href="${file.path}" target="_blank" class="file-link" style="text-decoration: none;">
-                    <span class="file-type-badge">💼</span>
-                    <span class="file-title" style="color: #0066cc;">${file.titre}</span>
-                  </a>`;
-        } else {
-          // Pour les PDFs, crée un lien vers le fichier local
-          // Vérifie si la propriété path est définie, sinon utilise nomFichier
-          const filePath = file.path || `/Les synthèses des invités/${file.cours}/${file.nomFichier}`;
-          return `<a href="${filePath}" target="_blank" class="file-link" style="text-decoration: none;">
-                    <span class="file-type-badge">📄</span>
-                    <span class="file-title" style="color: #0066cc;">${file.titre}</span>
-                  </a>`;
-        }
-      }
+/**
+ * Génère le lien HTML pour un fichier
+ * 
+ * @param {Object} file - Objet contenant les métadonnées du fichier
+ * @returns {string} - HTML pour le lien du fichier
+ */
+function generateFileLink(file) {
+  // Génère un lien différent selon le type de fichier (PDF, ZIP ou vidéo)
+  if (file.type === 'video') {
+    // Pour les vidéos, crée un lien externe vers la vidéo
+    const videoLink = file.path || file.nomFichier; // utilise path si défini, sinon nomFichier
+    return `<a href="${videoLink}" target="_blank" class="file-link" style="text-decoration: none;">
+                <span class="file-type-badge">🎥</span>
+                <span class="file-title" style="color: #0066cc;">${file.titre}</span>
+            </a>`;
+  } else if (file.type === 'zip') {
+    // Pour les ZIPs, crée un lien vers le fichier local
+    return `<a href="${file.path}" target="_blank" class="file-link" style="text-decoration: none;">
+                <span class="file-type-badge">💼</span>
+                <span class="file-title" style="color: #0066cc;">${file.titre}</span>
+            </a>`;
+  } else {
+    // Pour les PDFs, crée un lien vers le fichier local
+    const filePath = file.path || `/Les synthèses des invités/${file.cours}/${file.nomFichier}`;
+    return `<a href="${filePath}" target="_blank" class="file-link" style="text-decoration: none;">
+                <span class="file-type-badge">📄</span>
+                <span class="file-title" style="color: #0066cc;">${file.titre}</span>
+            </a>`;
+  }
+}
+
       
       /**
        * Fonction qui formate une date au format jour/mois/année
@@ -642,5 +658,10 @@ document.addEventListener("DOMContentLoaded", () => {
 </footer>
   <!-- Script cookiesConsent -->
   <script src="cookiesConsent.js"></script>
+
+
+      <!-- Script vote -->
+  <script src="vote.js"></script>
+
   </body>
 </html>

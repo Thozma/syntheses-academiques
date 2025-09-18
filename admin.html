@@ -1,620 +1,626 @@
-<!--
-  Panneau d'administration - Synthèses Académiques
-  
-  Cette page permet aux administrateurs de gérer les synthèses académiques.
-  Fonctionnalités principales :
-  - Authentification par mot de passe
-  - Affichage de tous les fichiers avec filtrage et recherche
-  - Modification des informations des fichiers (titre, cours, etc.)
-  - Conversion de fichiers PDF/ZIP en liens vidéo
-  - Suppression de fichiers
-  - Ajout de messages manuels dans chat.json
-  - Affichage des messages depuis chat.json
-  - Affichage des logs de modifications/suppressions depuis logs.json
-  
-  La page utilise JavaScript vanilla pour les interactions et communique
-  avec le backend Node.js via des requêtes fetch API. Les styles sont
-  définis dans le fichier admin.css séparé.
-  
-  @author: Thomas Bauwens
-  @date: Mai 2025
-  @lastModified: 17 septembre 2025
+<!-- Site web de partage de synthèses académiques - ADMINISTRATION
+@author: Thomas Bauwens
+@date : mai 2025
+@modifiéDate : 18 septembre 2025 
 -->
 
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
+    <meta charset="UTF-8">
+    <title>Administration - Synthèses Académiques</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="style/admin.css?v=8">
+    <style>
+        .delete-btn {
+            background: #e74c3c;
+            color: #fff;
+        }
 
-
-  <meta charset="UTF-8">
-  <title>Administration - Synthèses Académiques</title>
-  <link rel="stylesheet" href="style/style.css">
-  <link rel="stylesheet" href="style/admin.css?v=7">
-  <style>
-    .delete-btn {
-      background: #e74c3c;
-      color: white;
-    }
-
-    .edit-btn {
-      background: #3498db;
-      color: white;
-    }
-  </style>
+        .edit-btn {
+            background: #3498db;
+            color: #fff;
+        }
+    </style>
 </head>
 
 <body>
-  <!-- Connexion -->
-  <div class="admin-container" id="loginContainer">
-    <div class="login-form">
-      <h2 class="admin-title">Administration</h2>
-      <input type="password" id="password" placeholder="Mot de passe">
-      <button onclick="login()">Connexion</button>
-      <p id="loginError" style="color:red;display:none;">Mot de passe incorrect</p>
-    </div>
-  </div>
-
-  <div id="cookiePopup"
-    style="display: none; position: fixed; bottom: 20px; right: 20px; background: #fff; padding: 20px; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000;">
-    <h2>Consentement aux cookies</h2>
-    <p>Nous utilisons des cookies pour améliorer votre expérience. Acceptez-vous leur utilisation ?</p>
-    <button id="acceptCookies">J'accepte</button>
-    <button id="refuseCookies">Je refuse</button>
-  </div>
-
-  <!-- Panneau Admin -->
-  <div class="admin-container" id="adminPanel" style="display:none;">
-    <div class="admin-header">
-      <h2>Panneau d'administration</h2>
-      <button onclick="logout()">Déconnexion</button>
+    <!-- Connexion -->
+    <div class="admin-container" id="loginContainer">
+        <div class="login-form">
+            <h2 class="admin-title">Administration</h2>
+            <input type="password" id="password" placeholder="Mot de passe">
+            <button onclick="login()">Connexion</button>
+            <p id="loginError" style="color:red;display:none;">Mot de passe incorrect</p>
+        </div>
     </div>
 
-    <!-- Cadre pour ajouter un message manuel -->
-    <div class="message-form">
-      <h3>Ajouter un message</h3>
-      <form id="messageForm">
-        <div class="form-group">
-          <label for="messageNom">Nom</label>
-          <input type="text" id="messageNom" class="form-control" placeholder="Votre nom ou Discord">
-        </div>
-        <div class="form-group">
-          <label for="messageText">Message</label>
-          <textarea id="messageText" class="form-control" placeholder="Écrivez votre message ici" rows="1"></textarea>
-        </div>
-        <div class="form-actions">
-          <button type="button" class="save-btn" onclick="sendMessage()">Envoyer</button>
-        </div>
-      </form>
+    <!-- Cookies -->
+    <div id="cookiePopup"
+        style="display:none; position:fixed; bottom:20px; right:20px; background:#fff; padding:20px; border:1px solid #ccc; border-radius:5px; box-shadow:0 0 10px rgba(0,0,0,.1); z-index:1000;">
+        <h2>Consentement aux cookies</h2>
+        <p>Nous utilisons des cookies pour améliorer votre expérience. Acceptez-vous leur utilisation ?</p>
+        <button id="acceptCookies">J'accepte</button>
+        <button id="refuseCookies">Je refuse</button>
     </div>
 
-    <!-- Cadre pour afficher les messages -->
-    <div class="messages-list">
-      <h3>Messages enregistrés</h3>
-      <table class="messages-table">
-        <thead>
-          <tr>
-            <th>Date & Heure</th>
-            <th>Nom</th>
-            <th>Message</th>
-          </tr>
-        </thead>
-        <tbody id="messagesTableBody"></tbody>
-      </table>
+    <!-- Panneau Admin -->
+    <div class="admin-container" id="adminPanel" style="display:none;">
+        <div class="admin-header">
+            <h2>Panneau d'administration</h2>
+            <button onclick="logout()" class="logout-btn">Déconnexion</button>
+        </div>
+
+        <!-- Activité (Messages puis Logs empilés) -->
+        <section class="activity">
+            <div class="card">
+                <div class="card-head">
+                    <h3>Messages enregistrés</h3>
+                    <button class="collapse-btn">▲</button> 
+                    <div class="card-actions">
+
+
+                    </div>
+                </div>
+                <div class="card-body" style="display: none;">
+                    <!-- Formulaire message (conservé) -->
+                    <div class="message-form">
+                        <h3>Ajouter un message</h3>
+                        <form id="messageForm">
+                            <div class="form-group">
+                                <label for="messageNom">Nom</label>
+                                <input type="text" id="messageNom" class="form-control"
+                                    placeholder="Votre nom ou Discord">
+                            </div>
+                            <div class="form-group">
+                                <label for="messageText">Message</label>
+                                <textarea id="messageText" class="form-control" placeholder="Écrivez votre message ici"
+                                    rows="2"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="save-btn" onclick="sendMessage()">Envoyer</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="table-wrap scroll-220">
+                        <table class="messages-table">
+                            <thead>
+                                <tr>
+                                    <th>Date & Heure</th>
+                                    <th>Nom</th>
+                                    <th>Message</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="messagesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">
+                    <h3>Logs des modifications/suppressions</h3>
+                     <button class="collapse-btn">▲</button>
+                    <div class="card-actions">
+                        <button id="clearLogs" class="btn danger sm" type="button">Tout supprimer</button>
+                    </div>
+                </div>
+                <div class="card-body" style="display: none;">
+                    <div class="table-wrap scroll-220">
+                        <table class="logs-table">
+                            <thead>
+                                <tr>
+                                    <th>Date & Action</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filtres -->
+        <div class="filter-options">
+            <input type="text" id="searchInput" placeholder="Rechercher...">
+            <select id="anneeFilter">
+                <option value="">Toutes les années</option>
+                <option value="1">1ère année</option>
+                <option value="2">2ème année</option>
+                <option value="3">3ème année</option>
+            </select>
+            <select id="coursFilter">
+                <option value="">Tous les cours</option>
+            </select>
+            <select id="typeFilter">
+                <option value="">Tous les types</option>
+                <option value="pdf">PDF</option>
+                <option value="zip">ZIP</option>
+                <option value="video">Vidéo</option>
+            </select>
+            <select id="anneeScolaireFilter">
+                <option value="">Années scolaires</option>
+                <option value="2021-2022">2021-2022</option>
+                <option value="2022-2023">2022-2023</option>
+                <option value="2023-2024">2023-2024</option>
+                <option value="2024-2025">2024-2025</option>
+                <option value="2025-2026">2025-2026</option>
+            </select>
+            <span class="muted" id="countInfo"></span>
+        </div>
+
+        <!-- Tableau fichiers -->
+        <div class="table-container">
+            <table class="file-table">
+                <thead>
+    <tr>
+        <th>ID</th>
+        <th>Année</th>
+        <th>Année Scolaire</th>
+        <th>Titre</th>
+        <th>Type</th>
+        <th>Cours</th>
+        <th>Nom/Discord</th>
+        <th>Taille</th>
+        <th>Date</th>
+<th>👍</th>
+<th>👎</th>
+        <th>Actions</th>
+    </tr>
+</thead>
+                <tbody id="fileTableBody"></tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- Cadre pour afficher les logs -->
-    <div class="logs-list">
-      <h3>Logs des modifications/suppressions</h3>
-      <table class="logs-table">
-        <thead>
-          <tr>
-            <th>Date & Action</th>
-          </tr>
-        </thead>
-        <tbody id="logsTableBody"></tbody>
-      </table>
+    <!-- Modal Edition -->
+    <div id="editModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Modifier un fichier</h3>
+            <form id="editForm">
+                <input type="hidden" id="editId">
+                <p><b>ID :</b> <span id="displayId"></span></p>
+
+                <div class="form-group">
+                    <label for="editAnnee">Année</label>
+                    <select id="editAnnee">
+                        <option value="1">1ère année</option>
+                        <option value="2">2ème année</option>
+                        <option value="3">3ème année</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="editAnneeScolaire">Année scolaire</label>
+                    <select id="editAnneeScolaire">
+                        <option value="2021-2022">2021-2022</option>
+                        <option value="2022-2023">2022-2023</option>
+                        <option value="2023-2024">2023-2024</option>
+                        <option value="2024-2025">2024-2025</option>
+                        <option value="2025-2026">2025-2026</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="editCours">Cours</label>
+                    <select id="editCours"></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="editTitre">Titre</label>
+                    <input type="text" id="editTitre">
+                </div>
+
+                <div class="form-group">
+                    <label for="editNom">Nom/Discord</label>
+                    <input type="text" id="editNom">
+                </div>
+
+                <div class="form-group">
+                    <label for="editDescription">Description</label>
+                    <textarea id="editDescription"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="closeModal()">Annuler</button>
+                    <button type="button" class="save-btn" onclick="saveChanges()">Enregistrer</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- 🔎 Filtres -->
-    <div class="filter-options">
-      <input type="text" id="searchInput" placeholder="Rechercher...">
-      <select id="anneeFilter">
-        <option value="">Toutes les années</option>
-        <option value="1">1ère année</option>
-        <option value="2">2ème année</option>
-        <option value="3">3ème année</option>
-      </select>
-      <select id="coursFilter">
-        <option value="">Tous les cours</option>
-      </select>
-      <select id="typeFilter">
-        <option value="">Tous les types</option>
-        <option value="pdf">PDF</option>
-        <option value="zip">ZIP</option>
-        <option value="video">Vidéo</option>
-      </select>
-      <select id="anneeScolaireFilter">
-        <option value="">Années scolaires</option>
-        <option value="2021-2022">2021-2022</option>
-        <option value="2022-2023">2022-2023</option>
-        <option value="2023-2024">2023-2024</option>
-        <option value="2024-2025">2024-2025</option>
-        <option value="2025-2026">2025-2026</option>
-      </select>
+    <!-- Votre script existant -->
+    <script>
+        document.getElementById('password').addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') { event.preventDefault(); login(); }
+        });
 
-    </div>
+        async function checkSession() {
+            const res = await fetch('/api/check-session');
+            const data = await res.json();
+            if (data.authenticated) {
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                loadFiles(); loadMessages(); loadLogs();
+            }
+        }
+        window.onload = () => { checkSession(); };
 
-    <!-- 📑 Tableau des fichiers -->
-    <div class="table-container">
-      <table class="file-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Année</th>
-            <th>Année Scolaire</th>
-            <th>Titre</th>
-            <th>Type</th>
-            <th>Cours</th>
-            <th>Nom/Discord</th>
-            <th>Taille</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="fileTableBody"></tbody>
-      </table>
-    </div>
-  </div>
+        const allFiles = [];
+        const coursParAnnee = {
+            1: ["STRUCTURE DE DONNEES", "MATHEMATIQUE 1", "MATHEMATIQUE 2", "BASE DE DONNEES", "SYSTEMES D'EXPLOITATION / LINUX", "JAVASCRIPT", "ANGLAIS", "ALGO", "APOO", "FONCTIONNEMENT DES ORDINATEURS", "GESTION COMPTABILITE ECONOMIE", "COMPETENCES NUMERIQUES", "DIVERS"],
+            2: ["LANGAGE C BASE", "ANALYSE ET MODELISATION", "GESTION DE DONNEES", "PROGRAMMATION JAVA", "DEVELOPPEMENT WEB", "DEVOPS", "INTRODUCTION AUX RESEAUX", "STRUCTURES DE DONNEES", "ORGANISATION DES ENTREPRISES", "CONCEPTION D'APPLICATIONS D'ENTREPRISE", "LINUX : PROGRAMMATION DISTRIBUEE", "INFORMATIQUE MOBILE", "ANGLAIS 2", "DIVERS"],
+            3: ["ADMINISTRATION INFRASTRUCTURE", "ORGANISATION DES ENTREPRISES", "ANGLAIS 3", "PROGRAMMATION : QUESTIONS SPECIALES", "DEVELOPPEMENT WEB", "PROJET DE FIN D'ETUDE : ASTUCES", "INTEGRATION EN MILIEU PROFESSIONNEL", "DEVELOPPEMENT A L'AIDE D'UN MOTEUR DE JEUX (UNITY)", "INTELLIGENCE ARTIFICIELLE", "CYBERSECURITE ET MALWARES", "DIVERS"]
+        };
 
+        async function login() {
+            const password = document.getElementById("password").value;
+            try {
+                const res = await fetch('/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById("loginContainer").style.display = "none";
+                    document.getElementById("adminPanel").style.display = "block";
+                    loadFiles(); loadMessages(); loadLogs();
+                } else { document.getElementById("loginError").style.display = "block"; }
+            } catch { document.getElementById("loginError").style.display = "block"; }
+        }
+        function logout() { document.getElementById("adminPanel").style.display = "none"; document.getElementById("loginContainer").style.display = "block"; }
 
-  <!-- 📝 Modal Edition -->
-  <div id="editModal" class="modal" style="display:none;">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal()">&times;</span>
-      <h3>Modifier un fichier</h3>
-      <form id="editForm">
-        <input type="hidden" id="editId">
-        <p><b>ID :</b> <span id="displayId"></span></p>
+        async function loadFiles() {
+            const res = await fetch('/get-files'); const data = await res.json();
+            allFiles.length = 0; data.forEach(f => allFiles.push(f));
+            populateCoursFilter(allFiles); filterFiles();
+        }
 
-        <div class="form-group">
-          <label for="editAnnee">Année</label>
-          <select id="editAnnee">
-            <option value="1">1ère année</option>
-            <option value="2">2ème année</option>
-            <option value="3">3ème année</option>
-          </select>
-        </div>
+        async function loadMessages() {
+            try {
+                const res = await fetch('/get-messages');
+                const messages = await res.json();
+                const tbody = document.getElementById("messagesTableBody");
+                tbody.innerHTML = "";
 
-        <div class="form-group">
-          <label for="editAnneeScolaire">Année scolaire</label>
-          <select id="editAnneeScolaire">
-            <option value="2021-2022">2021-2022</option>
-            <option value="2022-2023">2022-2023</option>
-            <option value="2023-2024">2023-2024</option>
-            <option value="2024-2025">2024-2025</option>
-            <option value="2025-2026">2025-2026</option>
-          </select>
-        </div>
+                if (!messages.length) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center">Aucun message trouvé</td></tr>`;
+                    return;
+                }
 
-        <div class="form-group">
-          <label for="editCours">Cours</label>
-          <select id="editCours"></select>
-        </div>
+                // Trie du plus récent au plus ancien
+                const sorted = [...messages].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        <div class="form-group">
-          <label for="editTitre">Titre</label>
-          <input type="text" id="editTitre">
-        </div>
+                sorted.forEach(m => {
+                    const tr = document.createElement("tr");
 
-        <div class="form-group">
-          <label for="editNom">Nom/Discord</label>
-          <input type="text" id="editNom">
-        </div>
+                    // Colonne Date
+                    const tdDate = document.createElement("td");
+                    tdDate.textContent = m.date;
 
-        <div class="form-group">
-          <label for="editDescription">Description</label>
-          <textarea id="editDescription"></textarea>
-        </div>
+                    // Colonne Nom
+                    const tdNom = document.createElement("td");
+                    tdNom.textContent = m.nom;
 
-        <div class="form-actions">
-          <button type="button" onclick="closeModal()">Annuler</button>
-          <button type="button" onclick="saveChanges()">Enregistrer</button>
-        </div>
-      </form>
-    </div>
-  </div>
+                    // Colonne Message
+                    const tdMessage = document.createElement("td");
+                    tdMessage.textContent = m.message;
+
+                    // Colonne Actions (Supprimer)
+                    const tdActions = document.createElement("td");
+                    const deleteBtn = document.createElement("button");
+                    deleteBtn.textContent = "Supprimer";
+                    deleteBtn.className = "delete-btn";
+                    deleteBtn.onclick = () => deleteMessage(m.id); // utilise l'ID du message
+                    tdActions.appendChild(deleteBtn);
+
+                    tr.appendChild(tdDate);
+                    tr.appendChild(tdNom);
+                    tr.appendChild(tdMessage);
+                    tr.appendChild(tdActions);
+
+                    // Ajout en haut du tableau pour que le plus récent soit visible
+                    tbody.prepend(tr);
+                });
+
+            } catch (e) {
+                console.error(e);
+                alert('Erreur lors du chargement des messages');
+            }
+        }
 
 
-  <script>
-    // Permet à l'utilisateur d'appuyer sur Entrée dans le champ mot de passe pour se connecter
-    document.getElementById('password').addEventListener('keydown', function (event) {
-      if (event.key === 'Enter') {
-        event.preventDefault(); // Empêche la soumission par défaut
-        login(); // Appelle la fonction login définie dans le script
-      }
+        async function loadLogs() {
+            try {
+                const res = await fetch('/get-logs');
+                const logs = await res.json();
+                const tbody = document.getElementById("logsTableBody");
+                tbody.innerHTML = "";
+
+                if (!logs.length) {
+                    tbody.innerHTML = `<tr><td style="text-align:center">Aucun log trouvé</td></tr>`;
+                    return;
+                }
+
+                // Trie du plus récent au plus ancien
+                const sorted = [...logs].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                sorted.forEach(l => {
+                    const tr = document.createElement("tr");
+
+                    // Colonne Date & Action
+                    const tdInfo = document.createElement("td");
+                    tdInfo.textContent = `${l.date} - ${l.action}`;
+
+                    // Colonne Actions (Supprimer)
+                    const tdActions = document.createElement("td");
+                    const deleteBtn = document.createElement("button");
+                    deleteBtn.textContent = "Supprimer";
+                    deleteBtn.className = "delete-btn";
+                    deleteBtn.onclick = () => deleteLog(l.id); // utilise l'ID du log
+                    tdActions.appendChild(deleteBtn);
+
+                    tr.appendChild(tdInfo);
+                    tr.appendChild(tdActions);
+
+                    // Ajout en haut pour que le plus récent soit visible
+                    tbody.prepend(tr);
+                });
+
+            } catch (e) {
+                console.error(e);
+                alert('Erreur lors du chargement des logs');
+            }
+        }
+
+
+
+        function populateCoursFilter(files) {
+            const coursFilter = document.getElementById("coursFilter");
+            const cours = [...new Set(files.map(f => f.cours))].sort();
+            coursFilter.innerHTML = '<option value="">Tous les cours</option>';
+            cours.forEach(c => coursFilter.innerHTML += `<option value="${c}">${c}</option>`);
+        }
+
+        function displayFiles(files) {
+            const tbody = document.getElementById("fileTableBody"); tbody.innerHTML = "";
+            if (!files.length) { tbody.innerHTML = `<tr><td colspan="10" style="text-align:center">Aucun fichier trouvé</td></tr>`; return; }
+            const sorted = [...files].sort((a, b) => b.id - a.id);
+            sorted.forEach(f => {
+                const sizeMB = f.poidsFichier ? (f.poidsFichier / 1048576).toFixed(2) + ' MB' : 'N/A';
+                const tr = document.createElement("tr");
+  tr.innerHTML = `
+  <td>${f.id}</td>
+  <td>${f.annee || "N/A"}</td>
+  <td>${f.anneeScolaire || "N/A"}</td>
+  <td>${f.titre || "N/A"}</td>
+  <td>${f.type ? f.type.toUpperCase() : "N/A"}</td>
+  <td>${f.cours || "N/A"}</td>
+  <td>${f.nomDiscord || "N/A"}</td>
+  <td>${sizeMB}</td>
+  <td>${f.dateAjout || "N/A"}</td>
+  <td>${f.likes || 0}</td>
+  <td>${f.dislikes || 0}</td>
+  <td>
+    <button class="edit-btn" onclick="editFile(${f.id})">Modifier</button>
+    <button class="delete-btn" onclick="deleteFile(${f.id})">Supprimer</button>
+  </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterFiles() {
+            const search = document.getElementById("searchInput").value.toLowerCase();
+            const anneeFilter = document.getElementById("anneeFilter").value;
+            const coursFilter = document.getElementById("coursFilter").value;
+            const typeFilter = document.getElementById("typeFilter").value;
+            const anneeScolaireFilter = document.getElementById("anneeScolaireFilter").value;
+
+            const filtered = allFiles.filter(f => {
+                const matchesS = f.titre.toLowerCase().includes(search) || f.cours.toLowerCase().includes(search) || (f.nomDiscord || "").toLowerCase().includes(search);
+                const matchesA = !anneeFilter || String(f.annee) === anneeFilter;
+                const matchesAS = !anneeScolaireFilter || f.anneeScolaire === anneeScolaireFilter;
+                const matchesC = !coursFilter || f.cours === coursFilter;
+                const matchesT = !typeFilter || f.type === typeFilter;
+                return matchesS && matchesA && matchesAS && matchesC && matchesT;
+            });
+            displayFiles(filtered);
+        }
+
+        function editFile(id) {
+            const f = allFiles.find(f => f.id === id); if (!f) return;
+            document.getElementById("editId").value = f.id;
+            document.getElementById("displayId").textContent = f.id;
+            document.getElementById("editTitre").value = f.titre;
+            document.getElementById("editNom").value = f.nomDiscord;
+            document.getElementById("editDescription").value = f.description || "";
+            document.getElementById("editAnnee").value = f.annee;
+            document.getElementById("editAnneeScolaire").value = f.anneeScolaire || "2024-2025";
+            fillCoursSelect(f.annee, f.cours);
+            document.getElementById("editModal").style.display = "block";
+            document.getElementById("editAnnee").onchange = function () { fillCoursSelect(this.value); };
+        }
+        function fillCoursSelect(annee, current = "") {
+            const select = document.getElementById("editCours"); select.innerHTML = "";
+            (coursParAnnee[annee] || []).forEach(c => {
+                const opt = document.createElement("option"); opt.value = c; opt.textContent = c; if (c === current) opt.selected = true; select.appendChild(opt);
+            });
+        }
+        function closeModal() { document.getElementById("editModal").style.display = "none"; }
+
+        async function saveChanges() {
+            const id = parseInt(document.getElementById("editId").value);
+            const updates = {
+                annee: parseInt(document.getElementById("editAnnee").value),
+                anneeScolaire: document.getElementById("editAnneeScolaire").value.trim(),
+                cours: document.getElementById("editCours").value.trim(),
+                titre: document.getElementById("editTitre").value.trim(),
+                nomDiscord: document.getElementById("editNom").value.trim(),
+                description: document.getElementById("editDescription").value.trim()
+            };
+            try {
+                const res = await fetch("/edit-file", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, ...updates }) });
+                const data = await res.json();
+                if (data.success) { loadFiles(); loadLogs(); closeModal(); alert("Fichier modifié avec succès"); }
+                else { alert("Erreur: " + data.message); }
+            } catch (error) { alert("Erreur lors de la modification"); console.error(error); }
+        }
+
+        async function deleteFile(id) {
+            if (!confirm("Voulez-vous vraiment supprimer ce fichier ?")) return;
+            try {
+                const res = await fetch(`/delete-file/${id}`, { method: "DELETE" });
+                const data = await res.json();
+                if (data.success) { loadFiles(); loadLogs(); alert("Fichier supprimé avec succès"); }
+                else { alert("Erreur: " + data.message); }
+            } catch { alert("Erreur lors de la suppression"); }
+        }
+
+        async function deleteLog(id) {
+            if (!confirm("Voulez-vous vraiment supprimer ce log ?")) return;
+            try {
+                const res = await fetch(`/delete-log/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.success) {
+                    alert("Log supprimé !");
+                    loadLogs(); // recharge la liste
+                } else {
+                    alert("Erreur : " + data.message);
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Erreur lors de la suppression du log");
+            }
+        }
+
+
+        async function deleteMessage(id) {
+            if (!confirm("Voulez-vous vraiment supprimer ce message ?")) return;
+            try {
+                const res = await fetch(`/delete-message/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.success) {
+                    alert("Message supprimé !");
+                    loadMessages(); // recharge la liste
+                } else {
+                    alert("Erreur : " + data.message);
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Erreur lors de la suppression du message");
+            }
+        }
+
+
+
+
+
+        async function sendMessage() {
+            const nom = document.getElementById("messageNom").value.trim();
+            const message = document.getElementById("messageText").value.trim();
+            if (!nom || !message) { alert("Veuillez remplir tous les champs."); return; }
+            if (nom.length > 50) { alert("Le nom ne doit pas dépasser 50 caractères."); return; }
+            if (message.length > 500) { alert("Le message ne doit pas dépasser 500 caractères."); return; }
+            try {
+                const res = await fetch('/add-message', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nom, message }) });
+                const data = await res.json();
+                if (data.success) { alert("Message ajouté avec succès !"); document.getElementById("messageForm").reset(); loadMessages(); }
+                else { alert("Erreur : " + data.message); }
+            } catch (error) { alert("Erreur lors de l'envoi du message."); console.error(error); }
+        }
+
+        document.getElementById("anneeFilter").addEventListener("change", () => {
+            const year = document.getElementById("anneeFilter").value;
+            populateCoursFilter(allFiles.filter(f => !year || String(f.annee) === year));
+            filterFiles();
+        });
+        document.getElementById("coursFilter").addEventListener("change", filterFiles);
+        document.getElementById("typeFilter").addEventListener("change", filterFiles);
+        document.getElementById("anneeScolaireFilter").addEventListener("change", filterFiles);
+        let filterTimeout;
+        document.getElementById("searchInput").addEventListener("input", () => {
+            clearTimeout(filterTimeout); filterTimeout = setTimeout(filterFiles, 200);
+        });
+    </script>
+
+    <script>
+        document.getElementById('clearLogs').addEventListener('click', async () => {
+            if (!confirm('Voulez-vous vraiment supprimer tous les logs ?')) return;
+
+            try {
+                const response = await fetch('/delete-all-logs', { method: 'DELETE' });
+                const result = await response.json();
+                if (result.success) {
+                    alert(result.message);
+                    // Recharge la liste des logs si tu as une fonction pour ça
+                    if (typeof loadLogs === 'function') loadLogs();
+                } else {
+                    alert('Erreur : ' + result.message);
+                }
+            } catch (error) {
+                console.error('Erreur suppression tous les logs:', error);
+                alert('Erreur serveur');
+            }
+        });
+    </script>
+
+    <!-- Ton script de tri -->
+<script>
+    document.querySelectorAll(".file-table th").forEach((th, index) => {
+        th.style.cursor = "pointer";
+        th.addEventListener("click", () => {
+            sortTableByColumn("fileTableBody", index);
+        });
     });
 
-    async function checkSession() {
-      const res = await fetch('/api/check-session'); // à créer côté serveur
-      const data = await res.json();
-      if (data.authenticated) {
-        // Affiche le panel, cache login
-        document.getElementById('loginContainer').style.display = 'none';
-        document.getElementById('adminPanel').style.display = 'block';
-        // Charge les données
-        loadFiles();
-        loadMessages();
-        loadLogs();
-      }
-    }
+    function sortTableByColumn(tbodyId, colIndex) {
+        const tbody = document.getElementById(tbodyId);
+        const table = tbody.closest("table");
+        const rows = Array.from(tbody.querySelectorAll("tr"));
 
-    window.onload = () => {
-      checkSession();
-    };
+        let currentDir = table.getAttribute(`data-sort-dir-${colIndex}`) || "desc";
+        let asc = currentDir === "asc";
 
-    const allFiles = [];
+        rows.sort((a, b) => {
+            const aText = a.cells[colIndex].textContent.trim().toLowerCase();
+            const bText = b.cells[colIndex].textContent.trim().toLowerCase();
 
-    // 📚 Liste des cours par année
-    const coursParAnnee = {
-      1: ["STRUCTURE DE DONNEES", "MATHEMATIQUE 1", "MATHEMATIQUE 2", "BASE DE DONNEES",
-        "SYSTEMES D'EXPLOITATION / LINUX", "JAVASCRIPT", "ANGLAIS", "ALGO", "APOO",
-        "FONCTIONNEMENT DES ORDINATEURS", "GESTION COMPTABILITE ECONOMIE",
-        "COMPETENCES NUMERIQUES", "DIVERS"],
-      2: ["LANGAGE C : BASE", "ANALYSE ET MODELISATION", "GESTION DE DONNEES", "PROGRAMMATION JAVA",
-        "DEVELOPPEMENT WEB", "DEVOPS", "INTRODUCTION AUX RESEAUX", "STRUCTURES DE DONNEES",
-        "ORGANISATION DES ENTREPRISES", "CONCEPTION D'APPLICATIONS D'ENTREPRISE",
-        "LINUX : PROGRAMMATION DISTRIBUEE", "INFORMATIQUE MOBILE", "ANGLAIS 2", "DIVERS"],
-      3: ["ADMINISTRATION INFRASTRUCTURE", "ORGANISATION DES ENTREPRISES", "ANGLAIS 3",
-        "PROGRAMMATION : QUESTIONS SPECIALES", "DEVELOPPEMENT WEB",
-        "PROJET DE FIN D'ETUDE : ASTUCES", "INTEGRATION EN MILIEU PROFESSIONNEL",
-        "DEVELOPPEMENT A L'AIDE D'UN MOTEUR DE JEUX (UNITY)", "INTELLIGENCE ARTIFICIELLE",
-        "CYBERSECURITE ET MALWARES", "DIVERS"]
-    };
+            const aNum = parseFloat(aText.replace(/[^\d.-]/g, ''));
+            const bNum = parseFloat(bText.replace(/[^\d.-]/g, ''));
+            if (!isNaN(aNum) && !isNaN(bNum)) {
+                return asc ? aNum - bNum : bNum - aNum;
+            }
 
-    // ✅ Login
-    async function login() {
-      const password = document.getElementById("password").value;
-      try {
-        const res = await fetch('/admin/login', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password })
+            if (aText < bText) return asc ? -1 : 1;
+            if (aText > bText) return asc ? 1 : -1;
+            return 0;
         });
-        const data = await res.json();
-        if (data.success) {
-          document.getElementById("loginContainer").style.display = "none";
-          document.getElementById("adminPanel").style.display = "block";
-          loadFiles();
-          loadMessages();
-          loadLogs();
-        } else {
-          document.getElementById("loginError").style.display = "block";
-        }
-      } catch {
-        document.getElementById("loginError").style.display = "block";
-      }
-    }
 
-    function logout() {
-      document.getElementById("adminPanel").style.display = "none";
-      document.getElementById("loginContainer").style.display = "block";
-    }
-
-    // ✅ Charger fichiers
-    async function loadFiles() {
-      const res = await fetch('/get-files');
-      const data = await res.json();
-      allFiles.length = 0;
-      data.forEach(f => allFiles.push(f));
-      populateCoursFilter(allFiles);
-      filterFiles();
-    }
-
-    // Charger messages
-    async function loadMessages() {
-      try {
-        const res = await fetch('/get-messages');
-        const messages = await res.json();
-        const tbody = document.getElementById("messagesTableBody");
         tbody.innerHTML = "";
-        if (!messages.length) {
-          tbody.innerHTML = `<tr><td colspan="3" style="text-align:center">Aucun message trouvé</td></tr>`;
-          return;
-        }
-        // Trier par date décroissante (dernier en haut)
-        const sortedMessages = [...messages].sort((a, b) => new Date(b.date) - new Date(a.date));
-        if (sortedMessages.length > 3) {
-          // Créer une liste déroulante pour plus de 3 messages
-          const div = document.createElement("div");
-          div.style.maxHeight = "100px";       // hauteur max
-          div.style.width = "1350px";            // prend toute la largeur possible
-          div.style.overflowY = "auto";        // scroll vertical si nécessaire
-          div.style.padding = "10px";          // espace interne
-          div.style.border = "1px solid #ccc"; // contour
-          div.style.borderRadius = "5px";
-          div.style.background = "#f9f9f9";    // fond clair
+        rows.forEach(row => tbody.appendChild(row));
 
-          sortedMessages.forEach(m => {
-            const p = document.createElement("p");
-            p.style.margin = "5px 0";          // espace entre messages
-            p.textContent = `${m.date} - ${m.nom} - ${m.message}`;
-            div.appendChild(p);
-          });
+        table.setAttribute(`data-sort-dir-${colIndex}`, asc ? "desc" : "asc");
+    }
 
-          tbody.appendChild(div);
-
-
+    document.querySelectorAll('.collapse-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const body = btn.closest('.card').querySelector('.card-body');
+        if(body.style.display === 'none') {
+            body.style.display = 'block';
+            btn.textContent = '▲'; // flèche vers le haut
         } else {
-          // Afficher sous forme de table pour 3 ou moins
-          sortedMessages.forEach(m => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-          <td>${m.date}</td>
-          <td>${m.nom}</td>
-          <td>${m.message}</td>
-        `;
-            tbody.appendChild(tr);
-          });
+            body.style.display = 'none';
+            btn.textContent = '▼'; // flèche vers le bas
         }
-      } catch (error) {
-        console.error('Erreur lors du chargement des messages:', error);
-        alert('Erreur lors du chargement des messages');
-      }
-    }
-
-    // Charger logs
-    async function loadLogs() {
-      try {
-        const res = await fetch('/get-logs');
-        const logs = await res.json();
-        const tbody = document.getElementById("logsTableBody");
-        tbody.innerHTML = "";
-        if (!logs.length) {
-          tbody.innerHTML = `<tr><td style="text-align:center">Aucun log trouvé</td></tr>`;
-          return;
-        }
-        // Trier par date décroissante (dernier en haut)
-        const sortedLogs = [...logs].sort((a, b) => new Date(b.date) - new Date(a.date));
-        if (sortedLogs.length > 3) {
-          // Créer une liste déroulante pour plus de 3 logs
-          const select = document.createElement("select");
-          select.className = "log-dropdown";
-          select.size = Math.min(sortedLogs.length, 10); // Limite à 10 visibles max
-          sortedLogs.forEach(log => {
-            const option = document.createElement("option");
-            option.value = `${log.date} - ${log.action}`;
-            option.textContent = `${log.date} - ${log.action}`;
-            select.appendChild(option);
-          });
-          tbody.appendChild(select);
-        } else {
-          // Afficher sous forme de table pour 3 ou moins
-          sortedLogs.forEach(log => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-          <td>${log.date} - ${log.action}</td>
-        `;
-            tbody.appendChild(tr);
-          });
-        }
-      } catch (error) {
-        console.error('Erreur lors du chargement des logs:', error);
-        alert('Erreur lors du chargement des logs');
-      }
-    }
-
-    // Génère les options du filtre cours
-    function populateCoursFilter(files) {
-      const coursFilter = document.getElementById("coursFilter");
-      const cours = [...new Set(files.map(f => f.cours))].sort();
-      coursFilter.innerHTML = '<option value="">Tous les cours</option>';
-      cours.forEach(c => { coursFilter.innerHTML += `<option value="${c}">${c}</option>`; });
-    }
-
-    // Tri et affichage
-function displayFiles(files) {
-  const tbody = document.getElementById("fileTableBody");
-  tbody.innerHTML = "";
-
-  if (!files.length) {
-    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center">Aucun fichier trouvé</td></tr>`;
-    return;
-  }
-
-  // Trier par ID décroissant (plus grand en premier)
-  const sorted = [...files].sort((a, b) => b.id - a.id);
-
-  sorted.forEach(f => {
-    const sizeMB = f.poidsFichier ? (f.poidsFichier / 1048576).toFixed(2) + " MB" : "N/A";
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${f.id}</td>
-      <td>${f.annee || "N/A"}</td>
-      <td>${f.anneeScolaire || "N/A"}</td>
-      <td>${f.titre || "N/A"}</td>
-      <td>${f.type ? f.type.toUpperCase() : "N/A"}</td>
-      <td>${f.cours || "N/A"}</td>
-      <td>${f.nomDiscord || "N/A"}</td>
-      <td>${sizeMB}</td>
-      <td>${f.dateAjout || "N/A"}</td>
-      <td>
-        <button class="edit-btn" onclick="editFile(${f.id})">Modifier</button>
-        <button class="delete-btn" onclick="deleteFile(${f.id})">Supprimer</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-
-
-    // Filtres
-    function filterFiles() {
-      const search = document.getElementById("searchInput").value.toLowerCase();
-      const anneeFilter = document.getElementById("anneeFilter").value;
-      const coursFilter = document.getElementById("coursFilter").value;
-      const typeFilter = document.getElementById("typeFilter").value;
-      const anneeScolaireFilter = document.getElementById("anneeScolaireFilter").value;
-
-      const filtered = allFiles.filter(f => {
-        const matchesS = f.titre.toLowerCase().includes(search) || f.cours.toLowerCase().includes(search) || (f.nomDiscord || "").toLowerCase().includes(search);
-        const matchesA = !anneeFilter || String(f.annee) === anneeFilter;
-        const matchesAS = !anneeScolaireFilter || f.anneeScolaire === anneeScolaireFilter;
-        const matchesC = !coursFilter || f.cours === coursFilter;
-        const matchesT = !typeFilter || f.type === typeFilter;
-        return matchesS && matchesA && matchesAS && matchesC && matchesT;
-      });
-      displayFiles(filtered);
-    }
-
-    // Edition
-    function editFile(id) {
-      const f = allFiles.find(f => f.id === id);
-      if (!f) return;
-
-      document.getElementById("editId").value = f.id;
-      document.getElementById("displayId").textContent = f.id;
-      document.getElementById("editTitre").value = f.titre;
-      document.getElementById("editNom").value = f.nomDiscord;
-      document.getElementById("editDescription").value = f.description || "";
-      document.getElementById("editAnnee").value = f.annee;
-      document.getElementById("editAnneeScolaire").value = f.anneeScolaire || "2024-2025"; // valeur par défaut
-
-      fillCoursSelect(f.annee, f.cours);
-
-      document.getElementById("editModal").style.display = "block";
-
-
-      document.getElementById("editAnnee").onchange = function () {
-        fillCoursSelect(this.value);
-      };
-    }
-
-    function fillCoursSelect(annee, current = "") {
-      const select = document.getElementById("editCours");
-      select.innerHTML = "";
-      (coursParAnnee[annee] || []).forEach(c => {
-        const opt = document.createElement("option");
-        opt.value = c; opt.textContent = c;
-        if (c === current) opt.selected = true;
-        select.appendChild(opt);
-      });
-    }
-
-    function closeModal() { document.getElementById("editModal").style.display = "none"; }
-
-    // Sauver modifications
-    async function saveChanges() {
-      const id = parseInt(document.getElementById("editId").value);
-      const updates = {
-        annee: parseInt(document.getElementById("editAnnee").value),
-        anneeScolaire: document.getElementById("editAnneeScolaire").value.trim(),
-        cours: document.getElementById("editCours").value.trim(),
-        titre: document.getElementById("editTitre").value.trim(),
-        nomDiscord: document.getElementById("editNom").value.trim(),
-        description: document.getElementById("editDescription").value.trim()
-      };
-
-
-      try {
-        const res = await fetch("/edit-file", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id, ...updates })
-        });
-        const data = await res.json();
-        if (data.success) {
-          loadFiles();
-          loadLogs();
-          closeModal();
-          alert("Fichier modifié avec succès");
-        } else {
-          alert("Erreur: " + data.message);
-        }
-      } catch (error) {
-        alert("Erreur lors de la modification");
-        console.error('Erreur:', error);
-      }
-    }
-
-
-    // Suppression
-    async function deleteFile(id) {
-      if (!confirm("Voulez-vous vraiment supprimer ce fichier ?")) return;
-      try {
-        const res = await fetch(`/delete-file/${id}`, { method: "DELETE" });
-        const data = await res.json();
-        if (data.success) {
-          loadFiles();
-          loadLogs();
-          alert("Fichier supprimé avec succès");
-        } else {
-          alert("Erreur: " + data.message);
-        }
-      } catch {
-        alert("Erreur lors de la suppression");
-      }
-    }
-
-    // Ajouter un message
-    async function sendMessage() {
-      const nom = document.getElementById("messageNom").value.trim();
-      const message = document.getElementById("messageText").value.trim();
-      if (!nom || !message) {
-        alert("Veuillez remplir tous les champs.");
-        return;
-      }
-      if (nom.length > 50) {
-        alert("Le nom ne doit pas dépasser 50 caractères.");
-        return;
-      }
-      if (message.length > 500) {
-        alert("Le message ne doit pas dépasser 500 caractères.");
-        return;
-      }
-      try {
-        const res = await fetch('/add-message', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nom, message })
-        });
-        const data = await res.json();
-        if (data.success) {
-          alert("Message ajouté avec succès !");
-          document.getElementById("messageForm").reset();
-          loadMessages();
-        } else {
-          alert("Erreur : " + data.message);
-        }
-      } catch (error) {
-        alert("Erreur lors de l'envoi du message.");
-        console.error('Erreur:', error);
-      }
-    }
-
-    // Listeners filtres
-    document.getElementById("anneeFilter").addEventListener("change", () => {
-      const year = document.getElementById("anneeFilter").value;
-      populateCoursFilter(allFiles.filter(f => !year || String(f.annee) === year));
-      filterFiles();
     });
-    document.getElementById("coursFilter").addEventListener("change", filterFiles);
-    document.getElementById("typeFilter").addEventListener("change", filterFiles);
-    document.getElementById("anneeScolaireFilter").addEventListener("change", filterFiles);s
-    let filterTimeout;
-    document.getElementById("searchInput").addEventListener("input", () => {
-      clearTimeout(filterTimeout);
-      filterTimeout = setTimeout(filterFiles, 200); // attend 200ms
-    });
-
-  </script>
-
-  <!-- Script cookiesConsent -->
-  <script src="cookiesConsent.js"></script>
+});
+</script>
 
 
-
-
+    <script src="cookiesConsent.js"></script>
 </body>
 
 </html>

@@ -1,460 +1,829 @@
 /**
- * Feuille de style de l'interface d'administration
- * Contient tous les styles pour la page d'administration du site
- * 
- * Cette feuille de style définit l'apparence de l'interface d'administration
- * pour la gestion des synthèses académiques. Elle inclut les styles pour
- * le tableau de fichiers, les formulaires d'édition, les fenêtres modales,
- * le formulaire de message, les tables de messages et de logs.
- * 
- * Fonctionnalités spéciales :
- * - Tableau de gestion des fichiers avec colonnes redimensionnables
- * - Formulaires d'édition dans des fenêtres modales
- * - Boutons d'action pour convertir, éditer et supprimer les fichiers
- * - Filtres de recherche et de tri des fichiers
- * - Affichage des messages et logs dans des tables
- * 
- * @author Thomas Bauwens
+ * Interface d'Administration - Styles modernes
+ * Version stylée et contemporaine
+ *
+* @author Thomas Bauwens
  * @version 1.0
  * @date Mai 2025
- * @lastModified: 17 septembre 2025
+ * @lastModified 7 mai 2025
  */
 
-/* ======================================================
-   CONTENEUR PRINCIPAL
-   ====================================================== */
+/* ===== RESET & BASE ===== */
+* {
+    margin: 0; /* Supprime les marges par défaut de tous les éléments */
+    padding: 0; /* Supprime les paddings par défaut de tous les éléments */
+    box-sizing: border-box; /* Inclut padding et bordure dans la largeur/hauteur */
+}
+
+body {
+    font-family: 'Inter', sans-serif; /* Police moderne et système */
+    background: linear-gradient(135deg, #ea9666 0%, #764ba2 100%); /* Dégradé violet/bleu pour le fond */
+    min-height: 100vh; /* Hauteur minimale pour remplir tout l'écran */
+    color: #333; /* Couleur du texte par défaut */
+    line-height: 1.6; /* Hauteur de ligne pour une meilleure lisibilité */
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+    from { 
+        opacity: 0; /* Début transparent */
+        transform: translateY(20px); /* Début légèrement décalé vers le bas */
+    }
+    to { 
+        opacity: 1; /* Fin opaque */
+        transform: translateY(0); /* Remet à sa position initiale */
+    }
+}
+
+@keyframes slideIn {
+    from { 
+        opacity: 0; /* Début transparent */
+        transform: translateX(-20px); /* Début décalé vers la gauche */
+    }
+    to { 
+        opacity: 1; /* Fin opaque */
+        transform: translateX(0); /* Remet à sa position initiale */
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        transform: scale(1); /* Taille normale au début et à la fin */
+    }
+    50% { 
+        transform: scale(1.05); /* Agrandit légèrement au milieu */
+    }
+}
+
+@keyframes spin {
+    0% { 
+        transform: translate(-50%, -50%) rotate(0deg); /* Position initiale sans rotation */
+    }
+    100% { 
+        transform: translate(-50%, -50%) rotate(360deg); /* Rotation complète */
+    }
+}
+
+.animate-fadeIn { 
+    animation: fadeIn 0.6s ease-out; /* Applique l'animation fadeIn sur 0.6s */
+}
+
+.animate-slideIn { 
+    animation: slideIn 0.4s ease-out; /* Applique l'animation slideIn sur 0.4s */
+}
+
+/* ===== CONTENEUR PRINCIPAL ===== */
 .admin-container {
-  max-width: 1400px;
-  margin: 20px auto;
-  padding: 20px;
-  background: white;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  width: 95%;
+    max-width: 1700px; /* Largeur maximale du conteneur */
+    margin: 20px auto; /* Centre le conteneur et ajoute une marge verticale */
+    padding: 30px; /* Espace interne */
+    background: rgba(255, 255, 255, 0.95); /* Fond blanc légèrement transparent */
+    backdrop-filter: blur(10px); /* Flou derrière le conteneur pour effet glass */
+    border-radius: 20px; /* Coins arrondis */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); /* Ombre portée douce */
+    width: 95%; /* Largeur relative à l'écran */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Bordure transparente */
 }
 
-/* ======================================================
-   FORMULAIRE DE CONNEXION
-   ====================================================== */
+/* ===== CONNEXION ===== */
 .login-form {
-  max-width: 400px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-/* ======================================================
-   EN-TÊTE ADMINISTRATEUR
-   ====================================================== */
-.admin-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #eee;
+    max-width: 700px; /* Largeur maximale du formulaire */
+    margin: 0 auto; /* Centre horizontalement */
+    text-align: center; /* Texte centré */
+    padding: 40px 30px; /* Espace interne */
+    background: linear-gradient(135deg, #fff 0%, #f8fafc 100%); /* Dégradé clair */
+    border-radius: 15px; /* Coins arrondis */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Ombre légère */
 }
 
 .admin-title {
-  color: #d73a49;
-  font-family: Arial, sans-serif;
-  font-size: 1.5em;
-  margin: 0;
+    color: #1e293b; /* Couleur du texte */
+    font-size: 28px; /* Taille du texte */
+    margin-bottom: 30px; /* Marge sous le titre */
+    font-weight: 700; /* Texte en gras */
+    background: linear-gradient(135deg, #667eea, #764ba2); /* Dégradé pour texte */
+    background-clip: text; /* Clip du dégradé au texte */
 }
 
-/* ======================================================
-   TABLEAU DES FICHIERS
-   ====================================================== */
-.table-container {
-  width: 100%;
-  overflow-x: auto;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.login-form input {
+    width: 100%; /* Pleine largeur */
+    padding: 15px 20px; /* Espace interne */
+    margin-bottom: 20px; /* Marge inférieure */
+    border: 2px solid #e2e8f0; /* Bordure grise claire */
+    border-radius: 12px; /* Coins arrondis */
+    font-size: 16px; /* Taille du texte */
+    transition: all 0.3s ease; /* Animation douce pour hover/focus */
+    background: #fff; /* Fond blanc */
 }
 
-.file-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 1200px;
+.login-form input:focus {
+    outline: none; /* Supprime le contour par défaut */
+    border-color: #667eea; /* Bordure bleue au focus */
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); /* Ombre autour du champ */
+    transform: translateY(-2px); /* Légère élévation */
 }
 
-.file-table th,
-.file-table td {
-  padding: 6px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-  border-right: 1px solid #ddd;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.login-form button {
+    width: 100%; /* Pleine largeur */
+    padding: 15px; /* Espace interne */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Dégradé violet/bleu */
+    color: white; /* Texte blanc */
+    border: none; /* Pas de bordure */
+    border-radius: 12px; /* Coins arrondis */
+    font-size: 16px; /* Taille du texte */
+    font-weight: 600; /* Gras moyen */
+    cursor: pointer; /* Curseur pointer */
+    transition: all 0.3s ease; /* Transition douce */
+    text-transform: uppercase; /* Texte en majuscule */
+    letter-spacing: 0.5px; /* Espacement lettres */
 }
 
-.file-table th:last-child,
-.file-table td:last-child {
-  border-right: none;
+.login-form button:hover {
+    transform: translateY(-2px); /* Légère élévation au hover */
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3); /* Ombre au hover */
 }
 
-.file-table th {
-  background: #f6f8fa;
-  font-weight: bold;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+/* ===== EN-TÊTE ADMIN ===== */
+.admin-header {
+    display: flex; /* Flexbox pour aligner horizontalement */
+    justify-content: space-between; /* Espace entre les éléments */
+    align-items: center; /* Alignement vertical */
+    margin-bottom: 30px; /* Marge sous l'en-tête */
+    padding: 20px 0; /* Padding vertical */
+    border-bottom: 2px solid #e2e8f0; /* Ligne de séparation */
 }
 
-.file-table th:nth-child(1),
-.file-table td:nth-child(1) { width: 60px; }  /* ID */
-.file-table th:nth-child(2),
-.file-table td:nth-child(2) { width: 80px; }  /* Année */
-.file-table th:nth-child(3),
-.file-table td:nth-child(3) { width: 80px; }  /* Type */
-.file-table th:nth-child(4),
-.file-table td:nth-child(4) { width: 250px; } /* Titre */
-.file-table th:nth-child(5),
-.file-table td:nth-child(5) { width: 200px; } /* Cours */
-.file-table th:nth-child(6),
-.file-table td:nth-child(6) { width: 120px; } /* Nom/Discord */
-.file-table th:nth-child(7),
-.file-table td:nth-child(7) { width: 80px; }  /* Taille */
-.file-table th:nth-child(8),
-.file-table td:nth-child(8) { width: 100px; } /* Date */
-.file-table th:nth-child(9),
-.file-table td:nth-child(9) { width: 120px; } /* Actions */
-
-/* ======================================================
-   TABLEAU DES MESSAGES
-   ====================================================== */
-.messages-list {
-  margin: 20px 0;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.messages-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-
-.messages-table th,
-.messages-table td {
-  padding: 8px 10px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.messages-table th {
-  background: #f6f8fa;
-  font-weight: 600;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.messages-table th:last-child,
-.messages-table td:last-child {
-  border-right: none;
-}
-
-.messages-table th:nth-child(1),
-.messages-table td:nth-child(1) { width: 150px; }
-.messages-table th:nth-child(2),
-.messages-table td:nth-child(2) { width: 150px; }
-.messages-table th:nth-child(3),
-.messages-table td:nth-child(3) { width: auto; min-width: 200px; }
-
-/* Boutons */
-.edit-btn {
-  background: #3498db;
-  color: #fff;
-  border: none;
-  padding: 5px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.delete-btn {
-  background: #e74c3c;
-  color: #fff;
-  border: none;
-  padding: 5px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.edit-btn:hover { background: #2980b9; }
-.delete-btn:hover { background: #c0392b; }
-
-
-/* ======================================================
-   TABLEAU DES LOGS
-   ====================================================== */
-.logs-list {
-  margin: 15px 0;
-  padding: 10px;
-  background: #f8f9fa;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-}
-
-.logs-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.logs-table th,
-.logs-table td {
-  padding: 4px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-  border-right: 1px solid #ddd;
-  white-space: nowrap;
-}
-
-.logs-table th:last-child,
-.logs-table td:last-child {
-  border-right: none;
-}
-
-.logs-table th {
-  background: #f6f8fa;
-  font-weight: bold;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.logs-table th:nth-child(1),
-.logs-table td:nth-child(1) { width: auto; min-width: 300px; } /* Date & Action */
-
-/* ======================================================
-   BOUTONS D'ACTION
-   ====================================================== */
-.action-btn {
-  padding: 4px 8px;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 14px;
-  margin-right: 4px;
-  color: white;
-}
-
-.convert-btn {
-  background: #2196F3;
-}
-
-.edit-btn {
-  background: #28a745;
-}
-
-.delete-btn {
-  background: #dc3545;
+.admin-header h2 {
+    font-size: 32px; /* Taille du texte */
+    font-weight: 700; /* Gras */
+    background: linear-gradient(135deg, #667eea, #764ba2); /* Dégradé texte */
+    background-clip: text; /* Clip général */
 }
 
 .logout-btn {
-  background: #dc3545;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+    background: linear-gradient(135deg, #ef4444, #dc2626); /* Dégradé rouge */
+    color: white; /* Texte blanc */
+    padding: 12px 24px; /* Espace interne */
+    border: none; /* Pas de bordure */
+    border-radius: 10px; /* Coins arrondis */
+    cursor: pointer; /* Curseur pointer */
+    font-weight: 600; /* Gras moyen */
+    transition: all 0.3s ease; /* Transition douce */
+    display: flex; /* Flex pour aligner contenu */
+    align-items: center; /* Alignement vertical */
+    gap: 8px; /* Espace entre icône et texte */
 }
 
-/* ======================================================
-   FENÊTRES MODALES
-   ====================================================== */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  z-index: 1000;
+.logout-btn:hover {
+    transform: translateY(-2px); /* Légère élévation */
+    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3); /* Ombre rouge */
 }
 
-.modal-content {
-  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
-  margin: 5% auto;
-  padding: 20px;
-  width: 90%;
-  max-width: 600px;
-  border-radius: 8px;
-  position: relative;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  border: 1px solid #e9ecef;
+/* ===== CARTES ===== */
+.activity {
+    display: flex; /* Flexbox pour les cartes */
+    flex-direction: column; /* Colonnes */
+    gap: 25px; /* Espacement vertical entre cartes */
+    margin: 30px 0; /* Marge verticale */
 }
 
-.close {
-  position: absolute;
-  right: 15px;
-  top: 15px;
-  font-size: 24px;
-  cursor: pointer;
-  color: #666;
-  line-height: 1;
-  padding: 5px;
+.card {
+    background: white; /* Fond blanc */
+    border-radius: 15px; /* Coins arrondis */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); /* Ombre douce */
+    border: 1px solid rgba(226, 232, 240, 0.5); /* Bordure claire */
+    overflow: hidden; /* Contenu caché si dépasse */
+    transition: all 0.3s ease; /* Transition douce */
 }
 
-.close:hover {
-  color: #333;
+.card:hover {
+    transform: translateY(-5px); /* Légère élévation */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12); /* Ombre au hover */
 }
 
-.modal h3 {
-  margin: 0 0 15px 0;
-  color: #1a237e;
-  font-size: 1.5em;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #e8eaf6;
+.card-head {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); /* Dégradé clair */
+    padding: 20px 25px; /* Padding interne */
+    border-bottom: 1px solid #e2e8f0; /* Ligne de séparation */
+    display: flex; /* Flexbox */
+    justify-content: space-between; /* Espacement horizontal */
+    align-items: center; /* Alignement vertical */
 }
 
-/* ======================================================
-   FORMULAIRES
-   ====================================================== */
-.form-group {
-  margin-bottom: 8px;
+.card-head h3 {
+    font-size: 20px; /* Taille texte */
+    font-weight: 700; /* Gras */
+    color: #1e293b; /* Couleur texte */
+    margin: 0; /* Supprime marge par défaut */
+    display: flex; /* Flexbox */
+    align-items: center; /* Alignement vertical */
+    gap: 10px; /* Espace entre éléments */
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 4px;
-  font-weight: bold;
-  color: #1a237e;
-  font-size: 0.95em;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.card-actions {
+    display: flex; /* Flexbox pour boutons */
+    gap: 12px; /* Espacement entre boutons */
 }
 
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 6px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
+.card-body {
+    padding: 25px; /* Padding interne */
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  border-color: #3f51b5;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.15);
-  background-color: #fafafa;
+/* ===== BOUTONS ===== */
+.btn {
+    padding: 10px 18px; /* Espace interne */
+    border-radius: 10px; /* Coins arrondis */
+    border: none; /* Pas de bordure */
+    cursor: pointer; /* Curseur pointer */
+    font-weight: 600; /* Gras moyen */
+    transition: all 0.3s ease; /* Transition douce */
+    display: inline-flex; /* Flex pour contenu */
+    align-items: center; /* Alignement vertical */
+    gap: 8px; /* Espacement contenu */
+    font-size: 14px; /* Taille texte */
 }
 
-.form-actions {
-  margin-top: 10px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+.btn:hover {
+    transform: translateY(-2px); /* Légère élévation */
 }
 
-.form-actions button {
-  padding: 6px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  border: none;
+.btn.sm {
+    padding: 6px 12px; /* Moins de padding pour petite taille */
+    font-size: 12px; /* Texte plus petit */
 }
 
-.save-btn {
-  background: #28a745;
-  color: white;
+.btn.primary {
+    background: linear-gradient(135deg, #667eea, #764ba2); /* Dégradé violet/bleu */
+    color: white; /* Texte blanc */
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); /* Ombre douce */
 }
 
-.cancel-btn {
-  background: #dc3545;
-  color: white;
+.btn.primary:hover {
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); /* Ombre plus visible au hover */
 }
 
-/* ======================================================
-   RECHERCHE ET FILTRES
-   ====================================================== */
-.search-bar {
-  margin: 10px 0;
+.btn.ghost {
+    background: transparent; /* Fond transparent */
+    color: #64748b; /* Texte gris */
+    border: 2px solid #e2e8f0; /* Bordure grise */
 }
 
-.search-bar input {
-  width: 100%;
-  max-width: 500px;
-  padding: 6px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.btn.ghost:hover {
+    background: #f8fafc; /* Fond clair au hover */
+    border-color: #cbd5e1; /* Bordure légèrement plus foncée */
 }
 
-.filter-options {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
+.btn.danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626); /* Dégradé rouge */
+    color: white; /* Texte blanc */
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); /* Ombre rouge */
 }
 
-.filter-options select {
-  padding: 6px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  min-width: 150px;
+.btn.danger:hover {
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4); /* Ombre rouge plus visible */
 }
 
-/* ======================================================
-   FORMULAIRE DE MESSAGE MANUEL
-   ====================================================== */
+/* ===== FORMULAIRES ===== */
 .message-form {
-  margin: 5px 0;
-  padding: 5px;
-  background: #f8f9fa;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); /* Dégradé clair pour le formulaire */
+    padding: 3px 15px; /* Espace interne */
+    border-radius: 12px; /* Coins arrondis */
+    margin-bottom: 15px; /* Marge en bas */
+    border: 1px solid rgba(226, 232, 240, 0.5); /* Bordure claire */
 }
 
 .message-form h3 {
-  margin: 0 0 5px 0;
-  color: #1a237e;
-  font-size: 1.1em;
-  border-bottom: 1px solid #e8eaf6;
-  padding-bottom: 3px;
+    color: #1e293b; /* Couleur texte sombre */
+    font-size: 16px; /* Taille du texte */
+    font-weight: 700; /* Gras */
+    margin-bottom: 8px; /* Marge sous le titre */
+    display: flex; /* Flexbox pour icône + texte */
+    align-items: center; /* Alignement vertical */
+    gap: 8px; /* Espacement entre icône et texte */
 }
 
-.message-form .form-group {
-  margin-bottom: 5px;
+.form-group {
+    margin-bottom: 8px; /* Marge sous chaque champ */
 }
 
-.message-form textarea,
-.message-form input {
-  width: 100%;
-  padding: 6px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-
-  /* Empêche l'apparition des barres de scroll */
-  overflow: hidden;
-  resize: vertical;
-  white-space: pre-wrap;
+.form-group label {
+    display: block; /* Bloc complet */
+    margin-bottom: 4px; /* Marge sous le label */
+    color: #374151; /* Couleur texte gris foncé */
+    font-weight: 600; /* Gras moyen */
+    font-size: 14px; /* Taille texte */
+    display: flex; /* Flexbox pour icône + texte */
+    align-items: center; /* Alignement vertical */
+    gap: 8px; /* Espacement */
 }
 
-.message-form .form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 5px;
+.form-control {
+    width: 100%; /* Pleine largeur */
+    padding: 6px 10px; /* Espace interne */
+    border: 2px solid #e2e8f0; /* Bordure claire */
+    border-radius: 10px; /* Coins arrondis */
+    font-size: 14px; /* Taille texte */
+    transition: all 0.3s ease; /* Transition douce */
+    background: white; /* Fond blanc */
+    font-family: inherit; /* Même police que le parent */
 }
 
-.message-form .save-btn {
-  padding: 5px 12px;
-  font-size: 13px;
-  background: #28a745;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+.form-control:focus {
+    outline: none; /* Supprime contour par défaut */
+    border-color: #667eea; /* Bordure bleue au focus */
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); /* Ombre douce */
+    transform: translateY(-1px); /* Légère élévation */
+}
+
+.save-btn {
+    background: linear-gradient(135deg, #10b981, #059669); /* Dégradé vert */
+    color: white; /* Texte blanc */
+    padding: 8px 16px; /* Espace interne */
+    border: none; /* Pas de bordure */
+    border-radius: 10px; /* Coins arrondis */
+    font-weight: 600; /* Gras moyen */
+    cursor: pointer; /* Curseur pointer */
+    transition: all 0.3s ease; /* Transition douce */
+    display: flex; /* Flex pour contenu */
+    align-items: center; /* Alignement vertical */
+    gap: 8px; /* Espacement contenu */
+}
+
+.save-btn:hover {
+    transform: translateY(-2px); /* Légère élévation */
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); /* Ombre verte */
+}
+
+/* ===== FILTRES ===== */
+.filter-options {
+    display: flex; /* Flexbox pour options */
+    flex-wrap: wrap; /* Retour à la ligne si trop large */
+    gap: 15px; /* Espacement entre options */
+    align-items: center; /* Alignement vertical */
+    margin: 30px 0; /* Marge verticale */
+    padding: 25px; /* Padding interne */
+    background: white; /* Fond blanc */
+    border-radius: 15px; /* Coins arrondis */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); /* Ombre douce */
+    border: 1px solid rgba(226, 232, 240, 0.5); /* Bordure claire */
+}
+
+.filter-options input,
+.filter-options select {
+    padding: 12px 16px; /* Padding interne */
+    border: 2px solid #e2e8f0; /* Bordure claire */
+    border-radius: 10px; /* Coins arrondis */
+    background: white; /* Fond blanc */
+    font-size: 14px; /* Taille texte */
+    transition: all 0.3s ease; /* Transition douce */
+    min-width: 150px; /* Largeur minimale */
+    font-family: inherit; /* Police héritée */
+}
+
+.filter-options input:focus,
+.filter-options select:focus {
+    outline: none; /* Supprime contour par défaut */
+    border-color: #667eea; /* Bordure bleue au focus */
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); /* Ombre douce */
+    transform: translateY(-1px); /* Légère élévation */
+}
+
+.muted {
+    color: #64748b; /* Texte gris */
+    font-size: 14px; /* Taille texte */
+    font-weight: 500; /* Poids moyen */
+    display: flex; /* Flexbox */
+    align-items: center; /* Alignement vertical */
+    gap: 8px; /* Espacement */
+}
+
+/* ===== TABLES ===== */
+.table-container {
+    background: white; /* Fond blanc */
+    border-radius: 15px; /* Coins arrondis */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); /* Ombre douce */
+    border: 1px solid rgba(226, 232, 240, 0.5); /* Bordure claire */
+    overflow: hidden; /* Masque le débordement */
+    margin-bottom: 30px; /* Marge en bas */
+}
+
+.table-wrap {
+    border-radius: 12px; /* Coins arrondis */
+    border: 1px solid #e2e8f0; /* Bordure */
+    overflow: auto; /* Scroll si trop large */
+}
+
+.scroll-220 {
+    max-height: 400px; /* Hauteur max pour scroll */
+}
+
+.messages-table,
+.logs-table,
+.file-table {
+    width: 100%; /* Pleine largeur */
+    border-collapse: collapse; /* Supprime espace entre cellules */
+    background: white; /* Fond blanc */
+}
+
+.file-table {
+    width: 100%;
+    min-width: 1000px;
+    border-collapse: collapse;
+    table-layout: fixed; /* IMPORTANT pour que width fonctionne */
+}
+
+.messages-table thead th,
+.logs-table thead th,
+.file-table thead th {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%); /* Fond sombre pour entête */
+    color: white; /* Texte blanc */
+    padding: 18px 15px; /* Padding interne */
+    text-align: left; /* Texte à gauche */
+    font-weight: 600; /* Gras moyen */
+    font-size: 14px; /* Taille texte */
+    text-transform: uppercase; /* Majuscules */
+    letter-spacing: 0.5px; /* Espacement lettres */
+    position: sticky; /* Reste visible lors du scroll */
+    top: 0; /* Position sticky */
+    z-index: 10; /* Priorité au-dessus */
+}
+
+.messages-table tbody td,
+.logs-table tbody td,
+.file-table tbody td {
+    padding: 15px; /* Padding interne */
+    border-bottom: 1px solid #f1f5f9; /* Ligne de séparation */
+    font-size: 14px; /* Taille texte */
+    vertical-align: middle; /* Alignement vertical */
+    white-space: nowrap; /* Pas de retour ligne */
+    overflow: hidden; /* Masque dépassement */
+    text-overflow: ellipsis; /* Ajoute "..." si texte long */
+}
+
+.messages-table tbody tr:hover,
+.logs-table tbody tr:hover,
+.file-table tbody tr:hover {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); /* Fond clair au hover */
+    transition: all 0.3s ease; /* Transition douce */
+}
+
+
+/* ===== DIMENSIONS COLONNES FICHIER ===== */
+.file-table th:nth-child(1), td:nth-child(1) { width: 60px; }  /* ID */
+.file-table th:nth-child(2), td:nth-child(2) { width: 70px; }  /* Année */
+.file-table th:nth-child(3), td:nth-child(3) { width: 120px; }  /* Année scolaire */
+.file-table th:nth-child(4), td:nth-child(4) { width: 370px; }  /* Titre */
+.file-table th:nth-child(5), td:nth-child(5) { width: 70px; }   /* Type */
+.file-table th:nth-child(6), td:nth-child(6) { width: 220px; }  /* Cours */
+.file-table th:nth-child(7), td:nth-child(7) { width: 150px; }  /* Nom/Discord */
+.file-table th:nth-child(8), td:nth-child(8) { width: 100px; }  /* Taille */
+.file-table th:nth-child(9), td:nth-child(9) { width: 130px; }  /* Date */
+.file-table th:nth-child(10), td:nth-child(10) { width: 50px; } /* Likes */
+.file-table th:nth-child(11), td:nth-child(11) { width: 50px; } /* Dislikes */
+.file-table th:nth-child(12), td:nth-child(12) { width: 300px; }/* Actions */
+
+/* ===== BOUTONS D'ACTION ===== */
+.edit-btn,
+.delete-btn {
+    padding: 8px 16px; /* Padding interne */
+    border: none; /* Pas de bordure */
+    border-radius: 8px; /* Coins arrondis */
+    cursor: pointer; /* Curseur pointer */
+    font-size: 12px; /* Taille texte */
+    font-weight: 600; /* Gras moyen */
+    margin-right: 8px; /* Marge droite */
+    transition: all 0.3s ease; /* Transition douce */
+    text-transform: uppercase; /* Texte en majuscule */
+    letter-spacing: 0.5px; /* Espacement lettres */
+    display: inline-flex; /* Flex pour contenu */
+    align-items: center; /* Alignement vertical */
+    gap: 6px; /* Espacement interne */
+}
+
+.edit-btn {
+    background: linear-gradient(135deg, #0ea5e9, #0284c7); /* Dégradé bleu */
+    color: white; /* Texte blanc */
+}
+
+.edit-btn:hover {
+    transform: translateY(-2px); /* Légère élévation */
+    box-shadow: 0 6px 18px rgba(14, 165, 233, 0.3); /* Ombre bleue */
+}
+
+.delete-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626); /* Dégradé rouge */
+    color: white; /* Texte blanc */
+}
+
+.delete-btn:hover {
+    transform: translateY(-2px); /* Légère élévation */
+    box-shadow: 0 6px 18px rgba(239, 68, 68, 0.3); /* Ombre rouge */
+}
+
+/* ===== MODAL ===== */
+.modal {
+    position: fixed; /* Position fixe sur l’écran */
+    inset: 0; /* Top, right, bottom, left = 0 */
+    background: rgba(15, 23, 42, 0.8); /* Fond semi-transparent */
+    backdrop-filter: blur(5px); /* Flou arrière-plan */
+    z-index: 1000; /* Au-dessus de tout */
+    display: flex; /* Flexbox */
+    align-items: center; /* Centrer verticalement */
+    justify-content: center; /* Centrer horizontalement */
+    padding: 20px; /* Padding interne */
+}
+
+.modal-content {
+    background: white; /* Fond blanc */
+    padding: 30px; /* Padding interne */
+    border-radius: 20px; /* Coins arrondis */
+    width: 100%; /* Largeur 100% */
+    max-width: 600px; /* Largeur max */
+    max-height: 90vh; /* Hauteur max */
+    overflow-y: auto; /* Scroll vertical si nécessaire */
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2); /* Ombre */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Bordure très claire */
+    position: relative; /* Position relative pour close */
+}
+
+.close {
+    position: absolute; /* Position absolue dans le modal */
+    right: 20px; /* À 20px à droite */
+    top: 20px; /* À 20px du haut */
+    font-size: 28px; /* Taille texte */
+    cursor: pointer; /* Curseur pointer */
+    color: #64748b; /* Couleur gris */
+    transition: all 0.3s ease; /* Transition douce */
+    width: 40px; /* Largeur bouton */
+    height: 40px; /* Hauteur bouton */
+    display: flex; /* Flexbox */
+    align-items: center; /* Alignement vertical */
+    justify-content: center; /* Centrer contenu */
+    border-radius: 50%; /* Cercle */
+}
+
+.close:hover {
+    background: #f1f5f9; /* Fond clair au hover */
+    color: #ef4444; /* Texte rouge */
+    transform: rotate(90deg); /* Rotation du bouton */
+}
+
+.modal h3 {
+    color: #1e293b; /* Texte sombre */
+    font-size: 24px; /* Taille texte */
+    font-weight: 700; /* Gras */
+    margin-bottom: 25px; /* Marge en bas */
+    padding-bottom: 15px; /* Padding bas */
+    border-bottom: 2px solid #e2e8f0; /* Bordure séparatrice */
+    display: flex; /* Flexbox */
+    align-items: center; /* Alignement vertical */
+    gap: 10px; /* Espacement interne */
+}
+
+.modal .form-group input,
+.modal .form-group select,
+.modal .form-group textarea {
+    width: 100%; /* Pleine largeur */
+    padding: 12px 16px; /* Padding interne */
+    border: 2px solid #e2e8f0; /* Bordure claire */
+    border-radius: 10px; /* Coins arrondis */
+    font-size: 14px; /* Taille texte */
+    transition: all 0.3s ease; /* Transition douce */
+    background: white; /* Fond blanc */
+    font-family: inherit; /* Police héritée */
+}
+
+.modal .form-group input:focus,
+.modal .form-group select:focus,
+.modal .form-group textarea:focus {
+    outline: none; /* Supprime contour par défaut */
+    border-color: #667eea; /* Bordure bleue au focus */
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); /* Ombre douce */
+    transform: translateY(-1px); /* Légère élévation */
+}
+
+.form-actions {
+    display: flex; /* Flexbox pour boutons */
+    gap: 15px; /* Espacement entre boutons */
+    justify-content: flex-end; /* Alignement à droite */
+    margin-top: 10px; /* Marge en haut */
+    padding-top: 5px; /* Padding en haut */
+    border-top: 1px solid #e2e8f0; /* Bordure séparatrice */
+}
+
+.cancel-btn {
+    background: transparent; /* Fond transparent */
+    color: #64748b; /* Texte gris */
+    border: 2px solid #e2e8f0; /* Bordure claire */
+    padding: 12px 24px; /* Padding interne */
+    border-radius: 10px; /* Coins arrondis */
+    font-weight: 600; /* Gras moyen */
+    cursor: pointer; /* Curseur pointer */
+    transition: all 0.3s ease; /* Transition douce */
+    display: flex; /* Flexbox pour contenu */
+    align-items: center; /* Alignement vertical */
+    gap: 8px; /* Espacement interne */
+}
+
+.cancel-btn:hover {
+    background: #f1f5f9; /* Fond clair */
+    border-color: #cbd5e1; /* Bordure légèrement plus sombre */
+    transform: translateY(-1px); /* Légère élévation */
+}
+
+/* ===== POPUP COOKIES ===== */
+.cookie-popup {
+    position: fixed; /* Position fixe */
+    bottom: 30px; /* 30px du bas */
+    right: 30px; /* 30px de la droite */
+    background: white; /* Fond blanc */
+    padding: 25px; /* Padding interne */
+    border-radius: 15px; /* Coins arrondis */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); /* Ombre */
+    border: 1px solid rgba(226, 232, 240, 0.5); /* Bordure claire */
+    z-index: 1000; /* Au-dessus de tout */
+    max-width: 400px; /* Largeur max */
+    animation: slideIn 0.5s ease-out; /* Animation entrée */
+}
+
+.cookie-popup h2 {
+    color: #1e293b; /* Texte sombre */
+    font-size: 18px; /* Taille texte */
+    font-weight: 700; /* Gras */
+    margin-bottom: 15px; /* Marge en bas */
+    display: flex; /* Flexbox */
+    align-items: center; /* Alignement vertical */
+    gap: 8px; /* Espacement interne */
+}
+
+.cookie-popup p {
+    color: #64748b; /* Texte gris */
+    margin-bottom: 20px; /* Marge bas */
+    line-height: 1.5; /* Hauteur ligne */
+}
+
+.cookie-popup button {
+    margin-right: 10px; /* Marge droite */
+    padding: 10px 20px; /* Padding interne */
+    border-radius: 8px; /* Coins arrondis */
+    border: none; /* Pas de bordure */
+    cursor: pointer; /* Curseur pointer */
+    font-weight: 600; /* Gras moyen */
+    transition: all 0.3s ease; /* Transition douce */
+    display: inline-flex; /* Flexbox */
+    align-items: center; /* Alignement vertical */
+    gap: 6px; /* Espacement interne */
+}
+
+#acceptCookies {
+    background: linear-gradient(135deg, #10b981, #059669); /* Bouton vert */
+    color: white; /* Texte blanc */
+}
+
+#acceptCookies:hover {
+    transform: translateY(-2px); /* Légère élévation */
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.3); /* Ombre verte */
+}
+
+#refuseCookies {
+    background: transparent; /* Fond transparent */
+    color: #64748b; /* Texte gris */
+    border: 2px solid #e2e8f0; /* Bordure claire */
+}
+
+#refuseCookies:hover {
+    background: #f1f5f9; /* Fond clair */
+    border-color: #cbd5e1; /* Bordure légèrement plus sombre */
+}
+
+/* ===== INDICATEURS DE STATUT ===== */
+.status-indicator {
+    display: inline-block; /* Affichage inline */
+    width: 8px; /* Largeur */
+    height: 8px; /* Hauteur */
+    border-radius: 50%; /* Cercle */
+    margin-right: 8px; /* Marge droite */
+}
+
+.status-success { background: #10b981; } /* Vert succès */
+.status-warning { background: #f59e0b; } /* Orange avertissement */
+.status-error { background: #ef4444; } /* Rouge erreur */
+
+.count-badge {
+    background: linear-gradient(135deg, #667eea, #764ba2); /* Dégradé bleu */
+    color: white; /* Texte blanc */
+    padding: 4px 12px; /* Padding interne */
+    border-radius: 20px; /* Coins arrondis */
+    font-size: 12px; /* Taille texte */
+    font-weight: 600; /* Gras moyen */
+    margin-left: 8px; /* Marge gauche */
+}
+
+/* ===== ÉTATS DE CHARGEMENT ===== */
+.loading {
+    opacity: 0.6; /* Transparence */
+    pointer-events: none; /* Désactive interaction */
+    position: relative; /* Position relative pour pseudo-élément */
+}
+
+.loading::after {
+    content: ''; /* Contenu vide */
+    position: absolute; /* Position absolue */
+    top: 50%; /* Centré vertical */
+    left: 50%; /* Centré horizontal */
+    transform: translate(-50%, -50%); /* Ajuste pour centrage */
+    width: 30px; /* Largeur spinner */
+    height: 30px; /* Hauteur spinner */
+    border: 3px solid #e2e8f0; /* Bordure gris clair */
+    border-top: 3px solid #667eea; /* Partie supérieure bleue */
+    border-radius: 50%; /* Cercle */
+    animation: spin 1s linear infinite; /* Animation rotation */
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .admin-container {
+        margin: 10px; /* Marge réduite */
+        padding: 20px; /* Padding réduit */
+        width: calc(100% - 20px); /* Largeur adaptative */
+    }
+
+    .admin-title { font-size: 24px; } /* Taille titre réduite */
+
+    .admin-header {
+        flex-direction: column; /* Colonne */
+        gap: 15px; /* Espacement */
+        text-align: center; /* Centrer texte */
+    }
+
+    .admin-header h2 { font-size: 24px; } /* Taille titre réduite */
+
+    .filter-options {
+        flex-direction: column; /* Colonne */
+        align-items: stretch; /* Étire champs */
+    }
+
+    .filter-options input,
+    .filter-options select {
+        min-width: auto; /* Largeur auto */
+        width: 100%; /* Pleine largeur */
+    }
+
+    .card-head {
+        flex-direction: column; /* Colonne */
+        gap: 15px; /* Espacement */
+        text-align: center; /* Centre texte */
+    }
+
+    .card-actions {
+        flex-wrap: wrap; /* Retour à la ligne */
+        justify-content: center; /* Centrer boutons */
+    }
+
+    .table-container { overflow-x: auto; } /* Scroll horizontal si nécessaire */
+
+    .modal-content {
+        margin: 20px; /* Marges réduites */
+        padding: 20px; /* Padding réduit */
+    }
+
+    .form-actions { flex-direction: column; } /* Colonnes boutons */
+    .cookie-popup {
+        bottom: 10px; /* Ajuste bas */
+        right: 10px; /* Ajuste droite */
+        left: 10px; /* Ajuste gauche */
+        max-width: none; /* Largeur max désactivée */
+    }
+}
+
+@media (max-width: 480px) {
+    .login-form { padding: 30px 20px; } /* Padding réduit */
+    .admin-title { font-size: 20px; } /* Taille titre réduite */
+    .btn { padding: 8px 12px; font-size: 12px; } /* Boutons plus petits */
+    .edit-btn,
+    .delete-btn { padding: 6px 10px; font-size: 11px; margin-bottom: 5px; } /* Petits boutons d’action */
+}
+
+/* ===== UTILITAIRES ===== */
+.text-center { text-align: center; } /* Texte centré */
+.text-muted { color: #64748b; } /* Texte gris */
+.fw-bold { font-weight: 700; } /* Gras */
+.d-none { display: none; } /* Masqué */
+.mb-0 { margin-bottom: 0; } /* Pas de marge en bas */
+.mt-2 { margin-top: 0.5rem; } /* Marge en haut 0.5rem */
+.p-relative { position: relative; } /* Position relative */
+
+.collapse-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: transform 0.3s;
+    margin-left: 10px; /* espace avec le titre */
+}
+
+.collapse-btn:hover {
+    color: #667eea;
+    transform: scale(1.2);
 }

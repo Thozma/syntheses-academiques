@@ -1800,3 +1800,59 @@ a:visited {
   margin-left: auto; /* pousse le select complètement à droite */
   padding: 5px;
 }
+
+
+.file-title-container {
+  display: flex;
+  justify-content: space-between; /* lien à gauche, votes à droite */
+  align-items: center;
+}
+
+.file-votes {
+  display: flex;
+  gap: 5px; /* espace entre les deux boutons */
+}
+
+.vote-btn {
+  position: relative;              /* permet de positionner le nombre par rapport au bouton */
+  border: 1px solid #ccc;          /* bordure du cadre */
+  background-color: #f9f9f9;       /* couleur de fond */
+  border-radius: 5px;               /* coins arrondis */
+  padding: 5px 10px;                /* espace intérieur */
+  font-size: 1em;                   /* taille du pouce */
+  cursor: pointer;                  /* curseur main */
+  display: inline-flex;             /* pour contenir le pouce */
+  align-items: center;              /* centrage vertical */
+  justify-content: center;          /* centrage horizontal */
+  min-width: 30px;                  /* largeur minimum du bouton */
+  height: 30px;                     /* hauteur du bouton */
+  transition: background-color 0.2s, transform 0.2s; /* effet hover */
+}
+
+.vote-btn:hover {
+  background-color: #e0e0e0;        /* changement de fond au survol */
+  transform: scale(1.1);            /* zoom au survol */
+}
+
+.vote-count {
+  position: absolute;               /* position absolue pour ne pas décaler le pouce */
+  top: -5px;                        /* légèrement au-dessus du centre du bouton */
+  right: -5px;                      /* légèrement à droite du bouton */
+  display: flex;                     /* centrage du chiffre dans le rond */
+  align-items: center;
+  justify-content: center;
+  width: 16px;                       /* taille du rond */
+  height: 16px;
+  font-size: 0.7em;                  /* chiffre plus petit que le pouce */
+  background-color: #ddd;            /* couleur du rond */
+  color: #333;                       /* couleur du texte */
+  border-radius: 50%;                /* rond parfait */
+}
+
+.vote-count:empty {
+  display: none;                     /* cache le nombre si 0 */
+}
+
+
+
+

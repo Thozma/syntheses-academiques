@@ -364,3 +364,8 @@ Tous droits réservés © 2025
 - Organisation et mise en forme des filtres sur la page administrateur pour un affichage plus clair et intuitif.
 - Tri automatique des fichiers par ID décroissant dans le tableau administrateur.
 - Gestion améliorée des événements de filtrage (recherche, cours, type, année scolaire) pour un rafraîchissement instantané du tableau.
+
+### 18/09/2025
+- Ajout de possibilté de dire si la synthese est bien avec un vote
+- Organisation et amélioration de la page Administration (Tableau avec filtres, organisation par ordre croissant ou décroissant, amélioration des messages et des LogsAdmin)
+- Reparation des liens videos

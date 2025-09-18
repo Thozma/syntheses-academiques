@@ -1,8 +1,7 @@
-
 <!-- Site web de partage de synthèses académiques - 1ère année
 @author: Thomas Bauwens
 @date : mai 2025
-@modifiéDate : 17 septembre 2025 
+@modifiéDate : 18 septembre 2025 
 -->
 
 <!DOCTYPE html>
@@ -95,16 +94,16 @@
   <!-- Section listant les fichiers disponibles -->
   <div class="files-container">
     <div class="files-header">
-  <h2><span class="java-keyword">import</span> Synthèses disponibles</h2>
-  <select id="anneeScolaireFilter">
-    <option value="">Toutes les années</option>
-    <option value="2021-2022">2021-2022</option>
-    <option value="2022-2023">2022-2023</option>
-    <option value="2023-2024">2023-2024</option>
-    <option value="2024-2025">2024-2025</option>
-    <option value="2025-2026">2025-2026</option>
-  </select>
-</div>
+      <h2><span class="java-keyword">import</span> Synthèses disponibles</h2>
+      <select id="anneeScolaireFilter">
+        <option value="">Toutes les années</option>
+        <option value="2021-2022">2021-2022</option>
+        <option value="2022-2023">2022-2023</option>
+        <option value="2023-2024">2023-2024</option>
+        <option value="2024-2025">2024-2025</option>
+        <option value="2025-2026">2025-2026</option>
+      </select>
+    </div>
     <!-- Conteneur où la liste des fichiers sera chargée dynamiquement -->
     <div id="filesList" class="files-list">
       <p>Chargement des synthèses...</p>
@@ -349,104 +348,104 @@
     }
 
 
-  /**
-   * ========== GESTION DU FORMULAIRE D'UPLOAD ==========
-   * Fonction asynchrone qui gère la soumission du formulaire d'upload de fichiers
-   * Récupère les données du formulaire et le fichier, les envoie au serveur,
-   * affiche un message de confirmation et rafraîchit la liste des fichiers
-   * 
-   * @param {Event} event - L'événement de soumission du formulaire
-   * @returns {boolean} - Retourne false pour empêcher la soumission normale du formulaire
-   */
-  async function handleUpload(event) {
-    console.log('submit')
-    event.preventDefault();
-    const form = event.target;
-    const confirmationMessage = document.getElementById('confirmationMessage');
-    const uploadType = document.getElementById('uploadType').value;
+    /**
+     * ========== GESTION DU FORMULAIRE D'UPLOAD ==========
+     * Fonction asynchrone qui gère la soumission du formulaire d'upload de fichiers
+     * Récupère les données du formulaire et le fichier, les envoie au serveur,
+     * affiche un message de confirmation et rafraîchit la liste des fichiers
+     * 
+     * @param {Event} event - L'événement de soumission du formulaire
+     * @returns {boolean} - Retourne false pour empêcher la soumission normale du formulaire
+     */
+    async function handleUpload(event) {
+      console.log('submit')
+      event.preventDefault();
+      const form = event.target;
+      const confirmationMessage = document.getElementById('confirmationMessage');
+      const uploadType = document.getElementById('uploadType').value;
 
-    try {
-      confirmationMessage.style.display = 'block';
-      confirmationMessage.textContent = 'Upload en cours...';
+      try {
+        confirmationMessage.style.display = 'block';
+        confirmationMessage.textContent = 'Upload en cours...';
 
-      let response, result;
+        let response, result;
 
-      // Crée un FormData commun pour tous les uploads de fichiers
-      const formData = new FormData();
-      formData.append('uploadType', uploadType);
-      formData.append('nomDiscord', document.getElementById('nomDiscord').value);
-      formData.append('cours', document.getElementById('cours').value);
-      formData.append('titre', document.getElementById('titre').value);
-      formData.append('description', document.getElementById('description').value);
-      formData.append('annee', document.getElementById('annee').value);
-      formData.append('anneeScolaire', document.getElementById('anneeScolaire').value);
+        // Crée un FormData commun pour tous les uploads de fichiers
+        const formData = new FormData();
+        formData.append('uploadType', uploadType);
+        formData.append('nomDiscord', document.getElementById('nomDiscord').value);
+        formData.append('cours', document.getElementById('cours').value);
+        formData.append('titre', document.getElementById('titre').value);
+        formData.append('description', document.getElementById('description').value);
+        formData.append('annee', document.getElementById('annee').value);
+        formData.append('anneeScolaire', document.getElementById('anneeScolaire').value);
 
-      if (uploadType === 'pdf') {
-        const file = document.getElementById('fichier').files[0];
-        if (!file) throw new Error('Veuillez sélectionner un fichier PDF');
-        formData.append('fichier', file);
+        if (uploadType === 'pdf') {
+          const file = document.getElementById('fichier').files[0];
+          if (!file) throw new Error('Veuillez sélectionner un fichier PDF');
+          formData.append('fichier', file);
 
-        response = await fetch('/upload', { method: 'POST', body: formData });
+          response = await fetch('/upload', { method: 'POST', body: formData });
 
-      } else if (uploadType === 'zip') {
-        const file = document.getElementById('fichierZip').files[0];
-        if (!file) throw new Error('Veuillez sélectionner un fichier ZIP');
-        formData.append('fichier', file);
+        } else if (uploadType === 'zip') {
+          const file = document.getElementById('fichierZip').files[0];
+          if (!file) throw new Error('Veuillez sélectionner un fichier ZIP');
+          formData.append('fichier', file);
 
-        response = await fetch('/upload', { method: 'POST', body: formData });
+          response = await fetch('/upload', { method: 'POST', body: formData });
 
-      } else if (uploadType === 'multi') {
-        const files = document.getElementById('fichierMulti').files;
-        if (files.length === 0) throw new Error('Veuillez sélectionner au moins un fichier');
-        for (let i = 0; i < files.length; i++) {
-          formData.append('fichiers', files[i]);
+        } else if (uploadType === 'multi') {
+          const files = document.getElementById('fichierMulti').files;
+          if (files.length === 0) throw new Error('Veuillez sélectionner au moins un fichier');
+          for (let i = 0; i < files.length; i++) {
+            formData.append('fichiers', files[i]);
+          }
+          response = await fetch('/upload-multi', { method: 'POST', body: formData });
+
+        } else if (uploadType === 'video') {
+          const videoUrl = document.getElementById('videoUrl').value;
+          if (!videoUrl) throw new Error('Veuillez entrer un lien vidéo');
+
+          const videoData = {
+            uploadType: 'video',
+            annee: document.getElementById('annee').value,
+            anneeScolaire: document.getElementById('anneeScolaire').value,
+            videoUrl,
+            nomDiscord: document.getElementById('nomDiscord').value,
+            cours: document.getElementById('cours').value,
+            titre: document.getElementById('titre').value,
+            description: document.getElementById('description').value
+          };
+
+          console.log('Envoi des données vidéo:', videoData);
+          response = await fetch('/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(videoData)
+          });
         }
-        response = await fetch('/upload-multi', { method: 'POST', body: formData });
 
-      } else if (uploadType === 'video') {
-        const videoUrl = document.getElementById('videoUrl').value;
-        if (!videoUrl) throw new Error('Veuillez entrer un lien vidéo');
+        result = await response.json();
 
-        const videoData = {
-          uploadType: 'video',
-          annee: document.getElementById('annee').value,
-          anneeScolaire: document.getElementById('anneeScolaire').value,
-          videoUrl,
-          nomDiscord: document.getElementById('nomDiscord').value,
-          cours: document.getElementById('cours').value,
-          titre: document.getElementById('titre').value,
-          description: document.getElementById('description').value
-        };
+        if (result.error) {
+          const errorMessage = typeof result.error === 'object' ? JSON.stringify(result.error) : result.error;
+          throw new Error(errorMessage);
+        }
 
-        console.log('Envoi des données vidéo:', videoData);
-        response = await fetch('/upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(videoData)
-        });
+        confirmationMessage.textContent = result.message;
+        confirmationMessage.style.color = '#155724';
+        form.reset();
+        selectUploadType('pdf');
+        loadFiles();
+
+      } catch (error) {
+        console.error('Erreur:', error);
+        confirmationMessage.textContent = error.message || 'Erreur lors de l\'upload';
+        confirmationMessage.style.color = '#721c24';
       }
 
-      result = await response.json();
-
-      if (result.error) {
-        const errorMessage = typeof result.error === 'object' ? JSON.stringify(result.error) : result.error;
-        throw new Error(errorMessage);
-      }
-
-      confirmationMessage.textContent = result.message;
-      confirmationMessage.style.color = '#155724';
-      form.reset();
-      selectUploadType('pdf');
-      loadFiles();
-
-    } catch (error) {
-      console.error('Erreur:', error);
-      confirmationMessage.textContent = error.message || 'Erreur lors de l\'upload';
-      confirmationMessage.style.color = '#721c24';
+      return false;
     }
-
-    return false;
-  }
 
     /**
  * ========== CHARGEMENT ET AFFICHAGE DES FICHIERS ==========
@@ -455,48 +454,48 @@
  * et implémente la fonctionnalité de sections pliables/dépliables
  * @param {string} anneeFilter - année scolaire à filtrer (ex: "2023-2024"), "" = toutes
  */
-function loadFiles(anneeFilter = "") {
-  const baseUrl = window.location.origin;
-  const fetchUrl = `${baseUrl}/get-files?annee=1`; // Filtre 1ère année
+    function loadFiles(anneeFilter = "") {
+      const baseUrl = window.location.origin;
+      const fetchUrl = `${baseUrl}/get-files?annee=1`; // Filtre 1ère année
 
-  fetch(fetchUrl)
-    .then((response) => {
-      if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
-      return response.json();
-    })
-    .then((files) => {
-      console.log('Fichiers récupérés:', files.length);
+      fetch(fetchUrl)
+        .then((response) => {
+          if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+          return response.json();
+        })
+        .then((files) => {
+          console.log('Fichiers récupérés:', files.length);
 
-      // Formater toutes les dates dans le format JJ/MM/AAAA
-      files.forEach(file => {
-        if (file.dateAjout) file.dateAjout = formatDate(file.dateAjout);
-        if (file.date) file.date = formatDate(file.date);
-      });
+          // Formater toutes les dates dans le format JJ/MM/AAAA
+          files.forEach(file => {
+            if (file.dateAjout) file.dateAjout = formatDate(file.dateAjout);
+            if (file.date) file.date = formatDate(file.date);
+          });
 
-      // Appliquer le filtre par année scolaire si sélectionné
-      if (anneeFilter) {
-        files = files.filter(file => file.anneeScolaire === anneeFilter);
-      }
+          // Appliquer le filtre par année scolaire si sélectionné
+          if (anneeFilter) {
+            files = files.filter(file => file.anneeScolaire === anneeFilter);
+          }
 
-      const filesListDiv = document.getElementById("filesList");
+          const filesListDiv = document.getElementById("filesList");
 
-      if (files.length === 0) {
-        filesListDiv.innerHTML = "<p>Aucune synthèse n'est disponible pour cette année.</p>";
-        return;
-      }
+          if (files.length === 0) {
+            filesListDiv.innerHTML = "<p>Aucune synthèse n'est disponible pour cette année.</p>";
+            return;
+          }
 
-      const filesByCourse = {};
-      files.forEach(file => {
-        if (!filesByCourse[file.cours]) filesByCourse[file.cours] = [];
-        filesByCourse[file.cours].push(file);
-      });
+          const filesByCourse = {};
+          files.forEach(file => {
+            if (!filesByCourse[file.cours]) filesByCourse[file.cours] = [];
+            filesByCourse[file.cours].push(file);
+          });
 
-      let html = '';
-      Object.keys(filesByCourse).sort().forEach(cours => {
-        const courseFiles = filesByCourse[cours];
-        const courseIcon = getCourseIcon(cours);
+          let html = '';
+          Object.keys(filesByCourse).sort().forEach(cours => {
+            const courseFiles = filesByCourse[cours];
+            const courseIcon = getCourseIcon(cours);
 
-        html += `
+            html += `
           <div class="course-section">
             <h3>
               <span class="course-icon">${courseIcon}</span> ${cours}
@@ -505,73 +504,92 @@ function loadFiles(anneeFilter = "") {
             <div class="course-files">
         `;
 
-        courseFiles.sort((a, b) => new Date(b.dateAjout) - new Date(a.dateAjout)).forEach(file => {
-          html += `
-            <div class="file-item">
-              ${generateFileLink(file)}
-              <div class="file-meta">
-                <span class="file-info"><span class="label">Nom :</span> ${file.nomDiscord}</span>
-                <span class="file-size">${file.type === 'video' ? 'Lien externe' : `${(file.poidsFichier / 1048576).toFixed(2)} Mo`}</span>
-                <span class="file-date">${formatDate(file.dateAjout)}</span>
-              </div>
-              ${file.anneeScolaire ? `<div class="file-school-year"><span class="label">Année scolaire :</span> ${file.anneeScolaire}</div>` : ''}
-              ${file.description ? `<div class="file-description"><span class="label">Description :</span> ${file.description}</div>` : ''}
-            </div>
-          `;
-        });
+            courseFiles.sort((a, b) => new Date(b.dateAjout) - new Date(a.dateAjout)).forEach(file => {
+              html += `
+    <div class="file-item">
+      <!-- Conteneur flex uniquement pour le lien et les votes -->
+      <div class="file-title-container">
+        ${generateFileLink(file)}
+        <div class="file-votes">
+        <button class="vote-btn upvote" onclick="handleVote(${file.id}, 'like')">
+       👍 <span id="up_${file.id}" class="vote-count">${file.likes > 0 ? file.likes : ''}</span>
+        </button>
 
-        html += `</div></div>`;
-      });
+        <button class="vote-btn downvote" onclick="handleVote(${file.id}, 'dislike')">
+        👎 <span id="down_${file.id}" class="vote-count">${file.dislikes > 0 ? file.dislikes : ''}</span>
+        </button>
+        </div>
+      </div>
 
-      filesListDiv.innerHTML = html;
+      <!-- Métadonnées en dessous -->
+      <div class="file-meta">
+        <span class="file-info"><span class="label">Nom :</span> ${file.nomDiscord}</span>
+        <span class="file-size">${file.type === 'video' ? 'Lien externe' : `${(file.poidsFichier / 1048576).toFixed(2)} Mo`}</span>
+        <span class="file-date">${formatDate(file.dateAjout)}</span>
+      </div>
 
-      // Sections pliables/dépliables
-      document.querySelectorAll('.course-section').forEach(section => section.classList.remove('open'));
-      document.querySelectorAll('.course-section h3').forEach(header => {
-        header.addEventListener('click', () => {
-          header.parentElement.classList.toggle('open');
-        });
-      });
-    })
-    .catch(error => {
-      console.error("Erreur lors du chargement des fichiers:", error);
-      document.getElementById("filesList").innerHTML =
-        `<p>Une erreur s'est produite lors du chargement des synthèses.</p>
+      ${file.anneeScolaire ? `<div class="file-school-year"><span class="label">Année scolaire :</span> ${file.anneeScolaire}</div>` : ''}
+      ${file.description ? `<div class="file-description"><span class="label">Description :</span> ${file.description}</div>` : ''}
+    </div>
+  `;
+            });
+
+
+
+
+            html += `</div></div>`;
+          });
+
+          filesListDiv.innerHTML = html;
+
+          // Sections pliables/dépliables
+          document.querySelectorAll('.course-section').forEach(section => section.classList.remove('open'));
+          document.querySelectorAll('.course-section h3').forEach(header => {
+            header.addEventListener('click', () => {
+              header.parentElement.classList.toggle('open');
+            });
+          });
+        })
+        .catch(error => {
+          console.error("Erreur lors du chargement des fichiers:", error);
+          document.getElementById("filesList").innerHTML =
+            `<p>Une erreur s'est produite lors du chargement des synthèses.</p>
          <p style="font-size: 0.8em; color: #666;">Détail de l'erreur: ${error.message}</p>`;
-    });
+        });
+    }
+
+
+/**
+ * Génère le lien HTML pour un fichier
+ * 
+ * @param {Object} file - Objet contenant les métadonnées du fichier
+ * @returns {string} - HTML pour le lien du fichier
+ */
+function generateFileLink(file) {
+  // Génère un lien différent selon le type de fichier (PDF, ZIP ou vidéo)
+  if (file.type === 'video') {
+    // Pour les vidéos, crée un lien externe vers la vidéo
+    const videoLink = file.path || file.nomFichier; // utilise path si défini, sinon nomFichier
+    return `<a href="${videoLink}" target="_blank" class="file-link" style="text-decoration: none;">
+                <span class="file-type-badge">🎥</span>
+                <span class="file-title" style="color: #0066cc;">${file.titre}</span>
+            </a>`;
+  } else if (file.type === 'zip') {
+    // Pour les ZIPs, crée un lien vers le fichier local
+    return `<a href="${file.path}" target="_blank" class="file-link" style="text-decoration: none;">
+                <span class="file-type-badge">💼</span>
+                <span class="file-title" style="color: #0066cc;">${file.titre}</span>
+            </a>`;
+  } else {
+    // Pour les PDFs, crée un lien vers le fichier local
+    const filePath = file.path || `/Les synthèses des invités/${file.cours}/${file.nomFichier}`;
+    return `<a href="${filePath}" target="_blank" class="file-link" style="text-decoration: none;">
+                <span class="file-type-badge">📄</span>
+                <span class="file-title" style="color: #0066cc;">${file.titre}</span>
+            </a>`;
+  }
 }
 
-
-    /**
-     * Génère le lien HTML pour un fichier
-     * 
-     * @param {Object} file - Objet contenant les métadonnées du fichier
-     * @returns {string} - HTML pour le lien du fichier
-     */
-    function generateFileLink(file) {
-      // Génère un lien différent selon le type de fichier (PDF, ZIP ou vidéo)
-      if (file.type === 'video') {
-        // Pour les vidéos, crée un lien externe vers la vidéo
-        return `<a href="${file.url}" target="_blank" class="file-link" style="text-decoration: none;">
-                    <span class="file-type-badge">🎥</span>
-                    <span class="file-title" style="color: #0066cc;">${file.titre}</span>
-                  </a>`;
-      } else if (file.type === 'zip') {
-        // Pour les ZIPs, crée un lien vers le fichier local
-        return `<a href="${file.path}" target="_blank" class="file-link" style="text-decoration: none;">
-                    <span class="file-type-badge">💼</span>
-                    <span class="file-title" style="color: #0066cc;">${file.titre}</span>
-                  </a>`;
-      } else {
-        // Pour les PDFs, crée un lien vers le fichier local
-        // Vérifie si la propriété path est définie, sinon utilise nomFichier
-        const filePath = file.path || `/Les synthèses des invités/${file.cours}/${file.nomFichier}`;
-        return `<a href="${filePath}" target="_blank" class="file-link" style="text-decoration: none;">
-                    <span class="file-type-badge">📄</span>
-                    <span class="file-title" style="color: #0066cc;">${file.titre}</span>
-                  </a>`;
-      }
-    }
 
     /**
      * Fonction qui formate une date au format jour/mois/année
@@ -631,17 +649,17 @@ function loadFiles(anneeFilter = "") {
     }
 
     // Charge les fichiers lorsque la page est prête
-document.addEventListener("DOMContentLoaded", () => {
-  const anneeFilter = document.getElementById("anneeScolaireFilter");
+    document.addEventListener("DOMContentLoaded", () => {
+      const anneeFilter = document.getElementById("anneeScolaireFilter");
 
-  // Charger tous les fichiers au départ
-  loadFiles();
+      // Charger tous les fichiers au départ
+      loadFiles();
 
-  // Filtrer quand l'utilisateur change l'année scolaire
-  anneeFilter.addEventListener("change", () => {
-    loadFiles(anneeFilter.value);
-  });
-});
+      // Filtrer quand l'utilisateur change l'année scolaire
+      anneeFilter.addEventListener("change", () => {
+        loadFiles(anneeFilter.value);
+      });
+    });
 
 
 
@@ -664,8 +682,13 @@ document.addEventListener("DOMContentLoaded", () => {
       </a>
     </p>
   </footer>
+
   <!-- Script cookiesConsent -->
   <script src="cookiesConsent.js"></script>
+
+  <!-- Script vote -->
+  <script src="vote.js"></script>
+
 </body>
 
 </html>

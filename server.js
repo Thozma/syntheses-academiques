@@ -1,7 +1,8 @@
 /** Site web de partage de synthèses académiques - SERVER.JS Gestion des uploads, vidéos, messages et fichiers JSON associés
 @author: Thomas Bauwens
 @date : mai 2025
-@modifiéDate : 17 septembre 2025 */
+@modifiéDate : 18 septembre 2025 */
+
 
 // ========== IMPORTS DES MODULES ==========
 const express = require('express');
@@ -16,6 +17,7 @@ const cookieRoutes = require('./cookiesRoutes');
 const sanitize = require('sanitize-html');
 const crypto = require('crypto'); // en haut de ton fichier
 const sessions = new Set(); // stock interne
+
 
 // ========== CONFIGURATION DE BASE ==========
 const app = express();
@@ -103,6 +105,37 @@ const transporter = nodemailer.createTransport({
 const emailSender = config.smtp.auth.user;
 
 // ========== FONCTIONS UTILITAIRES ==========
+
+function addLog(action) {
+  const logsPath = path.join(__dirname, 'logs.json');
+  let logsData = [];
+
+  // Lire les logs existants
+  if (fs.existsSync(logsPath)) {
+    try {
+      logsData = JSON.parse(fs.readFileSync(logsPath, 'utf8'));
+    } catch (e) {
+      console.error('Erreur parsing logs.json:', e);
+    }
+  }
+
+  // Générer un ID unique
+  const newLogId = logsData.length > 0 ? Math.max(...logsData.map(l => l.id || 0)) + 1 : 1;
+
+  // Ajouter le log
+  logsData.push({
+    id: newLogId,
+    date: new Date().toLocaleString('fr-FR'),
+    action: action
+  });
+
+  // Sauvegarder
+  fs.writeFileSync(logsPath, JSON.stringify(logsData, null, 2));
+}
+
+
+
+
 function getNextAvailableId() {
   try {
     const fileData = fs.readFileSync('fichiers.json', 'utf8');
@@ -157,9 +190,6 @@ function createZipFromFiles(files, outputPath) {
 
 // ========== ROUTES ==========
 
-app.get('/admin', authMiddleware, (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
-});
 
 app.get('/api/check-session', authMiddleware, (req, res) => {
   res.json({ authenticated: true });
@@ -180,31 +210,58 @@ app.post('/admin/login', (req, res) => {
 });
 
 
-// Route pour ajouter un message
 app.post('/add-message', async (req, res) => {
   try {
     const { nom, message } = req.body;
-    if (!nom || !message) return res.status(400).json({ success: false, message: 'Nom et message sont requis' });
+    if (!nom || !message)
+      return res.status(400).json({ success: false, message: 'Nom et message sont requis' });
 
     const chatPath = path.join(__dirname, 'chat.json');
     let chatData = [];
+
     if (fs.existsSync(chatPath)) {
-      try { chatData = JSON.parse(fs.readFileSync(chatPath, 'utf8')); }
-      catch (error) { console.error('Erreur lors de la lecture de chat.json:', error); return res.status(500).json({ success: false, message: 'Erreur lors de la lecture du fichier de messages' }); }
+      try {
+        chatData = JSON.parse(fs.readFileSync(chatPath, 'utf8'));
+
+        // Ajouter un ID aux messages existants si absent
+        let maxExistingId = 0;
+        chatData = chatData.map((msg, index) => {
+          if (!msg.id) {
+            msg.id = index + 1;
+          }
+          if (msg.id > maxExistingId) maxExistingId = msg.id;
+          return msg;
+        });
+
+        // Stocker le max existant pour calculer le nouvel ID
+        req.maxId = maxExistingId;
+
+      } catch (error) {
+        console.error('Erreur lors de la lecture de chat.json:', error);
+        return res.status(500).json({ success: false, message: 'Erreur lors de la lecture du fichier de messages' });
+      }
     }
 
-    const newEntry = { date: new Date().toLocaleString('fr-FR'), nom, message };
+    // Générer un ID unique pour le nouveau message
+    const newId = chatData.length > 0 ? Math.max(...chatData.map(m => m.id)) + 1 : 1;
+
+    const newEntry = {
+      id: newId,
+      date: new Date().toLocaleString('fr-FR'),
+      nom,
+      message
+    };
     chatData.push(newEntry);
 
-    try { fs.writeFileSync(chatPath, JSON.stringify(chatData, null, 2)); }
-    catch (error) { console.error('Erreur lors de l\'écriture dans chat.json:', error); return res.status(500).json({ success: false, message: 'Erreur lors de l\'enregistrement du message' }); }
+    fs.writeFileSync(chatPath, JSON.stringify(chatData, null, 2));
 
-    res.json({ success: true, message: 'Message ajouté avec succès' });
+    res.json({ success: true, message: 'Message ajouté avec succès', id: newId });
   } catch (error) {
     console.error('Erreur serveur:', error);
     res.status(500).json({ success: false, message: `Erreur serveur : ${error.message}` });
   }
 });
+
 
 // Route pour récupérer les messages
 app.get('/get-messages', async (req, res) => {
@@ -237,6 +294,8 @@ app.get('/get-logs', async (req, res) => {
     res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
 });
+
+
 
 // Route pour uploader un fichier
 app.post('/upload', async (req, res) => {
@@ -280,6 +339,8 @@ app.post('/upload', async (req, res) => {
           poidsFichier: file.size,
           dateAjout: new Date().toLocaleDateString('fr-FR'),
           anneeScolaire: anneeScolaire,
+          likes: 0,
+          dislikes: 0
         };
 
         let fileList = [];
@@ -359,7 +420,9 @@ app.post('/upload-multi', uploadMulti.array('fichiers'), async (req, res) => {
       description: description,
       poidsFichier: zipSize,
       dateAjout: new Date().toLocaleDateString('fr-FR'),
-      anneeScolaire: anneeScolaire
+      anneeScolaire: anneeScolaire,
+      likes: 0,
+      dislikes: 0
     };
 
     let fileList = [];
@@ -419,14 +482,16 @@ async function handleVideoUpload(req, res) {
       description: description || '',
       dateAjout: new Date().toLocaleDateString('fr-FR'),
       annee: anneeInt,
-      anneeScolaire // ici ça utilise la variable destructurée
+      anneeScolaire,
+      likes: 0,
+      dislikes: 0
     };
 
     // Lecture JSON
     const jsonPath = path.join(__dirname, 'fichiers.json');
     let fileList = [];
     if (fs.existsSync(jsonPath)) {
-      try { fileList = JSON.parse(fs.readFileSync(jsonPath, 'utf8')); } 
+      try { fileList = JSON.parse(fs.readFileSync(jsonPath, 'utf8')); }
       catch (parseError) { console.error('Erreur parsing JSON:', parseError); }
     }
 
@@ -449,13 +514,21 @@ app.get('/get-files', (req, res) => {
   try {
     const jsonPath = path.join(__dirname, 'fichiers.json');
     if (!fs.existsSync(jsonPath)) return res.json([]);
+
     const fileContent = fs.readFileSync(jsonPath, 'utf8');
     const files = JSON.parse(fileContent);
+
     const annee = req.query.annee ? parseInt(req.query.annee, 10) : null;
     let filteredFiles = files;
+
     if (annee) {
-      filteredFiles = files.filter(f => f.annee === annee);
+      // Utilise == pour accepter nombres ou chaînes
+      filteredFiles = files.filter(f => f.annee == annee);
     }
+
+    // Vérifie le contenu filtré avant l'envoi
+    console.log('Fichiers à renvoyer :', filteredFiles);
+
     res.json(filteredFiles);
   } catch (error) {
     console.error('Erreur lors de la lecture des fichiers:', error);
@@ -463,19 +536,20 @@ app.get('/get-files', (req, res) => {
   }
 });
 
+
+
 app.post('/edit-file', async (req, res) => {
   try {
     const id = parseInt(req.body.id, 10);
-    const { type, titre, cours, nomDiscord, description, url, annee } = req.body;
+    const { titre, cours, nomDiscord, description, annee, anneeScolaire } = req.body;
 
     const fichiersPath = path.join(__dirname, 'fichiers.json');
     const logsPath = path.join(__dirname, 'logs.json');
 
-    // Lire le fichier JSON
+    // Lire le JSON
     const fichiers = JSON.parse(fs.readFileSync(fichiersPath, 'utf8'));
-
-    // Trouver l'index de l'objet à modifier
     const fileIndex = fichiers.findIndex(f => f.id === id);
+
     if (fileIndex === -1) {
       return res.status(404).json({ success: false, message: 'Fichier non trouvé' });
     }
@@ -483,46 +557,52 @@ app.post('/edit-file', async (req, res) => {
     const file = fichiers[fileIndex];
     const oldValues = `[${file.id}] [${file.annee} - ${file.type} - ${file.titre} - ${file.cours} - ${file.nomDiscord}]`;
 
-    // Si le dossier doit changer (année ou cours modifiés)
-    if (((cours && cours !== file.cours) || (annee && parseInt(annee) !== file.annee)) && file.path) {
-      const newAnnee = annee ? parseInt(annee, 10) : file.annee;
-      const newDir = path.join(__dirname, 'Les synthèses des invités', `Annee_${newAnnee}`, cours);
-      if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
+    // Vérifier si le dossier doit changer (année ou cours)
+    let newDir = path.join(__dirname, 'Les synthèses des invités', cours || file.cours);
+    if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
 
-      const extension = file.type === 'video' ? '' : path.extname(file.nomFichier || '');
-      const newFileName = `${cours}_${titre}_${nomDiscord}_${new Date().toLocaleDateString('fr-FR').replace(/\//g, '-')}${extension}`;
-      const newFilePath = path.join(newDir, newFileName);
+    // Renommer le fichier si le titre, nomDiscord ou cours change
+    const extension = file.type === 'video' ? '' : path.extname(file.nomFichier);
+    const newFileName = `${cours || file.cours}_${titre || file.titre}_${nomDiscord || file.nomDiscord}_${new Date().toLocaleDateString('fr-FR').replace(/\//g, '-')}${extension}`;
 
-      const oldFilePath = path.join(__dirname, file.path);
-      if (fs.existsSync(oldFilePath) && file.type !== 'video') {
-        fs.renameSync(oldFilePath, newFilePath);
-        file.path = `/Les synthèses des invités/Annee_${newAnnee}/${cours}/${newFileName}`;
-        file.nomFichier = newFileName;
-      }
+    const oldFilePath = path.join(__dirname, file.path);
+    const newFilePath = path.join(newDir, newFileName);
+
+    if (fs.existsSync(oldFilePath) && file.type !== 'video') {
+      fs.renameSync(oldFilePath, newFilePath);
+      file.path = `/Les synthèses des invités/${cours || file.cours}/${newFileName}`;
+      file.nomFichier = newFileName;
     }
 
-    // Mise à jour des champs
+    // Mettre à jour les autres champs
     file.annee = annee ? parseInt(annee, 10) : file.annee;
-    file.type = type || file.type;
+    file.anneeScolaire = anneeScolaire || file.anneeScolaire;
     file.titre = titre || file.titre;
     file.cours = cours || file.cours;
     file.nomDiscord = nomDiscord || file.nomDiscord;
     file.description = description || file.description;
-    file.url = url || file.url;
 
-    // Sauvegarde dans JSON
+    // Sauvegarder dans le JSON
     fs.writeFileSync(fichiersPath, JSON.stringify(fichiers, null, 2));
 
-    // Sauvegarde du log
+    // Ajouter un log
     const newValues = `[${file.id}] [${file.annee} - ${file.type} - ${file.titre} - ${file.cours} - ${file.nomDiscord}]`;
     let logsData = [];
     if (fs.existsSync(logsPath)) {
       try { logsData = JSON.parse(fs.readFileSync(logsPath, 'utf8')); } catch { /* ignore */ }
     }
-    logsData.push({ date: new Date().toLocaleString('fr-FR'), action: `${oldValues} modifié -> ${newValues}` });
+    // Générer un id unique pour le log
+    const newLogId = logsData.length > 0 ? Math.max(...logsData.map(l => l.id || 0)) + 1 : 1;
+
+    logsData.push({
+      id: newLogId,  // <-- ID unique
+      date: new Date().toLocaleString('fr-FR'),
+      action: `${oldValues} modifié -> ${newValues}`
+    });
     fs.writeFileSync(logsPath, JSON.stringify(logsData, null, 2));
 
     res.json({ success: true, message: 'Fichier modifié avec succès' });
+
   } catch (error) {
     console.error('Erreur lors de la modification:', error);
     res.status(500).json({ success: false, message: 'Erreur interne serveur' });
@@ -530,34 +610,124 @@ app.post('/edit-file', async (req, res) => {
 });
 
 
+
 // Suppression d’un fichier via DELETE /delete-file/:id
 app.delete('/delete-file/:id', async (req, res) => {
   try {
     const fileId = parseInt(req.params.id, 10);
     const jsonPath = path.join(__dirname, 'fichiers.json');
+    const logsPath = path.join(__dirname, 'logs.json'); // chemin vers les logs
+
     let fileList = [];
     if (fs.existsSync(jsonPath)) {
       fileList = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
     }
+
     const fileIndex = fileList.findIndex(file => file.id === fileId);
     if (fileIndex === -1) {
       return res.status(404).json({ success: false, message: 'Fichier non trouvé' });
     }
+
     const fileToDelete = fileList[fileIndex];
+
+    // --- AJOUT DU LOG ---
+    addLog(`[${fileToDelete.id}] [${fileToDelete.annee} - ${fileToDelete.type} - ${fileToDelete.titre} - ${fileToDelete.cours} - ${fileToDelete.nomDiscord}] supprimé`);
+
+    // --- FIN DU LOG ---
+
     if (fileToDelete.path && (fileToDelete.type === 'pdf' || fileToDelete.type === 'zip')) {
       const filePath = path.join(__dirname, fileToDelete.path);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
     }
+
     fileList.splice(fileIndex, 1);
     fs.writeFileSync(jsonPath, JSON.stringify(fileList, null, 2));
+
     res.json({ success: true, message: 'Fichier supprimé avec succès' });
   } catch (error) {
     console.error('Erreur lors de la suppression:', error);
     res.status(500).json({ success: false, message: 'Erreur serveur lors de la suppression' });
   }
 });
+
+// Suppression d’un message via DELETE /delete-message/:id
+app.delete('/delete-message/:id', async (req, res) => {
+  try {
+    const messageId = Number(req.params.id); // forcer le type nombre
+    console.log('ID reçu pour suppression :', req.params.id, '=>', messageId);
+
+    const jsonPath = path.join(__dirname, 'chat.json');
+    let messagesList = [];
+
+    if (fs.existsSync(jsonPath)) {
+      try {
+        messagesList = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+        console.log('Liste des messages :', messagesList.map(m => ({ id: m.id, nom: m.nom })));
+      } catch (err) {
+        console.error('Erreur parsing chat.json:', err);
+        return res.status(500).json({ success: false, message: 'Erreur lecture chat.json' });
+      }
+    }
+
+    const messageIndex = messagesList.findIndex(msg => Number(msg.id) === messageId);
+    if (messageIndex === -1) {
+      console.log('Message non trouvé pour ID :', messageId);
+      return res.status(404).json({ success: false, message: 'Message non trouvé' });
+    }
+
+    messagesList.splice(messageIndex, 1);
+    fs.writeFileSync(jsonPath, JSON.stringify(messagesList, null, 2));
+
+    res.json({ success: true, message: 'Message supprimé avec succès' });
+  } catch (error) {
+    console.error('Erreur lors de la suppression du message:', error);
+    res.status(500).json({ success: false, message: 'Erreur serveur lors de la suppression' });
+  }
+});
+
+
+
+
+
+// Suppression d’un log via DELETE /delete-log/:id
+app.delete('/delete-log/:id', async (req, res) => {
+  try {
+    const logId = parseInt(req.params.id, 10);
+    const jsonPath = path.join(__dirname, 'logs.json');
+    let logsList = [];
+    if (fs.existsSync(jsonPath)) {
+      logsList = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+    }
+
+    const logIndex = logsList.findIndex(log => log.id === logId);
+    if (logIndex === -1) {
+      return res.status(404).json({ success: false, message: 'Log non trouvé' });
+    }
+
+    logsList.splice(logIndex, 1);
+    fs.writeFileSync(jsonPath, JSON.stringify(logsList, null, 2));
+
+    res.json({ success: true, message: 'Log supprimé avec succès' });
+  } catch (error) {
+    console.error('Erreur lors de la suppression du log:', error);
+    res.status(500).json({ success: false, message: 'Erreur serveur lors de la suppression' });
+  }
+});
+
+// Supprimer tous les logs
+app.delete('/delete-all-logs', (req, res) => {
+  try {
+    const logsPath = path.join(__dirname, 'logs.json');
+    fs.writeFileSync(logsPath, JSON.stringify([], null, 2)); // vide le fichier
+    res.json({ success: true, message: 'Tous les logs ont été supprimés' });
+  } catch (error) {
+    console.error('Erreur lors de la suppression de tous les logs:', error);
+    res.status(500).json({ success: false, message: 'Erreur serveur' });
+  }
+});
+
+
+
 
 // Route pour poser une question (exemple)
 app.post('/ask-question', (req, res) => {
@@ -567,6 +737,43 @@ app.post('/ask-question', (req, res) => {
     res.json({ success: true, answer: `Question reçue : ${question}` });
   } catch (error) { console.error('Erreur ask-question:', error); res.status(500).json({ error: 'Erreur serveur' }); }
 });
+
+// Route pour voter 👍 ou 👎 sur une synthèse
+app.post('/vote', (req, res) => {
+  const { id, vote } = req.body;
+  const jsonPath = path.join(__dirname, 'fichiers.json');
+
+  if (!fs.existsSync(jsonPath)) return res.status(404).json({ error: 'Fichier JSON introuvable' });
+
+  const fileContent = fs.readFileSync(jsonPath, 'utf8');
+  let fileList = JSON.parse(fileContent);
+
+  const file = fileList.find(f => f.id === id);
+  if (!file) return res.status(404).json({ error: 'Fichier introuvable' });
+
+  // Vérifie votes précédents côté serveur
+  if (!file.userVotes) file.userVotes = {}; // stock temporaire des votes par utilisateur (ici basé sur session ou id si tu veux)
+
+  const previousVote = file.userVotes[id] || null;
+
+  // Retire le vote précédent
+  if (previousVote === 'like') file.likes--;
+  if (previousVote === 'dislike') file.dislikes--;
+
+  // Ajoute le nouveau vote
+  if (vote === 'like') file.likes++;
+  if (vote === 'dislike') file.dislikes++;
+
+  file.userVotes[id] = vote;
+
+  fs.writeFileSync(jsonPath, JSON.stringify(fileList, null, 2));
+  res.json({ likes: file.likes, dislikes: file.dislikes });
+});
+
+
+
+
+
 
 // Export du module
 module.exports = app;
