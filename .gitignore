@@ -7,6 +7,9 @@ node_modules/
 
 # Fichiers uploadés et temporaires
 Les synthèses des invités/
+cookies.json
+chat.json
+logs.json
 temp/
 
 # Fichiers de données

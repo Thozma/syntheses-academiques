@@ -209,7 +209,7 @@ app.post('/admin/login', (req, res) => {
   }
 });
 
-
+// Ajouter un nouveau chat admin
 app.post('/add-message', async (req, res) => {
   try {
     const { nom, message } = req.body;
@@ -242,7 +242,7 @@ app.post('/add-message', async (req, res) => {
       }
     }
 
-    // Générer un ID unique pour le nouveau message
+    // Générer un ID unique pour le nouveau chat
     const newId = chatData.length > 0 ? Math.max(...chatData.map(m => m.id)) + 1 : 1;
 
     const newEntry = {
@@ -263,7 +263,7 @@ app.post('/add-message', async (req, res) => {
 });
 
 
-// Route pour récupérer les messages
+// Route pour récupérer les chats Admin
 app.get('/get-messages', async (req, res) => {
   try {
     const chatPath = path.join(__dirname, 'chat.json');
@@ -279,7 +279,7 @@ app.get('/get-messages', async (req, res) => {
   }
 });
 
-// Route pour récupérer les logs
+// Route pour récupérer les logs Admins
 app.get('/get-logs', async (req, res) => {
   try {
     const logsPath = path.join(__dirname, 'logs.json');
@@ -537,7 +537,7 @@ app.get('/get-files', (req, res) => {
 });
 
 
-
+// Modifie fichier admin
 app.post('/edit-file', async (req, res) => {
   try {
     const id = parseInt(req.body.id, 10);
@@ -611,7 +611,7 @@ app.post('/edit-file', async (req, res) => {
 
 
 
-// Suppression d’un fichier via DELETE /delete-file/:id
+// Suppression d’un fichier admin via DELETE /delete-file/:id
 app.delete('/delete-file/:id', async (req, res) => {
   try {
     const fileId = parseInt(req.params.id, 10);
@@ -650,7 +650,7 @@ app.delete('/delete-file/:id', async (req, res) => {
   }
 });
 
-// Suppression d’un message via DELETE /delete-message/:id
+// Suppression d’un chat via DELETE /delete-message/:id
 app.delete('/delete-message/:id', async (req, res) => {
   try {
     const messageId = Number(req.params.id); // forcer le type nombre
@@ -689,7 +689,7 @@ app.delete('/delete-message/:id', async (req, res) => {
 
 
 
-// Suppression d’un log via DELETE /delete-log/:id
+// Suppression d’un log via DELETE /delete-log/:id admin
 app.delete('/delete-log/:id', async (req, res) => {
   try {
     const logId = parseInt(req.params.id, 10);
@@ -714,7 +714,7 @@ app.delete('/delete-log/:id', async (req, res) => {
   }
 });
 
-// Supprimer tous les logs
+// Supprimer tous les logs admin
 app.delete('/delete-all-logs', (req, res) => {
   try {
     const logsPath = path.join(__dirname, 'logs.json');
@@ -730,13 +730,42 @@ app.delete('/delete-all-logs', (req, res) => {
 
 
 // Route pour poser une question (exemple)
-app.post('/ask-question', (req, res) => {
+app.post('/ask-question', async (req, res) => {
   try {
-    const { question } = req.body;
-    if (!question) return res.status(400).json({ error: 'Question requise' });
-    res.json({ success: true, answer: `Question reçue : ${question}` });
-  } catch (error) { console.error('Erreur ask-question:', error); res.status(500).json({ error: 'Erreur serveur' }); }
+    const { nomDiscord, email, message, ip = null, country = null, region = null, city = null } = req.body;
+    if (!message) return res.status(400).json({ error: 'Message requis' });
+
+    const mailText = `
+Nouveau message reçu :
+
+De : ${nomDiscord || 'Anonyme'}
+Email : ${email || 'non renseigné'}
+Message : ${message}
+IP : ${ip || 'inconnue'}, Ville : ${city || ''}, Région : ${region || ''}, Pays : ${country || ''}
+`;
+
+// Ajout d'un log avant envoi mail
+    console.log('Préparation envoi mail pour message de:', nomDiscord);
+
+    await transporter.sendMail({
+      from: `Thomas Bauwens <${emailSender}>`,
+      to: emailSender,                 // La même adresse que dans upload
+      subject: 'Nouveau message de contact',
+      text: mailText,
+      replyTo: email || undefined
+    });
+
+    console.log('Mail envoyé à', emailSender);
+
+    res.json({ success: true, answer: "Message envoyé." });
+  } catch (error) {
+    console.error('Erreur ask-question:', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
 });
+
+
+
 
 // Route pour voter 👍 ou 👎 sur une synthèse
 app.post('/vote', (req, res) => {
@@ -778,4 +807,4 @@ app.post('/vote', (req, res) => {
 // Export du module
 module.exports = app;
 
-//app.listen(3000, () => console.log('Server started on port 3000'));
+app.listen(3000, () => console.log('Server started on port 3000'));
